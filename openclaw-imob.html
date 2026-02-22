@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OpenClaw Imob — AI para Corretores de Imóveis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --font-body: 'DM Sans', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --bg: #fdfcfa;
+  --surface: #ffffff;
+  --surface2: #f7f5f2;
+  --surface-elevated: #ffffff;
+  --border: rgba(0,0,0,0.06);
+  --border-bright: rgba(0,0,0,0.12);
+  --text: #1a1a1a;
+  --text-dim: #6b7280;
+  --text-light: #9ca3af;
+  --green: #059669;
+  --green-dim: rgba(5,150,105,0.08);
+  --blue: #2563eb;
+  --blue-dim: rgba(37,99,235,0.08);
+  --orange: #d97706;
+  --orange-dim: rgba(217,119,6,0.08);
+  --purple: #7c3aed;
+  --purple-dim: rgba(124,58,237,0.08);
+  --rose: #e11d48;
+  --rose-dim: rgba(225,29,72,0.08);
+  --teal: #0891b2;
+  --teal-dim: rgba(8,145,178,0.08);
+  --whatsapp: #25D366;
+  --whatsapp-dim: rgba(37,211,102,0.08);
+  --whatsapp-dark: #128C7E;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f1115;
+    --surface: #1a1d24;
+    --surface2: #22262e;
+    --surface-elevated: #262a33;
+    --border: rgba(255,255,255,0.06);
+    --border-bright: rgba(255,255,255,0.1);
+    --text: #e8e8e8;
+    --text-dim: #8b949e;
+    --text-light: #6b7280;
+    --green: #34d399;
+    --green-dim: rgba(52,211,153,0.1);
+    --blue: #60a5fa;
+    --blue-dim: rgba(96,165,250,0.1);
+    --orange: #fbbf24;
+    --orange-dim: rgba(251,191,36,0.1);
+    --purple: #a78bfa;
+    --purple-dim: rgba(167,139,250,0.1);
+    --rose: #fb7185;
+    --rose-dim: rgba(251,113,133,0.1);
+    --teal: #22d3ee;
+    --teal-dim: rgba(34,211,238,0.1);
+    --whatsapp: #25D366;
+    --whatsapp-dim: rgba(37,211,102,0.12);
+    --whatsapp-dark: #25D366;
+  }
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  background-image:
+    radial-gradient(at 20% 10%, var(--whatsapp-dim) 0%, transparent 50%),
+    radial-gradient(at 80% 50%, var(--blue-dim) 0%, transparent 50%);
+}
+
+.container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+/* ---- HERO ---- */
+.hero {
+  padding: 80px 0 60px;
+  text-align: center;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  background: var(--whatsapp-dim);
+  border: 1px solid rgba(37,211,102,0.2);
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--whatsapp-dark);
+  margin-bottom: 24px;
+}
+
+.hero h1 {
+  font-size: clamp(36px, 5vw, 56px);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -1.5px;
+  margin-bottom: 16px;
+}
+
+.hero h1 .accent { color: var(--whatsapp-dark); }
+
+.hero .subtitle {
+  font-size: 18px;
+  color: var(--text-dim);
+  max-width: 600px;
+  margin: 0 auto 40px;
+}
+
+/* ---- STATS BAR ---- */
+.stats-bar {
+  display: flex;
+  justify-content: center;
+  gap: 48px;
+  padding: 32px 0;
+  flex-wrap: wrap;
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 36px;
+  font-weight: 700;
+  letter-spacing: -1px;
+  line-height: 1;
+}
+
+.stat-value.green { color: var(--green); }
+.stat-value.orange { color: var(--orange); }
+.stat-value.rose { color: var(--rose); }
+.stat-value.blue { color: var(--blue); }
+
+.stat-label {
+  font-size: 13px;
+  color: var(--text-dim);
+  margin-top: 6px;
+}
+
+/* ---- SECTION ---- */
+.section {
+  padding: 60px 0;
+}
+
+.section-header {
+  margin-bottom: 40px;
+}
+
+.section-number {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-light);
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+.section-title {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.section-desc {
+  font-size: 15px;
+  color: var(--text-dim);
+  margin-top: 8px;
+  max-width: 600px;
+}
+
+/* ---- ARCHITECTURE ---- */
+.arch-diagram {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+
+.arch-row {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.arch-node {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 20px;
+  min-width: 160px;
+  text-align: center;
+  position: relative;
+}
+
+.arch-node.wide { flex: 1; max-width: 500px; }
+.arch-node.full { flex: 1; max-width: 100%; width: 100%; }
+
+.arch-node-icon {
+  font-size: 24px;
+  margin-bottom: 6px;
+}
+
+.arch-node-title {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.arch-node-desc {
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+.arch-node.whatsapp { border-color: rgba(37,211,102,0.3); background: var(--whatsapp-dim); }
+.arch-node.ai { border-color: rgba(124,58,237,0.3); background: var(--purple-dim); }
+.arch-node.skill { border-color: rgba(37,99,235,0.3); background: var(--blue-dim); }
+.arch-node.data { border-color: rgba(217,119,6,0.3); background: var(--orange-dim); }
+.arch-node.portal { border-color: rgba(8,145,178,0.3); background: var(--teal-dim); }
+.arch-node.corretor { border-color: rgba(5,150,105,0.3); background: var(--green-dim); }
+
+.arch-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-light);
+  font-size: 20px;
+  padding: 4px 0;
+}
+
+.arch-arrow svg { width: 24px; height: 24px; stroke: var(--text-light); fill: none; stroke-width: 2; }
+
+/* ---- FEATURE CARDS ---- */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.feature-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.feature-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+}
+
+.feature-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+  font-size: 18px;
+}
+
+.feature-icon.green { background: var(--green-dim); color: var(--green); }
+.feature-icon.blue { background: var(--blue-dim); color: var(--blue); }
+.feature-icon.orange { background: var(--orange-dim); color: var(--orange); }
+.feature-icon.purple { background: var(--purple-dim); color: var(--purple); }
+.feature-icon.rose { background: var(--rose-dim); color: var(--rose); }
+.feature-icon.teal { background: var(--teal-dim); color: var(--teal); }
+.feature-icon.whatsapp { background: var(--whatsapp-dim); color: var(--whatsapp-dark); }
+
+.feature-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.feature-desc {
+  font-size: 14px;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+
+.feature-tag {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 500;
+  margin-top: 12px;
+}
+
+.feature-tag.mvp { background: var(--green-dim); color: var(--green); }
+.feature-tag.v2 { background: var(--blue-dim); color: var(--blue); }
+
+/* ---- CHAT DEMO ---- */
+.chat-container {
+  max-width: 420px;
+  margin: 0 auto;
+  background: var(--surface2);
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+}
+
+.chat-header {
+  background: var(--whatsapp-dark);
+  color: white;
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.chat-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.chat-name { font-weight: 600; font-size: 15px; }
+.chat-status { font-size: 12px; opacity: 0.8; }
+
+.chat-messages {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 320px;
+}
+
+.msg {
+  max-width: 85%;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 1.4;
+  animation: msgIn 0.3s ease-out both;
+}
+
+.msg.incoming {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  align-self: flex-start;
+  border-bottom-left-radius: 4px;
+}
+
+.msg.outgoing {
+  background: #dcf8c6;
+  color: #1a1a1a;
+  align-self: flex-end;
+  border-bottom-right-radius: 4px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .msg.outgoing { background: #1b4332; color: var(--text); }
+}
+
+.msg-time {
+  font-size: 11px;
+  color: var(--text-light);
+  text-align: right;
+  margin-top: 4px;
+}
+
+@keyframes msgIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---- PRICING ---- */
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.pricing-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 28px;
+  text-align: center;
+}
+
+.pricing-card.featured {
+  border-color: var(--whatsapp-dark);
+  box-shadow: 0 0 0 1px var(--whatsapp-dark), 0 8px 24px rgba(37,211,102,0.1);
+}
+
+.pricing-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+}
+
+.pricing-price {
+  font-size: 36px;
+  font-weight: 700;
+  letter-spacing: -1px;
+}
+
+.pricing-price span { font-size: 16px; font-weight: 400; color: var(--text-dim); }
+
+.pricing-features {
+  list-style: none;
+  margin: 20px 0;
+  text-align: left;
+  font-size: 14px;
+  color: var(--text-dim);
+}
+
+.pricing-features li {
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pricing-features li::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  flex-shrink: 0;
+}
+
+/* ---- TIMELINE ---- */
+.timeline {
+  position: relative;
+  padding-left: 32px;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--border-bright);
+}
+
+.timeline-item {
+  position: relative;
+  padding-bottom: 32px;
+}
+
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: -29px;
+  top: 6px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--green);
+  background: var(--bg);
+}
+
+.timeline-item.future::before {
+  border-color: var(--text-light);
+}
+
+.timeline-week {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-light);
+  margin-bottom: 4px;
+}
+
+.timeline-title {
+  font-weight: 600;
+  font-size: 15px;
+  margin-bottom: 4px;
+}
+
+.timeline-desc {
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+/* ---- COMPETITORS TABLE ---- */
+.table-wrap {
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+thead th {
+  background: var(--surface2);
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-dim);
+  border-bottom: 1px solid var(--border);
+}
+
+td {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+tr:last-child td { border-bottom: none; }
+tr:hover { background: var(--surface2); }
+
+.check { color: var(--green); font-weight: 600; }
+.partial { color: var(--orange); }
+.no { color: var(--text-light); }
+
+.highlight-row { background: var(--whatsapp-dim); font-weight: 500; }
+
+/* ---- ANIMATIONS ---- */
+.fade-in {
+  opacity: 0;
+  transform: translateY(16px);
+  animation: fadeUp 0.5s ease-out forwards;
+  animation-delay: calc(var(--i, 0) * 80ms);
+}
+
+@keyframes fadeUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-in { animation: none; opacity: 1; transform: none; }
+  .msg { animation: none; }
+}
+
+/* ---- RESPONSIVE ---- */
+@media (max-width: 640px) {
+  .hero { padding: 48px 0 32px; }
+  .stats-bar { gap: 24px; }
+  .stat-value { font-size: 28px; }
+  .features-grid { grid-template-columns: 1fr; }
+  .pricing-grid { grid-template-columns: 1fr; }
+  .arch-row { flex-direction: column; align-items: center; }
+}
+
+/* ---- DIVIDER ---- */
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: 0;
+}
+
+/* ---- TWO PHONES ---- */
+.two-phones {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 24px;
+  align-items: start;
+  margin: 0 auto;
+  max-width: 900px;
+}
+
+.phone-label {
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-dim);
+  margin-bottom: 12px;
+  padding: 6px 12px;
+  background: var(--surface2);
+  border-radius: 100px;
+  display: inline-block;
+}
+
+.phone-wrap { display: flex; flex-direction: column; align-items: center; }
+
+.phones-connector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding-top: 60px;
+  color: var(--text-light);
+}
+
+.connector-line {
+  width: 60px;
+  height: 2px;
+  background: var(--border-bright);
+  position: relative;
+}
+
+.connector-label {
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--text-light);
+  white-space: nowrap;
+}
+
+@media (max-width: 800px) {
+  .two-phones { grid-template-columns: 1fr; gap: 32px; }
+  .phones-connector { flex-direction: row; padding-top: 0; }
+  .connector-line { width: 2px; height: 40px; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HERO -->
+  <section class="hero fade-in" style="--i:0">
+    <div class="hero-badge">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      Powered by WhatsApp + AI
+    </div>
+    <h1>OpenClaw <span class="accent">Imob</span></h1>
+    <p class="subtitle">Agente de IA para corretores de imóveis. Atende leads 24/7, qualifica, busca imóveis e agenda visitas pelo WhatsApp.</p>
+  </section>
+
+  <!-- STATS -->
+  <section class="stats-bar fade-in" style="--i:1">
+    <div class="stat">
+      <div class="stat-value green">630k+</div>
+      <div class="stat-label">Corretores no Brasil</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value rose">40%</div>
+      <div class="stat-label">Leads perdidos por demora</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value orange">70-85%</div>
+      <div class="stat-label">Margem SaaS</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value blue">&lt;1 min</div>
+      <div class="stat-label">Tempo de resposta</div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- SECTION 1: TWO WHATSAPPS -->
+  <section class="section fade-in" style="--i:2">
+    <div class="section-header">
+      <div class="section-number">01</div>
+      <h2 class="section-title">Dois WhatsApps, um agente</h2>
+      <p class="section-desc">O bot opera no WhatsApp comercial da imobiliária e notifica o corretor no WhatsApp pessoal.</p>
+    </div>
+
+    <div class="two-phones">
+      <div class="phone-wrap">
+        <span class="phone-label">WhatsApp Imobiliária</span>
+        <div class="chat-container">
+          <div class="chat-header">
+            <div class="chat-avatar">🏠</div>
+            <div>
+              <div class="chat-name">Imob Premium</div>
+              <div class="chat-status">online</div>
+            </div>
+          </div>
+          <div class="chat-messages">
+            <div class="msg incoming" style="animation-delay:0.2s">Oi, vi o apartamento de 2 quartos em Copacabana no ZAP. Ainda disponível?</div>
+            <div class="msg outgoing" style="animation-delay:0.5s">Olá! Sim, o apartamento na Rua Siqueira Campos está disponível! 😊 72m², 2 quartos, varanda, por R$ 480.000. Posso te passar mais fotos?</div>
+            <div class="msg incoming" style="animation-delay:0.8s">Sim! E quanto é o condomínio?</div>
+            <div class="msg outgoing" style="animation-delay:1.1s">Condomínio R$ 890/mês. Incluí academia e piscina. Quer agendar uma visita? Tenho horários amanhã à tarde!</div>
+            <div class="msg incoming" style="animation-delay:1.4s">Pode ser às 15h?</div>
+            <div class="msg outgoing" style="animation-delay:1.7s">Perfeito! Agendado para amanhã, 15h. Vou te enviar o endereço e confirmação. Até lá! 🤝</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phones-connector">
+        <div class="connector-label">OpenClaw</div>
+        <div class="connector-line"></div>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </div>
+
+      <div class="phone-wrap">
+        <span class="phone-label">WhatsApp Corretor</span>
+        <div class="chat-container">
+          <div class="chat-header">
+            <div class="chat-avatar">🤖</div>
+            <div>
+              <div class="chat-name">Imob AI</div>
+              <div class="chat-status">assistente</div>
+            </div>
+          </div>
+          <div class="chat-messages">
+            <div class="msg incoming" style="animation-delay:2.0s">
+              <strong>Novo lead qualificado!</strong><br><br>
+              Nome: Maria Santos<br>
+              Interesse: Apt 2Q Copacabana<br>
+              Budget: R$ 500k<br>
+              Score: 🔥 Quente<br><br>
+              Visita agendada amanhã 15h
+            </div>
+            <div class="msg incoming" style="animation-delay:2.4s">
+              <strong>Resumo do dia</strong><br><br>
+              12 leads atendidos<br>
+              3 qualificados<br>
+              2 visitas agendadas<br>
+              1 follow-up pendente
+            </div>
+            <div class="msg incoming" style="animation-delay:2.7s">
+              <strong>Alerta portal:</strong> 4 novos imóveis na região Sul apareceram no ZAP Imóveis hoje.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- SECTION 2: ARCHITECTURE -->
+  <section class="section fade-in" style="--i:3">
+    <div class="section-header">
+      <div class="section-number">02</div>
+      <h2 class="section-title">Arquitetura</h2>
+      <p class="section-desc">OpenClaw como core, conectando WhatsApp, LLM, banco de imóveis e portais.</p>
+    </div>
+
+    <div class="arch-diagram">
+      <div class="arch-row">
+        <div class="arch-node portal">
+          <div class="arch-node-icon">🌐</div>
+          <div class="arch-node-title">Portais</div>
+          <div class="arch-node-desc">ZAP, OLX, VivaReal</div>
+        </div>
+        <div class="arch-node whatsapp">
+          <div class="arch-node-icon">💬</div>
+          <div class="arch-node-title">WhatsApp Imobiliária</div>
+          <div class="arch-node-desc">Leads entram aqui</div>
+        </div>
+        <div class="arch-node corretor">
+          <div class="arch-node-icon">👤</div>
+          <div class="arch-node-title">WhatsApp Corretor</div>
+          <div class="arch-node-desc">Notificações</div>
+        </div>
+      </div>
+
+      <div class="arch-arrow">
+        <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+      </div>
+
+      <div class="arch-row">
+        <div class="arch-node ai full">
+          <div class="arch-node-icon">🧠</div>
+          <div class="arch-node-title">OpenClaw Gateway + Agent</div>
+          <div class="arch-node-desc">Claude/GPT com persona de corretor virtual. Atende, qualifica, agenda, faz follow-up.</div>
+        </div>
+      </div>
+
+      <div class="arch-arrow">
+        <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+      </div>
+
+      <div class="arch-row">
+        <div class="arch-node skill">
+          <div class="arch-node-title">Buscar Imóvel</div>
+          <div class="arch-node-desc">Supabase / Sheets</div>
+        </div>
+        <div class="arch-node skill">
+          <div class="arch-node-title">Agendar Visita</div>
+          <div class="arch-node-desc">Google Calendar</div>
+        </div>
+        <div class="arch-node skill">
+          <div class="arch-node-title">CRM</div>
+          <div class="arch-node-desc">Lead tracking</div>
+        </div>
+        <div class="arch-node skill">
+          <div class="arch-node-title">Follow-up</div>
+          <div class="arch-node-desc">Cron scheduler</div>
+        </div>
+        <div class="arch-node skill">
+          <div class="arch-node-title">Monitor</div>
+          <div class="arch-node-desc">Scraper portais</div>
+        </div>
+      </div>
+
+      <div class="arch-arrow">
+        <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+      </div>
+
+      <div class="arch-row">
+        <div class="arch-node data wide">
+          <div class="arch-node-icon">🗄️</div>
+          <div class="arch-node-title">Banco de Dados</div>
+          <div class="arch-node-desc">Imóveis, Leads, Conversas, Visitas, Snapshots de portais</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- SECTION 3: FEATURES -->
+  <section class="section fade-in" style="--i:4">
+    <div class="section-header">
+      <div class="section-number">03</div>
+      <h2 class="section-title">Features</h2>
+      <p class="section-desc">8 funcionalidades que transformam o dia a dia do corretor.</p>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon whatsapp">💬</div>
+        <div class="feature-title">Atendimento 24/7</div>
+        <div class="feature-desc">Bot conectado no WhatsApp da imobiliária responde leads em linguagem natural. Persona configurável, handoff para humano quando necessário.</div>
+        <span class="feature-tag mvp">MVP</span>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon orange">🎯</div>
+        <div class="feature-title">Qualificação Automática</div>
+        <div class="feature-desc">Pergunta orçamento, região, tipo de imóvel de forma natural. Score automático: quente, morno, frio. Notifica corretor nos leads quentes.</div>
+        <span class="feature-tag mvp">MVP</span>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon blue">🔍</div>
+        <div class="feature-title">Busca de Imóveis</div>
+        <div class="feature-desc">Busca semântica no banco: "algo perto do metrô, aceita pet, até 3k". Envia fichas com fotos e comparativos pelo WhatsApp.</div>
+        <span class="feature-tag mvp">MVP</span>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon green">📅</div>
+        <div class="feature-title">Agendamento de Visitas</div>
+        <div class="feature-desc">Detecta intenção de agendamento na conversa. Cria evento no Google Calendar. Confirmação automática e lembrete 1h antes.</div>
+        <span class="feature-tag mvp">MVP</span>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon purple">🔄</div>
+        <div class="feature-title">Follow-up Inteligente</div>
+        <div class="feature-desc">Cadência D+1, D+3, D+7. Mensagens personalizadas com contexto da conversa. Se lead responde, escala para corretor.</div>
+        <span class="feature-tag v2">V2</span>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon rose">📊</div>
+        <div class="feature-title">CRM via Planilha</div>
+        <div class="feature-desc">Leads gerados automaticamente das conversas. Status do funil, histórico completo. Exporta para Google Sheets.</div>
+        <span class="feature-tag mvp">MVP</span>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon teal">🔔</div>
+        <div class="feature-title">Monitor de Portais</div>
+        <div class="feature-desc">Agent roda diariamente, compara imóveis novos nos portais com o dia anterior. Notifica corretor dos novos que apareceram.</div>
+        <span class="feature-tag v2">V2</span>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon blue">🔗</div>
+        <div class="feature-title">Webhooks de Portais</div>
+        <div class="feature-desc">Recebe leads de ZAP, OLX, VivaReal automaticamente. Parsing do lead e resposta em menos de 1 minuto.</div>
+        <span class="feature-tag v2">V2</span>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- SECTION 4: COMPETITORS -->
+  <section class="section fade-in" style="--i:5">
+    <div class="section-header">
+      <div class="section-number">04</div>
+      <h2 class="section-title">Cenário Competitivo</h2>
+      <p class="section-desc">Nenhum concorrente combina IA conversacional real + WhatsApp + CRM + portais.</p>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Solução</th>
+            <th>IA Conversacional</th>
+            <th>WhatsApp</th>
+            <th>CRM</th>
+            <th>Portais</th>
+            <th>Preço</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="highlight-row">
+            <td><strong>OpenClaw Imob</strong></td>
+            <td class="check">LLM (Claude/GPT)</td>
+            <td class="check">Nativo</td>
+            <td class="check">Integrado</td>
+            <td class="check">Scraper + Webhook</td>
+            <td>R$ 147-997</td>
+          </tr>
+          <tr>
+            <td>ChatImob</td>
+            <td class="check">IA</td>
+            <td class="check">Sim</td>
+            <td class="partial">Parcial</td>
+            <td class="partial">Parcial</td>
+            <td>~R$ 197-397</td>
+          </tr>
+          <tr>
+            <td>Beeia</td>
+            <td class="partial">Rule-based</td>
+            <td class="check">Sim</td>
+            <td class="no">Não</td>
+            <td class="no">Não</td>
+            <td>~R$ 99-299</td>
+          </tr>
+          <tr>
+            <td>Harry (GoHarry)</td>
+            <td class="no">Não</td>
+            <td class="partial">Parcial</td>
+            <td class="check">Sim</td>
+            <td class="check">Sim</td>
+            <td>~R$ 200-500</td>
+          </tr>
+          <tr>
+            <td>Kenlo</td>
+            <td class="no">Não</td>
+            <td class="partial">Parcial</td>
+            <td class="check">Sim</td>
+            <td class="check">Sim</td>
+            <td>~R$ 300-800</td>
+          </tr>
+          <tr>
+            <td>Jetimob</td>
+            <td class="no">Não</td>
+            <td class="partial">Parcial</td>
+            <td class="check">Sim</td>
+            <td class="check">Sim</td>
+            <td>~R$ 199-499</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- SECTION 5: PRICING -->
+  <section class="section fade-in" style="--i:6">
+    <div class="section-header">
+      <div class="section-number">05</div>
+      <h2 class="section-title">Modelo de Negócio</h2>
+      <p class="section-desc">SaaS mensal com margem de 70-85%.</p>
+    </div>
+
+    <div class="pricing-grid">
+      <div class="pricing-card">
+        <div class="pricing-name">Corretor</div>
+        <div class="pricing-price">R$ 147<span>/mês</span></div>
+        <ul class="pricing-features">
+          <li>1 WhatsApp conectado</li>
+          <li>200 leads/mês</li>
+          <li>Qualificação + follow-up</li>
+          <li>Busca de até 100 imóveis</li>
+          <li>CRM básico (Sheets)</li>
+        </ul>
+      </div>
+
+      <div class="pricing-card featured">
+        <div class="pricing-name">Imobiliária</div>
+        <div class="pricing-price">R$ 497<span>/mês</span></div>
+        <ul class="pricing-features">
+          <li>3 WhatsApps conectados</li>
+          <li>1.000 leads/mês</li>
+          <li>Todas as features</li>
+          <li>Dashboard de gestão</li>
+          <li>Distribuição de leads</li>
+          <li>Integração com 2 portais</li>
+        </ul>
+      </div>
+
+      <div class="pricing-card">
+        <div class="pricing-name">Premium</div>
+        <div class="pricing-price">R$ 997<span>/mês</span></div>
+        <ul class="pricing-features">
+          <li>WhatsApp ilimitado</li>
+          <li>Leads ilimitados</li>
+          <li>Todos os portais</li>
+          <li>API personalizada</li>
+          <li>Suporte prioritário</li>
+          <li>Relatórios avançados</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- SECTION 6: TIMELINE -->
+  <section class="section fade-in" style="--i:7">
+    <div class="section-header">
+      <div class="section-number">06</div>
+      <h2 class="section-title">Roadmap de Desenvolvimento</h2>
+      <p class="section-desc">MVP em 5 semanas. Produto completo em 12.</p>
+    </div>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-week">SEMANA 1-2</div>
+        <div class="timeline-title">Atendimento WhatsApp + Qualificação</div>
+        <div class="timeline-desc">Agent com persona, prompt engineering, score de leads, notificação ao corretor.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-week">SEMANA 3</div>
+        <div class="timeline-title">CRM + Planilha</div>
+        <div class="timeline-desc">Google Sheets como CRM. Leads auto-gerados, funil de vendas, histórico.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-week">SEMANA 3-4</div>
+        <div class="timeline-title">Busca de Imóveis</div>
+        <div class="timeline-desc">Supabase com catálogo. Busca semântica, envio de fichas com fotos.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-week">SEMANA 4-5</div>
+        <div class="timeline-title">Agendamento de Visitas</div>
+        <div class="timeline-desc">Google Calendar API, confirmação automática, lembretes.</div>
+      </div>
+      <div class="timeline-item future">
+        <div class="timeline-week">SEMANA 6-8</div>
+        <div class="timeline-title">Follow-up + Webhooks Portais</div>
+        <div class="timeline-desc">Cadência automática, recebimento de leads de ZAP/OLX/VivaReal.</div>
+      </div>
+      <div class="timeline-item future">
+        <div class="timeline-week">SEMANA 8-10</div>
+        <div class="timeline-title">Monitor de Portais</div>
+        <div class="timeline-desc">Scraping diário, comparação com dia anterior, alertas de novos imóveis.</div>
+      </div>
+      <div class="timeline-item future">
+        <div class="timeline-week">SEMANA 10-12</div>
+        <div class="timeline-title">Dashboard + Polish</div>
+        <div class="timeline-desc">Interface web para gestão. Métricas, relatórios, multi-corretor.</div>
+      </div>
+    </div>
+  </section>
+
+  <div style="height: 80px;"></div>
+
+</div>
+
+</body>
+</html>
