@@ -46,7 +46,45 @@ A **browser-based IDE** that works like EPLAN or QElectroTech — full drag & dr
 
 ## Key Principles
 
-### 1. Workspace First, AI Second
+### 1. ESCL is the Source of Truth
+
+**ESCL (Electrical Schematic Context Language)** is the core document format of AnlageX. Everything revolves around it.
+
+```
+breaker -Q1 "Main Breaker 16A" {
+  rating: 16A
+  poles: 3
+  <- L1
+}
+
+contactor -KM1 "Main Contactor" {
+  rating: 18A
+  <- -Q1
+}
+
+motor -M1 "Pump 5.5kW" {
+  power: 5.5kW
+  voltage: 400V
+  <- -KM1
+}
+```
+
+The canvas is a **bidirectional ESCL editor**:
+- **ESCL → Canvas**: Parses ESCL, builds the IR graph, renders as interactive SVG
+- **Canvas → ESCL**: Every user action (drag, connect, delete) updates the underlying ESCL
+
+This means:
+- **Projects are ESCL files** — human-readable, versionable (git-friendly), lightweight
+- **AI reads and writes ESCL** — LLMs are great at structured text
+- **Universal import**: Any schematic from any software can be converted to ESCL → rendered in AnlageX
+  - EPLAN project → ESCL → AnlageX
+  - QElectroTech project → ESCL → AnlageX
+  - AutoCAD Electrical → ESCL → AnlageX
+  - **PDF scan → AI generates ESCL → AnlageX** (we already have this: ESCL Generator skill)
+  - **Photo of paper schematic → AI vision → ESCL → AnlageX**
+- **ESCL becomes the Markdown of electrical schematics** — a universal, readable interchange format
+
+### 2. Workspace First, AI Second
 
 The priority is a **professional schematic editor** that stands on its own:
 - Familiar layout: component tree (left), canvas (center), properties/chat (right)
@@ -55,7 +93,7 @@ The priority is a **professional schematic editor** that stands on its own:
 - Full keyboard shortcuts
 - The AI chat panel is collapsible — use it or ignore it
 
-### 2. Reuse QElectroTech's Component Library (6760+ elements)
+### 3. Reuse QElectroTech's Component Library (6760+ elements)
 
 QET elements are XML files with simple graphical primitives. We parse them and convert to our **own internal SVG-based component format**, stored on our backend.
 
@@ -98,7 +136,7 @@ This gives us:
 - **Multi-language names** — i18n from day one
 - **Extensibility** — users can create custom components
 
-### 3. Industrial Electrical Schematics Only
+### 4. Industrial Electrical Schematics Only
 
 This is **not** a PCB design tool. We focus exclusively on:
 - Power distribution (single-line and multi-line diagrams)
@@ -114,63 +152,43 @@ Wiring on the canvas follows **industrial schematic conventions**:
 - Connection dots at wire junctions
 - Wire numbering per IEC standards
 - Cross-reference system between pages (coil ↔ contacts)
-- No auto-routing algorithms — wires follow the grid, user places them or AI suggests paths
-
-### 4. ESCL as the AI ↔ Engine Bridge
-
-ESCL (Electrical Schematic Context Language) remains our intermediate format for AI interaction:
-
-```
-breaker -Q1 "Main Breaker 16A" {
-  rating: 16A
-  poles: 3
-  <- L1
-}
-
-contactor -KM1 "Main Contactor" {
-  rating: 18A
-  <- -Q1
-}
-
-motor -M1 "Pump 5.5kW" {
-  power: 5.5kW
-  voltage: 400V
-  <- -KM1
-}
-```
-
-The AI generates/modifies ESCL → Parser → IR → Layout → Canvas update.
-But the user can also work entirely without ESCL — just drag, drop, and wire.
+- Wires follow the grid, user places them or AI suggests paths
 
 ## Architecture
 
 ```
-┌──────────────────────────────────────────────────────────┐
-│                      Frontend (React)                     │
-│                                                          │
-│  ┌─────────┐  ┌──────────────────┐  ┌─────────────────┐ │
-│  │Component │  │   SVG Canvas     │  │   AI Chat       │ │
-│  │Tree      │  │   (workspace)    │  │   Panel         │ │
-│  │(library) │  │                  │  │                 │ │
-│  └────┬─────┘  └────────┬─────────┘  └───────┬─────────┘ │
-│       │                 │                     │           │
-│       └────────┬────────┘                     │           │
-│                ▼                              │           │
-│  ┌──────────────────────┐                     │           │
-│  │   Document Model     │◀────────────────────┘           │
-│  │   (IR Graph + State) │     AI modifies via ESCL        │
-│  └──────────┬───────────┘                                 │
-│             │                                             │
-└─────────────┼─────────────────────────────────────────────┘
-              │
-              ▼
-┌──────────────────────┐    ┌──────────────────────┐
-│   Backend API        │    │   Component Store     │
-│   - Project CRUD     │    │   - SVG definitions   │
-│   - AI relay         │    │   - Imported from QET │
-│   - Export engine    │    │   - User custom       │
-│   - Auth             │    │   - Categorized       │
-└──────────────────────┘    └──────────────────────┘
+┌──────────────────────────────────────────────────────────────────┐
+│                        Frontend (React)                           │
+│                                                                  │
+│  ┌──────────┐  ┌───────────────────┐  ┌────────────────────────┐ │
+│  │Component  │  │   SVG Canvas      │  │   AI Chat Panel       │ │
+│  │Tree       │  │   (workspace)     │  │   (collapsible)       │ │
+│  │(library)  │  │                   │  │                       │ │
+│  └─────┬─────┘  └─────────┬─────────┘  └───────────┬───────────┘ │
+│        │                  │                         │             │
+│        │          ┌───────▼────────┐                │             │
+│        └─────────▶│  ESCL Document │◀───────────────┘             │
+│  drag/drop        │  (source of    │  AI reads/writes ESCL       │
+│  adds to ESCL     │   truth)       │                             │
+│                   └───────┬────────┘                             │
+│                           │                                      │
+│                   ┌───────▼────────┐                             │
+│                   │  ESCL Parser   │                             │
+│                   │  → IR Graph    │                             │
+│                   │  → SVG Render  │                             │
+│                   └────────────────┘                             │
+│                                                                  │
+└──────────────────────────────────────────────────────────────────┘
+                            │
+              ┌─────────────┼──────────────┐
+              ▼             ▼              ▼
+┌──────────────────┐ ┌───────────┐ ┌──────────────┐
+│  Backend API     │ │ Component │ │  Import      │
+│  - Project CRUD  │ │ Store     │ │  Converters  │
+│  - AI relay      │ │ (SVG lib) │ │  EPLAN→ESCL  │
+│  - Export engine │ │           │ │  QET→ESCL    │
+│  - Auth          │ │           │ │  PDF→ESCL    │
+└──────────────────┘ └───────────┘ └──────────────┘
 ```
 
 ### Tech Stack
@@ -187,15 +205,16 @@ But the user can also work entirely without ESCL — just drag, drop, and wire.
 | ESCL Parser | Existing (from qet-gen) | Already built |
 | Export | jsPDF, SVG native | PDF and SVG output |
 
-### What We Already Have (from qet-gen)
+### What We Already Have
 
-- ✅ ESCL parser (`src/parser/escl-parser.ts`)
-- ✅ Internal Representation types (`src/ir/types.ts`)
-- ✅ Layout engine (`src/layout/engine.ts`)
-- ✅ Grid system (`src/layout/grid.ts`)
-- ✅ Transform logic (`src/transform.ts`)
-- ✅ 15 component definitions with graphical primitives
 - ✅ ESCL specification document
+- ✅ ESCL parser (`qet-gen/src/parser/escl-parser.ts`)
+- ✅ ESCL Generator skill (PDF → ESCL, already working in OpenClaw)
+- ✅ Internal Representation types (`qet-gen/src/ir/types.ts`)
+- ✅ Layout engine (`qet-gen/src/layout/engine.ts`)
+- ✅ Grid system (`qet-gen/src/layout/grid.ts`)
+- ✅ Transform logic (`qet-gen/src/transform.ts`)
+- ✅ 15 component definitions with graphical primitives
 
 ## Phases
 
@@ -206,13 +225,14 @@ But the user can also work entirely without ESCL — just drag, drop, and wire.
 - Import full QET library (6760+ elements), categorize into tree structure
 - SVG canvas workspace with grid, zoom, pan
 - Component tree on the left (searchable, categorized)
-- Drag & drop from library to canvas
-- Click-to-wire: click terminal → click terminal → wire drawn
+- Drag & drop from library to canvas → generates ESCL
+- Click-to-wire: click terminal → click terminal → wire added to ESCL
 - Select, move, delete, copy/paste components
 - Properties panel for selected component
-- Undo/redo
+- Undo/redo (ESCL history stack)
 - Page system (add/remove/reorder pages)
 - Title block with project info
+- Save/load projects as ESCL files
 
 ### Phase 2 — Professional Features (2-3 weeks)
 **Goal: Feature parity with basic QElectroTech usage.**
@@ -224,42 +244,49 @@ But the user can also work entirely without ESCL — just drag, drop, and wire.
 - Text annotations and labels
 - PDF export with proper pagination and title blocks
 - SVG export
-- Save/load projects (backend)
+- Project management (backend)
 
 ### Phase 3 — AI Chat Integration (2-3 weeks)
 **Goal: AI assistant that understands the current schematic.**
 
 - Collapsible chat panel on the right
-- AI sees current schematic state (serialized as ESCL)
-- Natural language → ESCL modifications → canvas updates
+- AI sees current schematic state as ESCL
+- Natural language → ESCL modifications → canvas updates in real-time
 - "Add a DOL starter for a 5.5kW motor"
 - "Add thermal overload between contactor and motor"
 - "Create the control circuit for KM1"
 - AI suggestions (hover to preview, click to accept)
 
-### Phase 4 — Advanced (ongoing)
+### Phase 4 — Import & Interoperability (2-3 weeks)
+**Goal: Import schematics from anywhere.**
+
+- QET project → ESCL converter
+- PDF schematic → ESCL (via AI / ESCL Generator skill)
+- Photo → ESCL (via AI vision)
+- EPLAN XML → ESCL converter
 - DXF export (for AutoCAD compatibility)
+
+### Phase 5 — Advanced (ongoing)
 - Component database with manufacturer specs
 - Validation engine (missing protection, incorrect wiring)
 - Standard circuit templates (DOL, star-delta, VFD, etc.)
 - Custom component editor
 - Collaboration (multi-user)
-- QET project import/export (bidirectional)
 - Offline PWA mode
 
 ## Competitive Landscape
 
-| Tool | Price | AI? | Browser? | Industrial? |
-|------|-------|-----|----------|-------------|
-| EPLAN | €5k+/yr | No | No | ✅ |
-| SEE Electrical | €2k+/yr | No | No | ✅ |
-| QElectroTech | Free | No | No | ✅ |
-| AutoCAD Electrical | €2k+/yr | No | No | ✅ |
-| **AnlageX** | **TBD** | **✅** | **✅** | **✅** |
+| Tool | Price | AI? | Browser? | Industrial? | Import? |
+|------|-------|-----|----------|-------------|---------|
+| EPLAN | €5k+/yr | No | No | ✅ | Own format |
+| SEE Electrical | €2k+/yr | No | No | ✅ | Own format |
+| QElectroTech | Free | No | No | ✅ | Own format |
+| AutoCAD Electrical | €2k+/yr | No | No | ✅ | DWG/DXF |
+| **AnlageX** | **TBD** | **✅** | **✅** | **✅** | **Universal (ESCL)** |
 
-No one is doing AI + browser + industrial electrical schematics today.
+No one is doing AI + browser + industrial electrical schematics today. And no one has a universal interchange format for electrical schematics.
 
-## Open Questions
+## Decisions
 
 1. **Name**: ✅ **AnlageX** — part of the Anlage ecosystem (AnlageAI, AnlageX)
 2. ~~Monetization~~: Not a priority for MVP
