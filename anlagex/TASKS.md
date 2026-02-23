@@ -68,10 +68,10 @@
 - [ ] **Connection dots** at wire junctions
 
 ### Editor Features
+- [ ] **Right-click context menu** — native feel, on canvas (delete, copy, paste, properties, rotate) AND on sidebar items (add to canvas, info). Should feel like a native desktop app.
 - [ ] **Copy/paste** components (Ctrl+C/V)
 - [ ] **Multi-select** (Shift+click or rubber band)
 - [ ] **Snap guidelines** when moving components
-- [ ] **Right-click context menu** (delete, copy, properties, rotate)
 - [ ] **Component rotation** (90°/180°/270°)
 - [ ] **Keyboard shortcuts** complete set
 - [ ] **Zoom to fit** all content
