@@ -1,4 +1,4 @@
-# QET-Gen IDE — Vision & Goals
+# AnlageX — Vision & Goals
 
 > Browser-based IDE for industrial electrical schematics — hybrid drag & drop + AI assistant.
 
@@ -255,19 +255,19 @@ But the user can also work entirely without ESCL — just drag, drop, and wire.
 | SEE Electrical | €2k+/yr | No | No | ✅ |
 | QElectroTech | Free | No | No | ✅ |
 | AutoCAD Electrical | €2k+/yr | No | No | ✅ |
-| **This project** | **TBD** | **✅** | **✅** | **✅** |
+| **AnlageX** | **TBD** | **✅** | **✅** | **✅** |
 
 No one is doing AI + browser + industrial electrical schematics today.
 
 ## Open Questions
 
-1. **Name & branding**: Standalone product or part of AnlageAI?
-2. **Monetization**: SaaS subscription? Freemium (free editor, paid AI + cloud)?
-3. **Target audience**: Electricians? Electrical engineers? Panel builders? All?
-4. **Offline support**: PWA with IndexedDB for local projects?
-5. **QET compatibility**: Import only, or full bidirectional sync?
-6. **Self-hosted option**: For companies that can't use cloud?
-7. **Component contributions**: Allow community to submit/verify components?
+1. **Name**: ✅ **AnlageX** — part of the Anlage ecosystem (AnlageAI, AnlageX)
+2. ~~Monetization~~: Not a priority for MVP
+3. **Target audience**: All — engineers, electricians, panel builders, students. Markets: Germany & Brazil first.
+4. **Offline**: Online only for now
+5. **QET compatibility**: Import only
+6. ~~Self-hosted~~: Not for MVP
+7. **Community components**: Yes, but not MVP priority
 
 ---
 
