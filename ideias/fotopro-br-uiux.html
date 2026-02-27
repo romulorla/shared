@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FotoPro BR — UI/UX Specification</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --vermelho: #E8442A;
+  --amarelo: #F7A823;
+  --verde: #1B8C5A;
+  --azul: #2563EB;
+  --dark: #0a0a0a;
+  --cream: #faf9f6;
+  --gray-100: #f3f2ef;
+  --gray-200: #e5e3df;
+  --gray-300: #d1cfc9;
+  --gray-500: #8a8780;
+  --gray-700: #4a4845;
+  --gray-900: #1a1917;
+  --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px; --sp-5: 20px;
+  --sp-6: 24px; --sp-8: 32px; --sp-10: 40px; --sp-12: 48px; --sp-16: 64px;
+  --radius-sm: 8px; --radius-md: 12px; --radius-lg: 20px; --radius-xl: 28px;
+  --font-heading: 'Instrument Serif', serif;
+  --font-body: 'DM Sans', sans-serif;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.08);
+  --shadow-md: 0 4px 16px rgba(0,0,0,.1);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,.15);
+  --shadow-xl: 0 16px 48px rgba(0,0,0,.2);
+}
+
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  background: var(--cream);
+  color: var(--gray-900);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* --- SIDE NAV --- */
+.side-nav {
+  position: fixed; left: 0; top: 0; bottom: 0; width: 260px;
+  background: var(--dark); color: white; z-index: 100;
+  padding: var(--sp-8) 0; overflow-y: auto;
+  border-right: 1px solid rgba(255,255,255,.06);
+}
+.side-nav .logo {
+  font-family: var(--font-heading); font-size: 28px; color: white;
+  padding: 0 var(--sp-6) var(--sp-8); border-bottom: 1px solid rgba(255,255,255,.08);
+  margin-bottom: var(--sp-6);
+}
+.side-nav .logo span { color: var(--amarelo); }
+.side-nav a {
+  display: flex; align-items: center; gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-6); color: var(--gray-500);
+  text-decoration: none; font-size: 14px; font-weight: 500;
+  transition: all .2s; border-left: 3px solid transparent;
+}
+.side-nav a:hover, .side-nav a.active {
+  color: white; background: rgba(255,255,255,.04);
+  border-left-color: var(--amarelo);
+}
+.side-nav .nav-group { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--gray-500); padding: var(--sp-4) var(--sp-6) var(--sp-2); margin-top: var(--sp-4); }
+
+/* --- MAIN CONTENT --- */
+.main { margin-left: 260px; }
+
+/* --- HERO --- */
+.hero {
+  background: linear-gradient(135deg, var(--dark) 0%, #1a1520 40%, #0d1a2a 100%);
+  color: white; padding: 120px var(--sp-16) 100px; position: relative; overflow: hidden;
+  min-height: 90vh; display: flex; align-items: center;
+}
+.hero::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(circle at 70% 30%, rgba(232,68,42,.15) 0%, transparent 50%),
+              radial-gradient(circle at 30% 70%, rgba(247,168,35,.1) 0%, transparent 50%),
+              radial-gradient(circle at 50% 50%, rgba(37,99,235,.08) 0%, transparent 60%);
+}
+.hero::after {
+  content: ''; position: absolute; inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.8'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.03'/%3E%3C/svg%3E");
+}
+.hero-content { position: relative; z-index: 1; max-width: 800px; }
+.hero h1 {
+  font-family: var(--font-heading); font-size: 72px; line-height: 1.05;
+  margin-bottom: var(--sp-6); font-weight: 400;
+}
+.hero h1 em { color: var(--amarelo); font-style: italic; }
+.hero p { font-size: 20px; color: rgba(255,255,255,.7); max-width: 560px; margin-bottom: var(--sp-8); }
+.hero .badge {
+  display: inline-flex; align-items: center; gap: var(--sp-2);
+  background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.12);
+  padding: var(--sp-2) var(--sp-4); border-radius: 100px; font-size: 13px;
+  color: rgba(255,255,255,.8); margin-bottom: var(--sp-6); backdrop-filter: blur(8px);
+}
+.hero .badge .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--verde); animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .4; } }
+
+/* --- SECTIONS --- */
+section { padding: 100px var(--sp-16); }
+section:nth-child(even) { background: var(--gray-100); }
+.section-header { max-width: 700px; margin-bottom: var(--sp-12); }
+.section-header .label {
+  font-size: 12px; text-transform: uppercase; letter-spacing: 2px; font-weight: 600;
+  color: var(--vermelho); margin-bottom: var(--sp-3);
+}
+.section-header h2 { font-family: var(--font-heading); font-size: 48px; line-height: 1.1; margin-bottom: var(--sp-4); }
+.section-header p { font-size: 17px; color: var(--gray-500); }
+
+/* --- PHONE MOCKUP --- */
+.phone {
+  width: 280px; height: 560px; background: var(--dark); border-radius: 36px;
+  position: relative; overflow: hidden; box-shadow: var(--shadow-xl), 0 0 0 2px rgba(255,255,255,.1);
+  flex-shrink: 0;
+}
+.phone .notch {
+  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 120px; height: 28px; background: var(--dark); border-radius: 0 0 18px 18px; z-index: 10;
+}
+.phone .status-bar {
+  height: 44px; display: flex; justify-content: space-between; align-items: center;
+  padding: 0 20px; font-size: 12px; font-weight: 600; color: white; position: relative; z-index: 5;
+}
+.phone .home-indicator {
+  position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
+  width: 120px; height: 4px; background: rgba(255,255,255,.3); border-radius: 2px; z-index: 10;
+}
+.phone .screen { padding: 0 16px 24px; height: calc(100% - 44px); overflow: hidden; position: relative; }
+.phone.light-screen { background: white; }
+.phone.light-screen .notch { background: white; }
+.phone.light-screen .status-bar { color: var(--dark); }
+.phone.light-screen .home-indicator { background: rgba(0,0,0,.2); }
+
+/* --- PHONE CONTENT HELPERS --- */
+.ph-title { font-family: var(--font-heading); font-size: 22px; margin-bottom: 8px; }
+.ph-subtitle { font-size: 12px; color: var(--gray-500); margin-bottom: 12px; }
+.ph-card {
+  background: var(--gray-100); border-radius: 12px; padding: 12px; margin-bottom: 8px;
+  font-size: 12px;
+}
+.ph-btn {
+  display: block; text-align: center; padding: 10px; border-radius: 12px;
+  font-size: 13px; font-weight: 600; margin-bottom: 8px; text-decoration: none;
+}
+.ph-btn-primary { background: var(--vermelho); color: white; }
+.ph-btn-secondary { background: var(--gray-200); color: var(--gray-900); }
+.ph-grid { display: grid; gap: 6px; }
+.ph-grid-2 { grid-template-columns: 1fr 1fr; }
+.ph-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+.ph-grid-item { background: var(--gray-200); border-radius: 8px; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--gray-500); }
+.ph-fab {
+  position: absolute; bottom: 28px; right: 20px; width: 52px; height: 52px;
+  background: var(--vermelho); border-radius: 16px; display: flex; align-items: center;
+  justify-content: center; color: white; font-size: 24px; box-shadow: 0 4px 16px rgba(232,68,42,.4);
+}
+.ph-bottom-nav {
+  position: absolute; bottom: 0; left: 0; right: 0; height: 56px;
+  background: white; border-top: 1px solid var(--gray-200);
+  display: flex; justify-content: space-around; align-items: center;
+  padding-bottom: 8px; font-size: 9px; color: var(--gray-500);
+}
+.ph-bottom-nav .active { color: var(--vermelho); }
+.ph-nav-item { text-align: center; line-height: 1.2; }
+.ph-nav-icon { font-size: 18px; margin-bottom: 2px; }
+.ph-chip {
+  display: inline-block; padding: 4px 10px; border-radius: 100px;
+  font-size: 10px; font-weight: 600; margin: 2px;
+}
+.ph-chip-active { background: var(--vermelho); color: white; }
+.ph-chip-inactive { background: var(--gray-200); color: var(--gray-700); }
+
+/* --- MOCKUP ROW --- */
+.mockup-row {
+  display: flex; gap: var(--sp-8); align-items: flex-start; flex-wrap: wrap;
+  justify-content: center;
+}
+.mockup-item { text-align: center; }
+.mockup-item .caption {
+  margin-top: var(--sp-4); font-size: 14px; font-weight: 600; color: var(--gray-700);
+}
+.mockup-item .sub-caption { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
+
+/* --- CARDS --- */
+.spec-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--sp-6); }
+.spec-card {
+  background: white; border-radius: var(--radius-lg); padding: var(--sp-8);
+  border: 1px solid var(--gray-200); transition: transform .2s, box-shadow .2s;
+}
+.spec-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.spec-card .icon {
+  width: 48px; height: 48px; border-radius: var(--radius-md); display: flex;
+  align-items: center; justify-content: center; font-size: 22px; margin-bottom: var(--sp-4);
+}
+.spec-card h3 { font-family: var(--font-heading); font-size: 22px; margin-bottom: var(--sp-2); }
+.spec-card p { font-size: 14px; color: var(--gray-500); line-height: 1.6; }
+
+/* --- FLOW DIAGRAM --- */
+.flow {
+  display: flex; align-items: center; gap: var(--sp-4); flex-wrap: wrap;
+  justify-content: center; margin: var(--sp-8) 0;
+}
+.flow-step {
+  background: white; border: 2px solid var(--gray-200); border-radius: var(--radius-lg);
+  padding: var(--sp-6) var(--sp-8); text-align: center; min-width: 140px;
+  transition: all .3s;
+}
+.flow-step:hover { border-color: var(--vermelho); transform: scale(1.05); }
+.flow-step .step-icon { font-size: 32px; margin-bottom: var(--sp-2); }
+.flow-step .step-label { font-weight: 600; font-size: 14px; }
+.flow-step .step-desc { font-size: 11px; color: var(--gray-500); margin-top: 2px; }
+.flow-arrow { font-size: 24px; color: var(--gray-300); }
+
+/* --- COLOR SWATCHES --- */
+.color-grid { display: flex; gap: var(--sp-4); flex-wrap: wrap; margin: var(--sp-6) 0; }
+.swatch {
+  width: 120px; border-radius: var(--radius-md); overflow: hidden;
+  box-shadow: var(--shadow-sm); border: 1px solid var(--gray-200);
+}
+.swatch .color-block { height: 80px; }
+.swatch .color-info { padding: var(--sp-3); background: white; }
+.swatch .color-name { font-weight: 600; font-size: 13px; }
+.swatch .color-hex { font-size: 11px; color: var(--gray-500); font-family: monospace; }
+
+/* --- TYPOGRAPHY SHOWCASE --- */
+.type-sample { margin: var(--sp-6) 0; }
+.type-sample .type-heading { font-family: var(--font-heading); }
+.type-sample .type-body { font-family: var(--font-body); }
+.type-row { display: flex; align-items: baseline; gap: var(--sp-8); padding: var(--sp-4) 0; border-bottom: 1px solid var(--gray-200); }
+.type-label { font-size: 12px; color: var(--gray-500); min-width: 100px; font-family: monospace; }
+
+/* --- COMPARISON TABLE --- */
+.compare-table {
+  width: 100%; border-collapse: separate; border-spacing: 0;
+  background: white; border-radius: var(--radius-lg); overflow: hidden;
+  box-shadow: var(--shadow-sm); margin: var(--sp-6) 0;
+}
+.compare-table th {
+  background: var(--dark); color: white; padding: var(--sp-4) var(--sp-6);
+  font-size: 14px; text-align: left;
+}
+.compare-table td {
+  padding: var(--sp-3) var(--sp-6); border-bottom: 1px solid var(--gray-200);
+  font-size: 14px;
+}
+.compare-table tr:last-child td { border-bottom: none; }
+.compare-table .winner { color: var(--verde); font-weight: 600; }
+.compare-table .check { color: var(--verde); }
+.compare-table .cross { color: var(--vermelho); }
+
+/* --- PRICING CARDS --- */
+.pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--sp-6); margin: var(--sp-8) 0; }
+.pricing-card {
+  background: white; border-radius: var(--radius-lg); padding: var(--sp-8);
+  border: 2px solid var(--gray-200); text-align: center; position: relative;
+}
+.pricing-card.featured { border-color: var(--vermelho); }
+.pricing-card.featured::before {
+  content: 'MAIS POPULAR'; position: absolute; top: -12px; left: 50%;
+  transform: translateX(-50%); background: var(--vermelho); color: white;
+  padding: 2px 16px; border-radius: 100px; font-size: 11px; font-weight: 700;
+}
+.pricing-card .plan-name { font-family: var(--font-heading); font-size: 24px; margin-bottom: var(--sp-2); }
+.pricing-card .plan-price { font-size: 36px; font-weight: 700; color: var(--dark); margin-bottom: var(--sp-1); }
+.pricing-card .plan-price span { font-size: 16px; font-weight: 400; color: var(--gray-500); }
+.pricing-card .plan-period { font-size: 13px; color: var(--gray-500); margin-bottom: var(--sp-6); }
+.pricing-card ul { list-style: none; text-align: left; margin-bottom: var(--sp-6); }
+.pricing-card li { padding: var(--sp-2) 0; font-size: 14px; color: var(--gray-700); }
+.pricing-card li::before { content: '✓ '; color: var(--verde); font-weight: 700; }
+
+/* --- INTERACTION CARDS --- */
+.interaction-card {
+  background: white; border-radius: var(--radius-lg); padding: var(--sp-6);
+  border: 1px solid var(--gray-200); display: flex; gap: var(--sp-6); align-items: center;
+  margin-bottom: var(--sp-4);
+}
+.interaction-card .demo {
+  width: 80px; height: 80px; border-radius: var(--radius-md); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 36px;
+}
+.interaction-card h4 { font-family: var(--font-heading); font-size: 20px; margin-bottom: 2px; }
+.interaction-card p { font-size: 13px; color: var(--gray-500); }
+
+/* --- FADE IN ANIMATION --- */
+.fade-up { opacity: 0; transform: translateY(24px); transition: opacity .6s ease, transform .6s ease; }
+.fade-up.visible { opacity: 1; transform: translateY(0); }
+
+/* --- BUTTON SHOWCASE --- */
+.btn-showcase { display: flex; gap: var(--sp-4); flex-wrap: wrap; margin: var(--sp-4) 0; }
+.btn-demo {
+  padding: var(--sp-3) var(--sp-6); border-radius: var(--radius-md);
+  font-size: 14px; font-weight: 600; font-family: var(--font-body);
+  border: none; cursor: pointer; transition: all .2s;
+}
+.btn-primary { background: var(--vermelho); color: white; }
+.btn-primary:hover { background: #d33d25; transform: translateY(-1px); }
+.btn-secondary { background: var(--gray-200); color: var(--gray-900); }
+.btn-outline { background: transparent; border: 2px solid var(--gray-300); color: var(--gray-700); }
+.btn-ghost { background: transparent; color: var(--vermelho); }
+.btn-fab-demo { width: 48px; height: 48px; border-radius: 14px; background: var(--vermelho); color: white; font-size: 20px; display: flex; align-items: center; justify-content: center; }
+
+/* --- ACCESSIBILITY SECTION --- */
+.a11y-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--sp-6); }
+.a11y-card { background: white; border-radius: var(--radius-lg); padding: var(--sp-6); border: 1px solid var(--gray-200); }
+.a11y-card h4 { font-family: var(--font-heading); font-size: 20px; margin-bottom: var(--sp-3); }
+.contrast-demo { display: flex; gap: var(--sp-3); margin-top: var(--sp-3); }
+.contrast-block { padding: var(--sp-3) var(--sp-4); border-radius: var(--radius-sm); font-size: 13px; font-weight: 600; }
+
+/* --- RESPONSIVE --- */
+@media (max-width: 1200px) {
+  .side-nav { display: none; }
+  .main { margin-left: 0; }
+  section { padding: 60px var(--sp-6); }
+  .hero { padding: 80px var(--sp-6) 60px; }
+  .hero h1 { font-size: 48px; }
+  .section-header h2 { font-size: 36px; }
+  .pricing-grid { grid-template-columns: 1fr; max-width: 400px; }
+}
+@media (max-width: 768px) {
+  .mockup-row { flex-direction: column; align-items: center; }
+  .flow { flex-direction: column; }
+  .flow-arrow { transform: rotate(90deg); }
+}
+
+/* Camera screen dark */
+.phone.dark-screen .screen { background: var(--dark); color: white; }
+.camera-viewfinder { width: 100%; height: 240px; background: linear-gradient(145deg, #2a2a2a, #1a1a1a); border-radius: 8px; position: relative; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; }
+.camera-grid { position: absolute; inset: 0; display: grid; grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 1fr 1fr 1fr; }
+.camera-grid > div { border: 1px solid rgba(255,255,255,.15); }
+.camera-guides { position: absolute; inset: 20px; border: 2px dashed rgba(247,168,35,.4); border-radius: 4px; }
+.camera-controls { display: flex; justify-content: space-around; align-items: center; padding: 8px 0; }
+.shutter { width: 56px; height: 56px; border-radius: 50%; border: 4px solid white; background: transparent; position: relative; }
+.shutter::after { content: ''; position: absolute; inset: 4px; border-radius: 50%; background: white; }
+.camera-btn { color: rgba(255,255,255,.7); font-size: 11px; text-align: center; }
+.camera-btn-icon { font-size: 20px; margin-bottom: 2px; }
+
+/* Processing animation */
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+.processing-circle {
+  width: 100px; height: 100px; border-radius: 50%;
+  border: 4px solid var(--gray-200); border-top-color: var(--vermelho);
+  animation: spin 1s linear infinite; margin: 40px auto 20px;
+}
+.shimmer-bar {
+  height: 8px; border-radius: 4px; margin: 8px 20px;
+  background: linear-gradient(90deg, var(--gray-200), var(--vermelho), var(--gray-200));
+  background-size: 200% 100%; animation: shimmer 1.5s infinite;
+}
+
+/* Onboarding */
+.onboard-illustration { width: 100%; height: 200px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 64px; margin-bottom: 12px; }
+.onboard-dots { display: flex; gap: 6px; justify-content: center; margin: 12px 0; }
+.onboard-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gray-300); }
+.onboard-dot.active { background: var(--vermelho); width: 24px; border-radius: 4px; }
+</style>
+</head>
+<body>
+
+<!-- SIDE NAVIGATION -->
+<nav class="side-nav">
+  <div class="logo">Foto<span>Pro</span> BR</div>
+  <div class="nav-group">Visão Geral</div>
+  <a href="#hero" class="active">🏠 Introdução</a>
+  <a href="#tech-stack">⚡ Tech Stack</a>
+  <a href="#flow">🔄 App Flow</a>
+  <div class="nav-group">Telas</div>
+  <a href="#onboarding">👋 Onboarding</a>
+  <a href="#home">🏡 Home</a>
+  <a href="#camera">📸 Câmera</a>
+  <a href="#processing">⚙️ Processamento</a>
+  <a href="#editor">🎨 Editor</a>
+  <a href="#templates">📐 Templates</a>
+  <a href="#mockups">🖼️ Mockups</a>
+  <a href="#export">📤 Exportar</a>
+  <a href="#gallery">🗂️ Galeria</a>
+  <a href="#subscription">💎 Assinatura</a>
+  <a href="#settings">⚙️ Ajustes</a>
+  <div class="nav-group">Sistema</div>
+  <a href="#design-system">🎨 Design System</a>
+  <a href="#ux-principles">💡 UX Principles</a>
+  <a href="#interactions">✨ Micro-interações</a>
+  <a href="#accessibility">♿ Acessibilidade</a>
+</nav>
+
+<!-- MAIN CONTENT -->
+<div class="main">
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="hero-content">
+    <div class="badge"><span class="dot"></span> UI/UX Specification — v1.0</div>
+    <h1>FotoPro <em>BR</em></h1>
+    <p>Especificação completa de interface para o app de fotografia profissional com IA para vendedores de marketplaces brasileiros. iOS + Android, cross-platform.</p>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:32px;">
+      <span style="background:rgba(232,68,42,.2);color:var(--vermelho);padding:6px 16px;border-radius:100px;font-size:13px;font-weight:600;">Flutter</span>
+      <span style="background:rgba(27,140,90,.2);color:var(--verde);padding:6px 16px;border-radius:100px;font-size:13px;font-weight:600;">iOS + Android</span>
+      <span style="background:rgba(247,168,35,.2);color:var(--amarelo);padding:6px 16px;border-radius:100px;font-size:13px;font-weight:600;">AI-Powered</span>
+      <span style="background:rgba(37,99,235,.2);color:var(--azul);padding:6px 16px;border-radius:100px;font-size:13px;font-weight:600;">Mercado Livre · Shopee · Amazon</span>
+    </div>
+  </div>
+</section>
+
+
+<!-- TECH STACK -->
+<section id="tech-stack" class="fade-up">
+  <div class="section-header">
+    <div class="label">01 — Tech Stack</div>
+    <h2>Flutter: A Escolha Certa</h2>
+    <p>Comparação entre React Native e Flutter para um app de fotografia com processamento de imagem intensivo.</p>
+  </div>
+
+  <table class="compare-table">
+    <thead>
+      <tr><th>Critério</th><th>React Native</th><th>Flutter</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Performance de Câmera</td><td class="cross">Bridge nativo, latência</td><td class="winner">✓ Direct camera API, baixa latência</td></tr>
+      <tr><td>Processamento de Imagem</td><td class="cross">JS thread limitado</td><td class="winner">✓ Dart isolates, processing paralelo</td></tr>
+      <tr><td>UI Consistency</td><td>Componentes nativos (variam)</td><td class="winner">✓ Pixel-perfect, idêntico iOS/Android</td></tr>
+      <tr><td>Animações</td><td>Reanimated (bom)</td><td class="winner">✓ 60fps nativo, Impeller engine</td></tr>
+      <tr><td>Hot Reload</td><td class="check">✓ Sim</td><td class="check">✓ Sim (mais rápido)</td></tr>
+      <tr><td>Ecossistema BR</td><td class="check">✓ Maior comunidade</td><td class="check">✓ Crescendo rápido no BR</td></tr>
+      <tr><td>Tamanho do App</td><td>~15MB base</td><td>~12MB base</td></tr>
+      <tr><td>Curva de Aprendizado</td><td>JS/TS (familiar)</td><td>Dart (fácil de aprender)</td></tr>
+    </tbody>
+  </table>
+
+  <div class="spec-grid" style="margin-top:32px;">
+    <div class="spec-card">
+      <div class="icon" style="background:rgba(37,99,235,.1);color:var(--azul);">🎯</div>
+      <h3>Recomendação: Flutter</h3>
+      <p>Para um app de fotografia com IA, Flutter oferece performance superior em câmera e processamento de imagem. O engine Impeller garante animações suaves durante edição. Dart isolates permitem processamento em background sem travar a UI.</p>
+    </div>
+    <div class="spec-card">
+      <div class="icon" style="background:rgba(27,140,90,.1);color:var(--verde);">📦</div>
+      <h3>Packages Chave</h3>
+      <p><code>camera</code> — acesso nativo à câmera<br><code>image</code> — manipulação local<br><code>flutter_bloc</code> — gerenciamento de estado<br><code>dio</code> — HTTP client<br><code>purchases_flutter</code> — RevenueCat subscriptions<br><code>firebase_core</code> — auth, analytics, storage</p>
+    </div>
+  </div>
+</section>
+
+<!-- APP FLOW -->
+<section id="flow" class="fade-up">
+  <div class="section-header">
+    <div class="label">02 — App Flow</div>
+    <h2>Fluxo Principal</h2>
+    <p>Do clique na câmera à foto pronta para o marketplace — em 3 toques.</p>
+  </div>
+
+  <div class="flow">
+    <div class="flow-step">
+      <div class="step-icon">📸</div>
+      <div class="step-label">Captura</div>
+      <div class="step-desc">Câmera com guias</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step" style="border-color:var(--amarelo);">
+      <div class="step-icon">⚡</div>
+      <div class="step-label">IA Processing</div>
+      <div class="step-desc">Remoção + enhancement</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step" style="border-color:var(--azul);">
+      <div class="step-icon">🎨</div>
+      <div class="step-label">Editor</div>
+      <div class="step-desc">Ajustes + templates</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step" style="border-color:var(--verde);">
+      <div class="step-icon">📤</div>
+      <div class="step-label">Exportar</div>
+      <div class="step-desc">Marketplace-ready</div>
+    </div>
+  </div>
+
+  <div class="spec-grid" style="margin-top:48px;">
+    <div class="spec-card">
+      <div class="icon" style="background:rgba(232,68,42,.1);color:var(--vermelho);">🔀</div>
+      <h3>Fluxos Secundários</h3>
+      <p>• <strong>Galeria import</strong> → Processing → Editor → Export<br>• <strong>Batch mode</strong> → Multi-select → Processing → Batch export<br>• <strong>Re-edit</strong> → Galeria → Editor → Export<br>• <strong>Template first</strong> → Escolher template → Captura → Auto-apply</p>
+    </div>
+    <div class="spec-card">
+      <div class="icon" style="background:rgba(247,168,35,.1);color:var(--amarelo);">⏱️</div>
+      <h3>Tempos Esperados</h3>
+      <p>• <strong>Captura → Preview:</strong> &lt;1s<br>• <strong>Background removal:</strong> 2-4s<br>• <strong>Enhancement:</strong> 1-2s<br>• <strong>Mockup generation:</strong> 3-6s<br>• <strong>Export (resize all):</strong> &lt;2s<br>• <strong>Total fluxo:</strong> ~15-30s</p>
+    </div>
+  </div>
+</section>
+
+<!-- ONBOARDING -->
+<section id="onboarding" class="fade-up">
+  <div class="section-header">
+    <div class="label">03 — Telas · Onboarding</div>
+    <h2>Primeira Impressão</h2>
+    <p>3 slides rápidos que mostram o valor do app sem friction.</p>
+  </div>
+
+  <div class="mockup-row">
+    <!-- Slide 1 -->
+    <div class="mockup-item">
+      <div class="phone light-screen">
+        <div class="notch"></div>
+        <div class="status-bar"><span>9:41</span><span>⚡</span></div>
+        <div class="screen" style="display:flex;flex-direction:column;justify-content:center;text-align:center;">
+          <div class="onboard-illustration" style="background:linear-gradient(135deg,#fff3e0,#ffe0cc);">📸</div>
+          <div class="ph-title" style="color:var(--dark);">Tire uma foto</div>
+          <p style="font-size:13px;color:var(--gray-500);padding:0 8px;">Aponte a câmera para seu produto. Nossos guias ajudam no enquadramento perfeito.</p>
+          <div class="onboard-dots"><span class="onboard-dot active"></span><span class="onboard-dot"></span><span class="onboard-dot"></span></div>
+          <a class="ph-btn ph-btn-primary" style="margin-top:12px;">Próximo</a>
+          <a style="font-size:12px;color:var(--gray-500);margin-top:8px;">Pular</a>
+        </div>
+        <div class="home-indicator"></div>
+      </div>
+      <div class="caption">Slide 1 — Captura</div>
+    </div>
+
+    <!-- Slide 2 -->
+    <div class="mockup-item">
+      <div class="phone light-screen">
+        <div class="notch"></div>
+        <div class="status-bar"><span>9:41</span><span>⚡</span></div>
+        <div class="screen" style="display:flex;flex-direction:column;justify-content:center;text-align:center;">
+          <div class="onboard-illustration" style="background:linear-gradient(135deg,#e8f5e9,#c8e6c9);">✨</div>
+          <div class="ph-title" style="color:var(--dark);">IA faz a mágica</div>
+          <p style="font-size:13px;color:var(--gray-500);padding:0 8px;">Remove fundo, ajusta iluminação e cores automaticamente em segundos.</p>
+          <div class="onboard-dots"><span class="onboard-dot"></span><span class="onboard-dot active"></span><span class="onboard-dot"></span></div>
+          <a class="ph-btn ph-btn-primary" style="margin-top:12px;">Próximo</a>
+          <a style="font-size:12px;color:var(--gray-500);margin-top:8px;">Pular</a>
+        </div>
+        <div class="home-indicator"></div>
+      </div>
+      <div class="caption">Slide 2 — IA</div>
+    </div>
+
+    <!-- Slide 3 -->
+    <div class="mockup-item">
+      <div class="phone light-screen">
+        <div class="notch"></div>
+        <div class="status-bar"><span>9:41</span><span>⚡</span></div>
+        <div class="screen" style="display:flex;flex-direction:column;justify-content:center;text-align:center;">
+          <div class="onboard-illustration" style="background:linear-gradient(135deg,#e3f2fd,#bbdefb);">🚀</div>
+          <div class="ph-title" style="color:var(--dark);">Venda mais!</div>
+          <p style="font-size:13px;color:var(--gray-500);padding:0 8px;">Exporte no tamanho certo para Mercado Livre, Shopee, Amazon e mais.</p>
+          <div class="onboard-dots"><span class="onboard-dot"></span><span class="onboard-dot"></span><span class="onboard-dot active"></span></div>
+          <a class="ph-btn ph-btn-primary" style="margin-top:12px;">Começar grátis</a>
+          <a style="font-size:12px;color:var(--gray-500);margin-top:8px;">Já tenho conta</a>
+        </div>
+        <div class="home-indicator"></div>
+      </div>
+      <div class="caption">Slide 3 — CTA</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- HOME -->
+<section id="home" class="fade-up">
+  <div class="section-header">
+    <div class="label">04 — Telas · Home / Dashboard</div>
+    <h2>Tela Principal</h2>
+    <p>Acesso rápido a captura, fotos recentes e créditos restantes.</p>
+  </div>
+  <div class="mockup-row">
+    <div class="mockup-item">
+      <div class="phone light-screen">
+        <div class="notch"></div>
+        <div class="status-bar"><span>9:41</span><span>⚡</span></div>
+        <div class="screen">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+            <div><div class="ph-title" style="color:var(--dark);font-size:18px;">Olá, Maria 👋</div><div style="font-size:11px;color:var(--gray-500);">15 créditos restantes</div></div>
+            <div style="width:36px;height:36px;border-radius:50%;background:var(--vermelho);display:flex;align-items:center;justify-content:center;color:white;font-size:14px;">M</div>
+          </div>
+          <div class="ph-card" style="background:linear-gradient(135deg,var(--vermelho),#d33d25);color:white;border-radius:14px;padding:16px;">
+            <div style="font-size:11px;opacity:.8;">Plano Profissional</div>
+            <div style="font-size:18px;font-weight:700;">247 fotos</div>
+            <div style="font-size:11px;opacity:.8;">processadas este mês</div>
+            <div style="margin-top:8px;background:rgba(255,255,255,.2);border-radius:100px;height:6px;"><div style="background:white;border-radius:100px;height:6px;width:62%;"></div></div>
+          </div>
+          <div style="font-size:13px;font-weight:600;margin:12px 0 8px;color:var(--dark);">Recentes</div>
+          <div class="ph-grid ph-grid-3">
+            <div class="ph-grid-item" style="background:linear-gradient(135deg,#f5f5f5,#e0e0e0);">👟</div>
+            <div class="ph-grid-item" style="background:linear-gradient(135deg,#f5f5f5,#e0e0e0);">👜</div>
+            <div class="ph-grid-item" style="background:linear-gradient(135deg,#f5f5f5,#e0e0e0);">⌚</div>
+            <div class="ph-grid-item" style="background:linear-gradient(135deg,#f5f5f5,#e0e0e0);">📱</div>
+            <div class="ph-grid-item" style="background:linear-gradient(135deg,#f5f5f5,#e0e0e0);">🎧</div>
+            <div class="ph-grid-item" style="background:linear-gradient(135deg,#f5f5f5,#e0e0e0);">👕</div>
+          </div>
+          <div class="ph-fab">+</div>
+          <div class="ph-bottom-nav">
+            <div class="ph-nav-item active"><div class="ph-nav-icon">🏠</div>Home</div>
+            <div class="ph-nav-item"><div class="ph-nav-icon">📸</div>Captura</div>
+            <div class="ph-nav-item"><div class="ph-nav-icon">🗂️</div>Galeria</div>
+            <div class="ph-nav-item"><div class="ph-nav-icon">👤</div>Perfil</div>
+          </div>
+        </div>
+        <div class="home-indicator"></div>
+      </div>
+      <div class="caption">Home — Dashboard</div>
+      <div class="sub-caption">FAB para captura rápida</div>
+    </div>
+  </div>
+</section>
+
+<!-- CAMERA -->
+<section id="camera" class="fade-up">
+  <div class="section-header">
+    <div class="label">05 — Telas · Câmera</div>
+    <h2>Captura Inteligente</h2>
+    <p>Guias de alinhamento, grid de terços e controles essenciais.</p>
+  </div>
+  <div class="mockup-row">
+    <div class="mockup-item">
+      <div class="phone" style="background:#000;">
+        <div class="notch"></div>
+        <div class="status-bar"><span>9:41</span><span>⚡</span></div>
+        <div class="screen" style="color:white;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+            <span style="font-size:12px;opacity:.7;">✕</span>
+            <div style="display:flex;gap:12px;font-size:12px;opacity:.7;">
+              <span>⚡ Auto</span>
+              <span>HD</span>
+            </div>
+          </div>
+          <div class="camera-viewfinder">
+            <div class="camera-grid"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+            <div class="camera-guides"></div>
+            <span style="font-size:40px;opacity:.3;">👟</span>
+          </div>
+          <div style="display:flex;gap:8px;justify-content:center;margin-bottom:12px;">
+            <span class="ph-chip ph-chip-active">Sapatos</span>
+            <span class="ph-chip ph-chip-inactive" style="background:rgba(255,255,255,.1);color:rgba(255,255,255,.6);">Roupa</span>
+            <span class="ph-chip ph-chip-inactive" style="background:rgba(255,255,255,.1);color:rgba(255,255,255,.6);">Eletr.</span>
+            <span class="ph-chip ph-chip-inactive" style="background:rgba(255,255,255,.1);color:rgba(255,255,255,.6);">Geral</span>
+          </div>
+          <div class="camera-controls">
+            <div class="camera-btn"><div class="camera-btn-icon">🖼️</div>Galeria</div>
+            <div class="shutter"></div>
+            <div class="camera-btn"><div class="camera-btn-icon">🔄</div>Flip</div>
+          </div>
+        </div>
+        <div class="home-indicator"></div>
+      </div>
+      <div class="caption">Câmera</div>
+      <div class="sub-caption">Guias adaptáveis por categoria</div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESSING -->
+<section id="processing" class="fade-up">
+  <div class="section-header">
+    <div class="label">06 — Telas · Processamento</div>
+    <h2>IA Trabalhando</h2>
+    <p>Feedback visual durante remoção de fundo e enhancement.</p>
+  </div>
+  <div class="mockup-row">
+    <div class="mockup-item">
+      <div class="phone light-screen">
+        <div class="notch"></div>
+        <div class="status-bar"><span>9:41</span><span>⚡</span></div>
+        <div class="screen" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;">
+          <div class="processing-circle"></div>
+          <div class="ph-title" style="color:var(--dark);font-size:18px;">Processando...</div>
+          <p style="font-size:12px;color:var(--gray-500);margin-top:4px;">Removendo fundo</p>
+          <div style="width:100%;margin-top:16px;">
+            <div class="shimmer-bar"></div>
+          </div>
+          <div style="margin-top:24px;font-size:11px;color:var(--gray-500);">
+            <div style="margin-bottom:4px;">✓ Foto recebida</div>
+            <div style="margin-bottom:4px;">✓ Analisando produto</div>
+            <div style="color:var(--vermelho);font-weight:600;">◉ Removendo fundo...</div>
+            <div style="opacity:.4;">○ Ajustando iluminação</div>
+            <div style="opacity:.4;">○ Gerando sombra</div>
+          </div>
+        </div>
+        <div class="home-indicator"></div>
+      </div>
+      <div class="caption">Processamento</div>
+      <div class="sub-caption">Steps progressivos + animação</div>
+    </div>
+  </div>
+</section>
+
+<!-- EDITOR -->
+<section id="editor" class="fade-up">
+  <div class="section-header">
+    <div class="label">07 — Telas · Editor</div>
+    <h2>Editor Poderoso, Interface Simples</h2>
+    <p>Backgrounds, ajustes e crop — tudo em uma tela.</p>
+  </div>
+  <div class="mockup-row">
+    <div class="mockup-item">
+      <div class="phone light-screen">
+        <div class="notch"></div>
+        <div class="status-bar"><span>9:41</span><span>⚡</span></div>
+        <div class="screen">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <span style="font-size:14px;color:var(--gray-500);">✕</span>
+            <span style="font-size:13px;font-weight:600;color:var(--dark);">Editor</span>
+            <span style="font-size:13px;font-weight:600;color:var(--vermelho);">Salvar</span>
+          </div>
+          <div style="width:100%;height:200px;background:white;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:60px;border:1px solid var(--gray-200);margin-bottom:8px;">
+            👟
+          </div>
+          <div style="font-size:11px;font-weight:600;color:var(--dark);margin-bottom:6px;">Fundo</div>
+          <div style="display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;">
+            <div style="width:40px;height:40px;border-radius:8px;background:white;border:2px solid var(--vermelho);flex-shrink:0;"></div>
+            <div style="width:40px;height:40px;border-radius:8px;background:linear-gradient(135deg,#f5f5f5,#e0e0e0);border:2px solid transparent;flex-shrink:0;"></div>
+            <div style="width:40px;height:40px;border-radius:8px;background:linear-gradient(135deg,#e8f5e9,#a5d6a7);border:2px solid transparent;flex-shrink:0;"></div>
+            <div style="width:40px;height:40px;border-radius:8px;background:linear-gradient(135deg,#fff3e0,#ffcc80);border:2px solid transparent;flex-shrink:0;"></div>
+            <div style="width:40px;height:40px;border-radius:8px;background:linear-gradient(135deg,#e3f2fd,#90caf9);border:2px solid transparent;flex-shrink:0;"></div>
+            <div style="width:40px;height:40px;border-radius:8px;background:linear-gradient(135deg,#fce4ec,#f48fb1);border:2px solid transparent;flex-shrink:0;"></div>
+          </div>
+          <div style="font-size:11px;font-weight:600;color:var(--dark);margin-bottom:6px;">Ajustes</div>
+          <div style="display:flex;gap:4px;margin-bottom:8px;">
+            <div style="flex:1;text-align:center;padding:8px 0;background:var(--gray-100);border-radius:8px;font-size:10px;">☀️ Brilho</div>
+            <div style="flex:1;text-align:center;padding:8px 0;background:var(--gray-100);border-radius:8px;font-size:10px;">🎨 Cor</div>
+            <div style="flex:1;text-align:center;padding:8px 0;background:var(--gray-100);border-radius:8px;font-size:10px;">✂️ Crop</div>
+            <div style="flex:1;text-align:center;padding:8px 0;background:var(--gray-100);border-radius:8px;font-size:10px;">🔄 Rotação</div>
+          </div>
+          <div style="display:flex;gap:4px;">
+            <div style="flex:1;text-align:center;padding:8px 0;background:var(--gray-100);border-radius:8px;font-size:10px;">💫 Sombra</div>
+            <div style="flex:1;text-align:center;padding:8px 0;background:var(--gray-100);border-radius:8px;font-size:10px;">📐 Tamanho</div>
+            <div style="flex:1;text-align:center;padding:8px 0;background:var(--gray-100);border-radius:8px;font-size:10px;">🪄 Filtro</div>
+            <div style="flex:1;text-align:center;padding:8px 0;background:var(--gray-100);border-radius:8px;font-size:10px;">↩️ Desfazer</div>
+          </div>
+        </div>
+        <div class="home-indicator"></div>
+      </div>
+      <div class="caption">Editor</div>
+      <div class="sub-caption">Background picker + quick adjustments</div>
+    </div>
+  </div>
+</section>
+
+<!-- TEMPLATES -->
+<section id="templates" class="fade-up">
+  <div class="section-header">
+    <div class="label">08 — Telas · Template Picker</div>
+    <h2>Templates por Marketplace</h2>
+    <p>Dimensões e estilos otimizados para cada plataforma.</p>
+  </div>
+  <div class="mockup-row">
+    <div class="mockup-item">
+      <div class="phone light-screen">
+        <div class="notch"></div>
+        <div class="status-bar"><span>9:41</span><span>⚡</span></div>
+        <div class="screen">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+            <span style="font-size:14px;color:var(--gray-500);">←</span>
+            <span style="font-size:13px;font-weight:600;color:var(--dark);">Templates</span>
+            <span></span>
+          </div>
+          <div style="display:flex;gap:6px;margin-bottom:12px;">
+            <span class="ph-chip ph-chip-active">Todos</span>
+            <span class="ph-chip ph-chip-inactive">ML</span>
+            <span class="ph-chip ph-chip-inactive">Shopee</span>
+            <span class="ph-chip ph-chip-inactive">Amazon</span>
+          </div>
+          <div class="ph-card" style="display:flex;gap:8px;align-items:center;border-left:3px solid #FFE600;">
+            <div style="font-size:24px;">🟡</div>
+            <div><div style="font-size:12px;font-weight:600;">Mercado Livre</div><div style="font-size:10px;color:var(--gray-500);">1200×1200px · Fundo branco</div></div>
+          </div>
+          <div class="ph-card" style="display:flex;gap:8px;align-items:center;border-left:3px solid #EE4D2D;">
+            <div style="font-size:24px;">🟠</div>
+            <div><div style="font-size:12px;font-weight:600;">Shopee</div><div style="font-size:10px;color:var(--gray-500);">800×800px · Fundo branco pref.</div></div>
+          </div>
+          <div class="ph-card" style="display:flex;gap:8px;align-items:center;border-left:3px solid #FF9900;">
+            <div style="font-size:24px;">📦</div>
+            <div><div style="font-size:12px;font-weight:600;">Amazon BR</div><div style="font-size:10px;color:var(--gray-500);">1600×1600px · Branco puro obrig.</div></div>
+          </div>
+          <div class="ph-card" style="display:flex;gap:8px;align-items:center;border-left:3px solid #6E0AD6;">
+            <div style="font-size:24px;">🟣</div>
+            <div><div style="font-size:12px;font-weight:600;">OLX / Enjoei</div><div style="font-size:10px;color:var(--gray-500);">1080×1080px · Estilo livre</div></div>
+          </div>
+          <div class="ph-card" style="display:flex;gap:8px;align-items:center;border-left:3px solid var(--vermelho);">
+            <div style="font-size:24px;">📱</div>
+            <div><div style="font-size:12px;font-weight:600;">Instagram / Social</div><div style="font-size:10px;color:var(--gray-500);">1080×1080 / 1080×1350</div></div>
+          </div>
+        </div>
+        <div class="home-indicator"></div>
+      </div>
+      <div class="caption">Template Picker</div>
+      <div class="sub-caption">Filtro por marketplace</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- MOCKUPS -->
+<section id="mockups" class="fade-up">
+  <div class="section-header">
+    <div class="label">09 — Telas · Mockup Generator</div>
+    <h2>Cenários Lifestyle</h2>
+    <p>IA gera cenas realistas: produto na mesa, em uso, flat lay.</p>
+  </div>
+  <div class="mockup-row">
+    <div class="mockup-item">
+      <div class="phone light-screen">
+        <div class="notch"></div>
+        <div class="status-bar"><span>9:41</span><span>⚡</span></div>
+        <div class="screen">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <span style="font-size:14px;color:var(--gray-500);">←</span>
+            <span style="font-size:13px;font-weight:600;">Mockups</span>
+            <span style="font-size:11px;color:var(--vermelho);">3 💎</span>
+          </div>
+          <div style="width:100%;height:160px;background:linear-gradient(135deg,#f5ebe0,#d5c4a1);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:48px;margin-bottom:8px;">👟</div>
+          <div style="font-size:11px;font-weight:600;margin-bottom:6px;">Cenários</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+            <div style="height:70px;background:linear-gradient(135deg,#efebe9,#d7ccc8);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:10px;border:2px solid var(--vermelho);">🪵 Mesa madeira</div>
+            <div style="height:70px;background:linear-gradient(135deg,#f3e5f5,#ce93d8);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:10px;">🏠 Interior</div>
+            <div style="height:70px;background:linear-gradient(135deg,#e8f5e9,#a5d6a7);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:10px;">🌿 Natureza</div>
+            <div style="height:70px;background:linear-gradient(135deg,#e3f2fd,#90caf9);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:10px;">✨ Estúdio</div>
+          </div>
+          <a class="ph-btn ph-btn-primary" style="margin-top:12px;">Gerar Mockup</a>
+        </div>
+        <div class="home-indicator"></div>
+      </div>
+      <div class="caption">Mockup Generator</div>
+      <div class="sub-caption">Swipe entre cenários</div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPORT -->
+<section id="export" class="fade-up">
+  <div class="section-header">
+    <div class="label">10 — Telas · Exportar</div>
+    <h2>Pronto para Vender</h2>
+    <p>Seleção de marketplaces com auto-resize automático.</p>
+  </div>
+  <div class="mockup-row">
+    <div class="mockup-item">
+      <div class="phone light-screen">
+        <div class="notch"></div>
+        <div class="status-bar"><span>9:41</span><span>⚡</span></div>
+        <div class="screen">
+          <div style="text-align:center;margin-bottom:8px;">
+            <span style="font-size:13px;font-weight:600;color:var(--dark);">Exportar</span>
+          </div>
+          <div style="width:100%;height:120px;background:white;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:48px;border:1px solid var(--gray-200);margin-bottom:12px;">👟</div>
+          <div style="font-size:11px;font-weight:600;margin-bottom:6px;">Selecione os marketplaces</div>
+          <div class="ph-card" style="display:flex;align-items:center;gap:8px;border:2px solid var(--verde);">
+            <div style="width:20px;height:20px;border-radius:4px;background:var(--verde);color:white;display:flex;align-items:center;justify-content:center;font-size:12px;">✓</div>
+            <div style="flex:1;"><div style="font-size:12px;font-weight:600;">Mercado Livre</div><div style="font-size:9px;color:var(--gray-500);">1200×1200px</div></div>
+          </div>
+          <div class="ph-card" style="display:flex;align-items:center;gap:8px;border:2px solid var(--verde);">
+            <div style="width:20px;height:20px;border-radius:4px;background:var(--verde);color:white;display:flex;align-items:center;justify-content:center;font-size:12px;">✓</div>
+            <div style="flex:1;"><div style="font-size:12px;font-weight:600;">Shopee</div><div style="font-size:9px;color:var(--gray-500);">800×800px</div></div>
+          </div>
+          <div class="ph-card" style="display:flex;align-items:center;gap:8px;">
+            <div style="width:20px;height:20px;border-radius:4px;border:2px solid var(--gray-300);"></div>
+            <div style="flex:1;"><div style="font-size:12px;font-weight:600;">Amazon BR</div><div style="font-size:9px;color:var(--gray-500);">1600×1600px</div></div>
+          </div>
+          <div style="font-size:10px;color:var(--gray-500);text-align:center;margin:8px 0;">3 arquivos serão gerados</div>
+          <a class="ph-btn ph-btn-primary">📤 Exportar Todos</a>
+          <a class="ph-btn ph-btn-secondary" style="margin-top:4px;">Compartilhar</a>
+        </div>
+        <div class="home-indicator"></div>
+      </div>
+      <div class="caption">Export</div>
+      <div class="sub-caption">Multi-marketplace auto-resize</div>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section id="gallery" class="fade-up">
+  <div class="section-header">
+    <div class="label">11 — Telas · Galeria</div>
+    <h2>Seus Produtos</h2>
+    <p>Grid de imagens processadas com busca e filtros.</p>
+  </div>
+  <div class="mockup-row">
+    <div class="mockup-item">
+      <div class="phone light-screen">
+        <div class="notch"></div>
+        <div class="status-bar"><span>9:41</span><span>⚡</span></div>
+        <div class="screen">
+          <div class="ph-title" style="color:var(--dark);font-size:18px;margin-bottom:8px;">Galeria</div>
+          <div style="background:var(--gray-100);border-radius:10px;padding:8px 12px;margin-bottom:8px;font-size:12px;color:var(--gray-500);display:flex;align-items:center;gap:6px;">🔍 Buscar produtos...</div>
+          <div style="display:flex;gap:6px;margin-bottom:10px;">
+            <span class="ph-chip ph-chip-active">Todos (24)</span>
+            <span class="ph-chip ph-chip-inactive">Sapatos</span>
+            <span class="ph-chip ph-chip-inactive">Roupas</span>
+            <span class="ph-chip ph-chip-inactive">Tech</span>
+          </div>
+          <div class="ph-grid ph-grid-3" style="gap:4px;">
+            <div class="ph-grid-item" style="background:linear-gradient(135deg,#fafafa,#eee);">👟</div>
+            <div class="ph-grid-item" style="background:linear-gradient(135deg,#fafafa,#eee);">👜</div>
+            <div class="ph-grid-item" style="background:linear-gradient(135deg,#fafafa,#eee);">⌚</div>
+            <div class="ph-grid-item" style="background:linear-gradient(135deg,#fafafa,#eee);">📱</div>
+            <div class="ph-grid-item" style="background:linear-gradient(135deg,#fafafa,#eee);">🎧</div>
+            <div class="ph-grid-item" style="background:linear-gradient(135deg,#fafafa,#eee);">👕</div>
+            <div class="ph-grid-item" style="background:linear-gradient(135deg,#fafafa,#eee);">👗</div>
+            <div class="ph-grid-item" style="background:linear-gradient(135deg,#fafafa,#eee);">🕶️</div>
+            <div class="ph-grid-item" style="background:linear-gradient(135deg,#fafafa,#eee);">💄</div>
+          </div>
+          <div class="ph-bottom-nav">
+            <div class="ph-nav-item"><div class="ph-nav-icon">🏠</div>Home</div>
+            <div class="ph-nav-item"><div class="ph-nav-icon">📸</div>Captura</div>
+            <div class="ph-nav-item active"><div class="ph-nav-icon">🗂️</div>Galeria</div>
+            <div class="ph-nav-item"><div class="ph-nav-icon">👤</div>Perfil</div>
+          </div>
+        </div>
+        <div class="home-indicator"></div>
+      </div>
+      <div class="caption">Galeria</div>
+      <div class="sub-caption">Grid com filtros por categoria</div>
+    </div>
+  </div>
+</section>
+
+<!-- SUBSCRIPTION -->
+<section id="subscription" class="fade-up">
+  <div class="section-header">
+    <div class="label">12 — Telas · Assinatura</div>
+    <h2>Planos & Preços</h2>
+    <p>3 tiers em BRL, otimizados para o mercado brasileiro.</p>
+  </div>
+
+  <div class="pricing-grid">
+    <div class="pricing-card">
+      <div class="plan-name">Iniciante</div>
+      <div class="plan-price">R$19<span>,90</span></div>
+      <div class="plan-period">/mês</div>
+      <ul>
+        <li>30 fotos/mês</li>
+        <li>Remoção de fundo</li>
+        <li>3 templates básicos</li>
+        <li>Export Mercado Livre</li>
+        <li>Resolução padrão</li>
+      </ul>
+      <button class="btn-demo btn-outline" style="width:100%;">Começar</button>
+    </div>
+    <div class="pricing-card featured">
+      <div class="plan-name">Profissional</div>
+      <div class="plan-price">R$39<span>,90</span></div>
+      <div class="plan-period">/mês</div>
+      <ul>
+        <li>150 fotos/mês</li>
+        <li>Remoção + enhancement</li>
+        <li>Todos os templates</li>
+        <li>5 mockups lifestyle/mês</li>
+        <li>Todos os marketplaces</li>
+        <li>Batch processing</li>
+        <li>Resolução HD</li>
+      </ul>
+      <button class="btn-demo btn-primary" style="width:100%;">Assinar</button>
+    </div>
+    <div class="pricing-card">
+      <div class="plan-name">Loja Pro</div>
+      <div class="plan-price">R$69<span>,90</span></div>
+      <div class="plan-period">/mês</div>
+      <ul>
+        <li>Fotos ilimitadas</li>
+        <li>Tudo do Profissional</li>
+        <li>Mockups ilimitados</li>
+        <li>Marca d'água custom</li>
+        <li>API access</li>
+        <li>Prioridade no processing</li>
+        <li>Suporte prioritário</li>
+      </ul>
+      <button class="btn-demo btn-secondary" style="width:100%;">Contato</button>
+    </div>
+  </div>
+
+  <div class="mockup-row" style="margin-top:48px;">
+    <div class="mockup-item">
+      <div class="phone light-screen">
+        <div class="notch"></div>
+        <div class="status-bar"><span>9:41</span><span>⚡</span></div>
+        <div class="screen" style="text-align:center;">
+          <div style="font-size:32px;margin:8px 0;">💎</div>
+          <div class="ph-title" style="color:var(--dark);font-size:18px;">Seja Pro</div>
+          <p style="font-size:11px;color:var(--gray-500);margin-bottom:12px;">Desbloqueie todo o potencial do FotoPro</p>
+          <div class="ph-card" style="text-align:left;border:2px solid var(--vermelho);">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <div><div style="font-size:12px;font-weight:700;">Profissional</div><div style="font-size:10px;color:var(--gray-500);">150 fotos + mockups</div></div>
+              <div style="font-size:16px;font-weight:700;">R$39,90</div>
+            </div>
+          </div>
+          <div class="ph-card" style="text-align:left;">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <div><div style="font-size:12px;font-weight:700;">Iniciante</div><div style="font-size:10px;color:var(--gray-500);">30 fotos básicas</div></div>
+              <div style="font-size:16px;font-weight:700;">R$19,90</div>
+            </div>
+          </div>
+          <div class="ph-card" style="text-align:left;">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <div><div style="font-size:12px;font-weight:700;">Loja Pro</div><div style="font-size:10px;color:var(--gray-500);">Ilimitado + API</div></div>
+              <div style="font-size:16px;font-weight:700;">R$69,90</div>
+            </div>
+          </div>
+          <a class="ph-btn ph-btn-primary" style="margin-top:8px;">Assinar agora</a>
+          <div style="font-size:9px;color:var(--gray-500);margin-top:6px;">7 dias grátis · Cancele quando quiser</div>
+        </div>
+        <div class="home-indicator"></div>
+      </div>
+      <div class="caption">Paywall</div>
+      <div class="sub-caption">In-app subscription screen</div>
+    </div>
+  </div>
+</section>
+
+<!-- SETTINGS -->
+<section id="settings" class="fade-up">
+  <div class="section-header">
+    <div class="label">13 — Telas · Ajustes</div>
+    <h2>Configurações</h2>
+    <p>Preferências, conta e suporte.</p>
+  </div>
+  <div class="mockup-row">
+    <div class="mockup-item">
+      <div class="phone light-screen">
+        <div class="notch"></div>
+        <div class="status-bar"><span>9:41</span><span>⚡</span></div>
+        <div class="screen">
+          <div class="ph-title" style="color:var(--dark);font-size:18px;margin-bottom:12px;">Ajustes</div>
+          <div class="ph-card" style="display:flex;align-items:center;gap:8px;">
+            <div style="width:40px;height:40px;border-radius:50%;background:var(--vermelho);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;">M</div>
+            <div><div style="font-size:13px;font-weight:600;">Maria Silva</div><div style="font-size:10px;color:var(--gray-500);">Plano Profissional</div></div>
+            <span style="margin-left:auto;color:var(--gray-500);">›</span>
+          </div>
+          <div style="font-size:10px;font-weight:600;color:var(--gray-500);margin:12px 0 4px;text-transform:uppercase;letter-spacing:1px;">Preferências</div>
+          <div class="ph-card"><div style="display:flex;justify-content:space-between;font-size:12px;"><span>📸 Qualidade da câmera</span><span style="color:var(--gray-500);">HD ›</span></div></div>
+          <div class="ph-card"><div style="display:flex;justify-content:space-between;font-size:12px;"><span>🎨 Fundo padrão</span><span style="color:var(--gray-500);">Branco ›</span></div></div>
+          <div class="ph-card"><div style="display:flex;justify-content:space-between;font-size:12px;"><span>🏪 Marketplace padrão</span><span style="color:var(--gray-500);">ML ›</span></div></div>
+          <div class="ph-card"><div style="display:flex;justify-content:space-between;font-size:12px;"><span>📱 Marca d'água</span><span style="color:var(--gray-500);">Off ›</span></div></div>
+          <div style="font-size:10px;font-weight:600;color:var(--gray-500);margin:12px 0 4px;text-transform:uppercase;letter-spacing:1px;">Suporte</div>
+          <div class="ph-card"><div style="font-size:12px;">💬 Central de Ajuda</div></div>
+          <div class="ph-card"><div style="font-size:12px;">⭐ Avaliar o app</div></div>
+        </div>
+        <div class="home-indicator"></div>
+      </div>
+      <div class="caption">Ajustes</div>
+      <div class="sub-caption">Grouped settings pattern</div>
+    </div>
+  </div>
+</section>
+
