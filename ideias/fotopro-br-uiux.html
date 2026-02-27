@@ -38,6 +38,10 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* SVG Icons */
+.icon { display: inline-flex; align-items: center; justify-content: center; }
+.icon svg { width: 1em; height: 1em; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
 /* NAV */
 .side-nav {
   position: fixed; top: 0; left: 0; width: 220px; height: 100vh;
@@ -79,7 +83,8 @@ p { margin-bottom: 12px; }
   min-width: 120px; transition: box-shadow 0.2s;
 }
 .flow-step:hover { box-shadow: var(--shadow-md); }
-.flow-icon { font-size: 28px; }
+.flow-icon { font-size: 28px; color: var(--text); }
+.flow-icon svg { width: 28px; height: 28px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 .flow-label { font-size: 13px; font-weight: 600; color: var(--text); }
 .flow-sub { font-size: 11px; color: var(--text-muted); }
 .flow-arrow { font-size: 18px; color: var(--text-muted); padding: 0 8px; }
@@ -113,12 +118,36 @@ p { margin-bottom: 12px; }
 /* Camera screen */
 .camera-viewfinder { background: #1A1A1A; height: 100%; display: flex; flex-direction: column; justify-content: space-between; padding: 12px; position: relative; }
 .camera-top { display: flex; justify-content: space-between; align-items: center; }
-.camera-top-btn { width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; font-size: 14px; }
+.camera-top-btn { width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.85); }
+.camera-top-btn svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .camera-guides { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 75%; height: 55%; border: 1px dashed rgba(255,255,255,0.2); border-radius: 4px; }
 .camera-bottom { display: flex; align-items: center; justify-content: space-between; padding: 0 8px; }
 .camera-gallery-thumb { width: 40px; height: 40px; border-radius: 8px; background: #333; border: 2px solid rgba(255,255,255,0.3); }
 .camera-shutter { width: 56px; height: 56px; border-radius: 50%; background: #FFF; border: 3px solid rgba(255,255,255,0.4); cursor: pointer; }
-.camera-flip { width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; font-size: 13px; }
+.camera-flip { width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.85); }
+.camera-flip svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Preview + Edit Menu screen */
+.preview-content { height: 100%; display: flex; flex-direction: column; }
+.preview-image { height: 50%; background: var(--bg-alt); display: flex; align-items: center; justify-content: center; position: relative; border-bottom: 1px solid var(--border-light); }
+.preview-product { width: 80px; height: 80px; background: var(--border); border-radius: 8px; }
+.preview-topbar { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px; }
+.preview-topbar-btn { font-size: 13px; color: var(--text-muted); display: flex; align-items: center; gap: 4px; }
+.preview-topbar-btn svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.preview-title { font-size: 13px; font-weight: 600; color: var(--text); }
+.edit-menu { flex: 1; padding: 8px 12px; overflow-y: auto; }
+.edit-menu-title { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+.edit-menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.edit-menu-item {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  padding: 14px 8px; background: var(--bg-subtle); border-radius: 10px;
+  border: 1px solid var(--border-light); cursor: pointer; transition: all 0.15s;
+}
+.edit-menu-item:hover { border-color: var(--accent); background: var(--accent-light); }
+.edit-menu-item svg { width: 22px; height: 22px; fill: none; stroke: var(--text-secondary); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.edit-menu-item:hover svg { stroke: var(--accent); }
+.edit-menu-item span { font-size: 10px; font-weight: 500; color: var(--text-secondary); }
+.edit-menu-item:hover span { color: var(--accent); }
 
 /* Processing screen */
 .processing-content { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 24px; gap: 20px; }
@@ -132,57 +161,28 @@ p { margin-bottom: 12px; }
 .processing-step.done .step-dot { background: var(--accent); }
 .processing-step.active .step-dot { background: var(--text); }
 
-/* Editor screen */
-.editor-preview { height: 55%; background: var(--bg-alt); display: flex; align-items: center; justify-content: center; position: relative; border-bottom: 1px solid var(--border-light); }
-.editor-product { width: 80px; height: 80px; background: var(--border); border-radius: 8px; }
-.editor-toolbar { padding: 10px 12px; display: flex; gap: 6px; overflow-x: auto; border-bottom: 1px solid var(--border-light); }
-.editor-tool { padding: 5px 10px; border-radius: 6px; font-size: 10px; background: var(--bg-subtle); color: var(--text-secondary); white-space: nowrap; }
-.editor-tool.active { background: var(--accent); color: #FFF; }
-.editor-controls { padding: 12px; }
-.editor-slider-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-.editor-slider-label { font-size: 10px; color: var(--text-muted); width: 50px; }
-.editor-slider { flex: 1; height: 3px; background: var(--border); border-radius: 2px; position: relative; }
-.editor-slider-fill { height: 100%; background: var(--accent); border-radius: 2px; }
-.editor-slider-thumb { width: 10px; height: 10px; background: var(--accent); border-radius: 50%; position: absolute; top: -3.5px; }
-
-/* BG options row */
-.bg-options { display: flex; gap: 6px; padding: 8px 12px; overflow-x: auto; }
-.bg-option { width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--border); flex-shrink: 0; }
-.bg-option.active { border-color: var(--accent); border-width: 2px; }
-
-/* Template picker */
-.template-sheet { background: var(--bg); border-radius: 16px 16px 0 0; height: 100%; display: flex; flex-direction: column; }
-.template-handle { width: 32px; height: 4px; background: var(--border); border-radius: 2px; margin: 8px auto; }
-.template-title { font-size: 14px; font-weight: 600; padding: 8px 16px 12px; color: var(--text); }
-.template-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 0 16px; overflow-y: auto; flex: 1; }
-.template-item { background: var(--bg-alt); border-radius: 8px; height: 80px; border: 1px solid var(--border-light); display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--text-muted); }
-.template-item.active { border-color: var(--accent); }
-
-/* Mockup gen */
-.mockup-preview { height: 60%; background: var(--bg-alt); display: flex; align-items: center; justify-content: center; border-bottom: 1px solid var(--border-light); }
-.mockup-scene { width: 140px; height: 100px; background: var(--bg-subtle); border-radius: 8px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; }
-.mockup-product-sm { width: 40px; height: 40px; background: var(--border); border-radius: 4px; }
-.mockup-options { padding: 12px; }
-.mockup-row { display: flex; gap: 6px; margin-bottom: 8px; }
-.mockup-chip { padding: 4px 10px; border-radius: 6px; font-size: 10px; background: var(--bg-subtle); color: var(--text-secondary); border: 1px solid var(--border-light); }
-.mockup-chip.active { background: var(--accent-light); color: var(--accent); border-color: var(--accent); }
-
 /* Export screen */
 .export-content { padding: 16px; height: 100%; display: flex; flex-direction: column; }
+.export-topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.export-topbar-btn { font-size: 13px; color: var(--text-muted); display: flex; align-items: center; gap: 4px; }
+.export-topbar-btn svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .export-preview-box { height: 120px; background: var(--bg-alt); border-radius: 8px; border: 1px solid var(--border-light); margin-bottom: 12px; display: flex; align-items: center; justify-content: center; }
 .export-product-sm { width: 50px; height: 50px; background: var(--border); border-radius: 6px; }
 .export-section-title { font-size: 11px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
 .export-marketplace { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border: 1px solid var(--border-light); border-radius: 8px; margin-bottom: 6px; }
-.export-mp-icon { width: 24px; height: 24px; border-radius: 6px; background: var(--bg-subtle); font-size: 12px; display: flex; align-items: center; justify-content: center; }
+.export-mp-icon { width: 24px; height: 24px; border-radius: 6px; background: var(--bg-subtle); display: flex; align-items: center; justify-content: center; color: var(--text-secondary); }
+.export-mp-icon svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .export-mp-name { font-size: 11px; font-weight: 500; color: var(--text); flex: 1; }
 .export-mp-check { width: 16px; height: 16px; border-radius: 50%; border: 1.5px solid var(--border); }
 .export-mp-check.checked { background: var(--accent); border-color: var(--accent); }
-.export-btn { margin-top: auto; padding: 10px; background: var(--accent); color: #FFF; border-radius: 8px; text-align: center; font-size: 13px; font-weight: 600; }
+.export-btn { margin-top: auto; padding: 10px; background: var(--accent); color: #FFF; border-radius: 8px; text-align: center; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px; }
+.export-btn svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
 /* Gallery */
 .gallery-header { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px; }
 .gallery-title { font-size: 14px; font-weight: 600; color: var(--text); }
-.gallery-back { font-size: 13px; color: var(--accent); }
+.gallery-back { font-size: 13px; color: var(--accent); display: flex; align-items: center; gap: 2px; }
+.gallery-back svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .gallery-grid-inner { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2px; padding: 2px; }
 .gallery-item { aspect-ratio: 1; background: var(--bg-alt); border: 1px solid var(--border-light); }
 
@@ -196,14 +196,17 @@ p { margin-bottom: 12px; }
 .plan-price { font-size: 22px; font-weight: 700; color: var(--text); margin: 4px 0; }
 .plan-price span { font-size: 12px; font-weight: 400; color: var(--text-muted); }
 .plan-features { list-style: none; }
-.plan-features li { font-size: 10px; color: var(--text-secondary); padding: 2px 0; }
-.plan-features li::before { content: "✓ "; color: var(--accent); font-weight: 600; }
+.plan-features li { font-size: 10px; color: var(--text-secondary); padding: 2px 0; display: flex; align-items: center; gap: 4px; }
+.plan-features li::before { content: none; }
+.plan-check { width: 12px; height: 12px; flex-shrink: 0; }
+.plan-check svg { width: 12px; height: 12px; fill: none; stroke: var(--accent); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
 .plan-btn { display: block; margin-top: 10px; padding: 8px; text-align: center; border-radius: 6px; font-size: 11px; font-weight: 600; background: var(--bg-subtle); color: var(--text); }
 .plan-card.featured .plan-btn { background: var(--accent); color: #FFF; }
 
 /* Settings */
 .settings-content { padding: 16px; }
-.settings-title { font-size: 14px; font-weight: 600; margin-bottom: 12px; color: var(--text); }
+.settings-title { font-size: 14px; font-weight: 600; margin-bottom: 12px; color: var(--text); display: flex; align-items: center; gap: 6px; }
+.settings-title svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .settings-group { margin-bottom: 16px; }
 .settings-group-title { font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); margin-bottom: 6px; font-weight: 600; }
 .settings-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border-light); }
@@ -213,6 +216,10 @@ p { margin-bottom: 12px; }
 .settings-toggle::after { content: ''; width: 14px; height: 14px; border-radius: 50%; background: #FFF; position: absolute; top: 2px; left: 2px; transition: 0.2s; }
 .settings-toggle.on::after { left: 16px; }
 .settings-chevron { font-size: 12px; color: var(--text-muted); }
+
+/* Mockup chip (reused) */
+.mockup-chip { padding: 4px 10px; border-radius: 6px; font-size: 10px; background: var(--bg-subtle); color: var(--text-secondary); border: 1px solid var(--border-light); }
+.mockup-chip.active { background: var(--accent-light); color: var(--accent); border-color: var(--accent); }
 
 /* DESIGN SYSTEM */
 .color-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin: 16px 0; }
@@ -253,7 +260,8 @@ td:first-child { color: var(--text); font-weight: 500; }
 .principle-card { padding: 20px; border: 1px solid var(--border-light); border-radius: var(--radius-md); }
 .principle-card h4 { font-size: 14px; font-weight: 600; margin-bottom: 6px; color: var(--text); }
 .principle-card p { font-size: 13px; color: var(--text-secondary); margin: 0; line-height: 1.6; }
-.principle-icon { font-size: 24px; margin-bottom: 8px; }
+.principle-icon { margin-bottom: 8px; color: var(--text); }
+.principle-icon svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 
 /* INTERACTIONS */
 .interaction-list { margin: 16px 0; }
@@ -289,11 +297,10 @@ td:first-child { color: var(--text); font-weight: 500; }
   <a href="#flow">App Flow</a>
   <div class="nav-group">Screens</div>
   <a href="#camera">Camera</a>
+  <a href="#preview">Preview + Edit Menu</a>
   <a href="#processing">Processing</a>
-  <a href="#editor">Editor</a>
-  <a href="#templates">Templates</a>
-  <a href="#mockups">Mockup Generator</a>
-  <a href="#export">Export</a>
+  <a href="#export">Result + Export</a>
+  <div class="nav-group">Secondary</div>
   <a href="#gallery">Gallery</a>
   <a href="#subscription">Subscription</a>
   <a href="#settings">Settings</a>
@@ -309,7 +316,7 @@ td:first-child { color: var(--text); font-weight: 500; }
 <!-- HERO -->
 <section class="hero" id="hero">
   <h1>FotoPro BR</h1>
-  <p>Professional product photography for Brazilian e-commerce sellers. Capture, enhance, and export — all from your phone.</p>
+  <p>Professional product photography for Brazilian e-commerce sellers. Capture, choose your edit, and export — all from your phone.</p>
   <div class="hero-tags">
     <span class="tag">Mobile-first</span>
     <span class="tag">AI Background Removal</span>
@@ -327,7 +334,7 @@ td:first-child { color: var(--text); font-weight: 500; }
     <tr><td>Framework</td><td>Flutter 3.x</td><td>Cross-platform, single codebase</td></tr>
     <tr><td>State</td><td>Riverpod</td><td>Reactive, testable</td></tr>
     <tr><td>Camera</td><td>camera + image_picker</td><td>Native performance</td></tr>
-    <tr><td>AI Processing</td><td>Cloud Functions</td><td>Background removal, enhancement</td></tr>
+    <tr><td>AI Processing</td><td>Cloud Functions</td><td>Background removal, enhancement, mockups</td></tr>
     <tr><td>Storage</td><td>Firebase Storage</td><td>CDN-backed image delivery</td></tr>
     <tr><td>Auth</td><td>Firebase Auth</td><td>Email + Google + Apple</td></tr>
     <tr><td>Payments</td><td>RevenueCat</td><td>Subscription management</td></tr>
@@ -337,30 +344,30 @@ td:first-child { color: var(--text); font-weight: 500; }
 <!-- APP FLOW -->
 <section id="flow">
   <h2>App Flow</h2>
-  <p class="section-desc">Four core steps. Camera is the home screen — no dashboard, no friction.</p>
+  <p class="section-desc">Four screens only. Camera is the home screen — no dashboard, no friction. User picks editing options before processing begins.</p>
   <div class="flow-container">
     <div class="flow-step">
-      <div class="flow-icon">📷</div>
+      <div class="flow-icon"><svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></div>
       <div class="flow-label">Camera</div>
       <div class="flow-sub">Home screen</div>
     </div>
-    <div class="flow-arrow">→</div>
+    <div class="flow-arrow">&rarr;</div>
     <div class="flow-step">
-      <div class="flow-icon">⚙️</div>
+      <div class="flow-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/></svg></div>
+      <div class="flow-label">Preview + Edit</div>
+      <div class="flow-sub">Choose options</div>
+    </div>
+    <div class="flow-arrow">&rarr;</div>
+    <div class="flow-step">
+      <div class="flow-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
       <div class="flow-label">Processing</div>
-      <div class="flow-sub">AI enhancement</div>
+      <div class="flow-sub">AI generates</div>
     </div>
-    <div class="flow-arrow">→</div>
+    <div class="flow-arrow">&rarr;</div>
     <div class="flow-step">
-      <div class="flow-icon">✏️</div>
-      <div class="flow-label">Editor</div>
-      <div class="flow-sub">Refine & style</div>
-    </div>
-    <div class="flow-arrow">→</div>
-    <div class="flow-step">
-      <div class="flow-icon">📤</div>
-      <div class="flow-label">Export</div>
-      <div class="flow-sub">Marketplace ready</div>
+      <div class="flow-icon"><svg viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg></div>
+      <div class="flow-label">Result + Export</div>
+      <div class="flow-sub">Share & save</div>
     </div>
   </div>
 </section>
@@ -368,26 +375,26 @@ td:first-child { color: var(--text); font-weight: 500; }
 <!-- CAMERA -->
 <section id="camera">
   <h2>Screen Specifications</h2>
-  <p class="section-desc">Each screen designed for speed and clarity. Light theme throughout with minimal chrome.</p>
+  <p class="section-desc">Four core screens designed for speed and clarity. Light theme throughout with minimal chrome.</p>
   <div class="screen-grid">
     <div class="screen-card">
-      <h3>Camera</h3>
+      <h3>1. Camera (Home)</h3>
       <p class="screen-desc">The home screen. Opens immediately on launch. Gallery accessible via thumbnail. Composition guides toggleable.</p>
       <div class="phone">
         <div class="phone-notch"></div>
-        <div class="phone-status"><span>9:41</span><span>●●● WiFi 🔋</span></div>
+        <div class="phone-status"><span>9:41</span><span style="display:flex;align-items:center;gap:4px;"><svg style="width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><path d="M1 1l22 22M16.72 11.06A10.94 10.94 0 0 1 19 12.55M5 12.55a10.94 10.94 0 0 1 5.17-2.39M10.71 5.05A16 16 0 0 1 22.56 9M1.42 9a15.91 15.91 0 0 1 4.7-2.88M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01"/></svg> <svg style="width:12px;height:12px;fill:currentColor;stroke:none;" viewBox="0 0 24 24"><rect x="1" y="6" width="3" height="12" rx="1"/><rect x="6" y="4" width="3" height="14" rx="1"/><rect x="11" y="2" width="3" height="16" rx="1"/><rect x="16" y="7" width="3" height="11" rx="1"/></svg></span></div>
         <div class="phone-content">
           <div class="camera-viewfinder">
             <div class="camera-top">
-              <div class="camera-top-btn">⚡</div>
+              <div class="camera-top-btn"><svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
               <div style="font-size:11px;color:rgba(255,255,255,0.7);font-weight:500;">1x</div>
-              <div class="camera-top-btn">⊞</div>
+              <div class="camera-top-btn"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div>
             </div>
             <div class="camera-guides"></div>
             <div class="camera-bottom">
               <div class="camera-gallery-thumb"></div>
               <div class="camera-shutter"></div>
-              <div class="camera-flip">↻</div>
+              <div class="camera-flip"><svg viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></div>
             </div>
           </div>
           <div class="phone-bottom-bar"></div>
@@ -395,70 +402,80 @@ td:first-child { color: var(--text); font-weight: 500; }
       </div>
     </div>
 
-    <div class="screen-card">
-      <h3>Processing</h3>
-      <p class="screen-desc">Automatic AI pipeline. Background removal, color correction, and enhancement with clear step indicators.</p>
+    <!-- PREVIEW + EDIT MENU -->
+    <div class="screen-card" id="preview">
+      <h3>2. Preview + Edit Menu</h3>
+      <p class="screen-desc">After capture, shows the photo with a grid of editing options. User picks what they want — mockup, background removal, enhancement, lighting — then processing begins.</p>
       <div class="phone">
         <div class="phone-notch"></div>
-        <div class="phone-status"><span>9:41</span><span>●●● WiFi 🔋</span></div>
+        <div class="phone-status"><span>9:41</span><span style="display:flex;align-items:center;gap:4px;"><svg style="width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0 1 14 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01"/></svg> <svg style="width:12px;height:12px;fill:currentColor;stroke:none;" viewBox="0 0 24 24"><rect x="1" y="6" width="3" height="12" rx="1"/><rect x="6" y="4" width="3" height="14" rx="1"/><rect x="11" y="2" width="3" height="16" rx="1"/><rect x="16" y="7" width="3" height="11" rx="1"/></svg></span></div>
+        <div class="phone-content">
+          <div class="preview-content">
+            <div class="preview-topbar">
+              <div class="preview-topbar-btn"><svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> Back</div>
+              <div class="preview-title">Preview</div>
+              <div style="width:50px;"></div>
+            </div>
+            <div class="preview-image">
+              <div class="preview-product"></div>
+            </div>
+            <div class="edit-menu">
+              <div class="edit-menu-title">What would you like to do?</div>
+              <div class="edit-menu-grid">
+                <div class="edit-menu-item">
+                  <svg viewBox="0 0 24 24"><path d="M5 3a2 2 0 0 0-2 2"/><path d="M19 3a2 2 0 0 1 2 2"/><path d="M21 19a2 2 0 0 1-2 2"/><path d="M5 21a2 2 0 0 1-2-2"/><line x1="9" y1="3" x2="15" y2="3"/><line x1="9" y1="21" x2="15" y2="21"/><line x1="21" y1="9" x2="21" y2="15"/><line x1="3" y1="9" x2="3" y2="15"/></svg>
+                  <span>Mockup</span>
+                </div>
+                <div class="edit-menu-item">
+                  <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                  <span>Lighting</span>
+                </div>
+                <div class="edit-menu-item">
+                  <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  <span>Remove BG</span>
+                </div>
+                <div class="edit-menu-item">
+                  <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  <span>Enhance</span>
+                </div>
+                <div class="edit-menu-item">
+                  <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                  <span>Background</span>
+                </div>
+                <div class="edit-menu-item">
+                  <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                  <span>Template</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="phone-bottom-bar"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESSING -->
+<section id="processing">
+  <div class="screen-grid">
+    <div class="screen-card">
+      <h3>3. Processing</h3>
+      <p class="screen-desc">AI pipeline runs based on user's selection. Clear step indicators show progress. Automatic — no user action needed.</p>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-status"><span>9:41</span><span style="display:flex;align-items:center;gap:4px;"><svg style="width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0 1 14 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01"/></svg> <svg style="width:12px;height:12px;fill:currentColor;stroke:none;" viewBox="0 0 24 24"><rect x="1" y="6" width="3" height="12" rx="1"/><rect x="6" y="4" width="3" height="14" rx="1"/><rect x="11" y="2" width="3" height="16" rx="1"/><rect x="16" y="7" width="3" height="11" rx="1"/></svg></span></div>
         <div class="phone-content">
           <div class="processing-content">
             <div class="processing-spinner"></div>
-            <div style="font-size:13px;font-weight:600;color:var(--text);">Processing your photo</div>
+            <div style="font-size:13px;font-weight:600;color:var(--text);">Generating your image</div>
+            <div style="font-size:11px;color:var(--text-muted);">Mockup + Lighting selected</div>
             <div class="processing-steps">
-              <div class="processing-step done"><div class="step-dot"></div>Background removal</div>
-              <div class="processing-step done"><div class="step-dot"></div>Edge refinement</div>
-              <div class="processing-step active"><div class="step-dot"></div>Color correction</div>
-              <div class="processing-step"><div class="step-dot"></div>Enhancement</div>
-            </div>
-          </div>
-          <div class="phone-bottom-bar"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- EDITOR -->
-<section id="editor">
-  <div class="screen-grid">
-    <div class="screen-card">
-      <h3>Editor</h3>
-      <p class="screen-desc">Background selection, brightness/contrast sliders, and tool palette. Non-destructive editing with real-time preview.</p>
-      <div class="phone">
-        <div class="phone-notch"></div>
-        <div class="phone-status"><span>9:41</span><span>●●● WiFi 🔋</span></div>
-        <div class="phone-content">
-          <div class="editor-preview">
-            <div class="editor-product"></div>
-          </div>
-          <div class="bg-options">
-            <div class="bg-option active" style="background:#FFF;"></div>
-            <div class="bg-option" style="background:#F5F5F5;"></div>
-            <div class="bg-option" style="background:#E8F5EE;"></div>
-            <div class="bg-option" style="background:#FFF5F5;"></div>
-            <div class="bg-option" style="background:#F0F4FF;"></div>
-            <div class="bg-option" style="background:linear-gradient(135deg,#fafafa,#eee);"></div>
-          </div>
-          <div class="editor-toolbar">
-            <div class="editor-tool active">Background</div>
-            <div class="editor-tool">Adjust</div>
-            <div class="editor-tool">Shadow</div>
-            <div class="editor-tool">Crop</div>
-            <div class="editor-tool">Text</div>
-          </div>
-          <div class="editor-controls">
-            <div class="editor-slider-row">
-              <div class="editor-slider-label">Brightness</div>
-              <div class="editor-slider"><div class="editor-slider-fill" style="width:60%;"><div class="editor-slider-thumb" style="right:-5px;"></div></div></div>
-            </div>
-            <div class="editor-slider-row">
-              <div class="editor-slider-label">Contrast</div>
-              <div class="editor-slider"><div class="editor-slider-fill" style="width:45%;"><div class="editor-slider-thumb" style="right:-5px;"></div></div></div>
-            </div>
-            <div class="editor-slider-row">
-              <div class="editor-slider-label">Shadow</div>
-              <div class="editor-slider"><div class="editor-slider-fill" style="width:30%;"><div class="editor-slider-thumb" style="right:-5px;"></div></div></div>
+              <div class="processing-step done"><div class="step-dot"></div>Analyzing photo</div>
+              <div class="processing-step done"><div class="step-dot"></div>Removing background</div>
+              <div class="processing-step active"><div class="step-dot"></div>Generating mockup scene</div>
+              <div class="processing-step"><div class="step-dot"></div>Applying lighting</div>
+              <div class="processing-step"><div class="step-dot"></div>Final enhancement</div>
             </div>
           </div>
           <div class="phone-bottom-bar"></div>
@@ -466,106 +483,43 @@ td:first-child { color: var(--text); font-weight: 500; }
       </div>
     </div>
 
-    <!-- TEMPLATES -->
-    <div class="screen-card" id="templates">
-      <h3>Template Picker</h3>
-      <p class="screen-desc">Bottom sheet with marketplace-optimized templates. Pre-configured layouts for Mercado Livre, Shopee, and more.</p>
-      <div class="phone">
-        <div class="phone-notch"></div>
-        <div class="phone-status"><span>9:41</span><span>●●● WiFi 🔋</span></div>
-        <div class="phone-content">
-          <div class="template-sheet">
-            <div class="template-handle"></div>
-            <div class="template-title">Choose Template</div>
-            <div class="template-grid">
-              <div class="template-item active">Clean White</div>
-              <div class="template-item">Lifestyle</div>
-              <div class="template-item">Mercado Livre</div>
-              <div class="template-item">Shopee</div>
-              <div class="template-item">Minimal</div>
-              <div class="template-item">Shadow</div>
-              <div class="template-item">Gradient</div>
-              <div class="template-item">Custom</div>
-            </div>
-          </div>
-          <div class="phone-bottom-bar"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- MOCKUPS -->
-<section id="mockups">
-  <div class="screen-grid">
-    <div class="screen-card">
-      <h3>Mockup Generator</h3>
-      <p class="screen-desc">Place products in realistic scenes. Choose angles, lighting, and surfaces for professional lifestyle shots.</p>
-      <div class="phone">
-        <div class="phone-notch"></div>
-        <div class="phone-status"><span>9:41</span><span>●●● WiFi 🔋</span></div>
-        <div class="phone-content">
-          <div class="mockup-preview">
-            <div class="mockup-scene"><div class="mockup-product-sm"></div></div>
-          </div>
-          <div class="mockup-options">
-            <div style="font-size:11px;font-weight:600;color:var(--text);margin-bottom:6px;">Scene</div>
-            <div class="mockup-row">
-              <div class="mockup-chip active">Table</div>
-              <div class="mockup-chip">Shelf</div>
-              <div class="mockup-chip">Outdoor</div>
-              <div class="mockup-chip">Studio</div>
-            </div>
-            <div style="font-size:11px;font-weight:600;color:var(--text);margin-bottom:6px;">Lighting</div>
-            <div class="mockup-row">
-              <div class="mockup-chip active">Natural</div>
-              <div class="mockup-chip">Warm</div>
-              <div class="mockup-chip">Cool</div>
-            </div>
-            <div style="font-size:11px;font-weight:600;color:var(--text);margin-bottom:6px;">Surface</div>
-            <div class="mockup-row">
-              <div class="mockup-chip active">Wood</div>
-              <div class="mockup-chip">Marble</div>
-              <div class="mockup-chip">Fabric</div>
-            </div>
-          </div>
-          <div class="phone-bottom-bar"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- EXPORT -->
+    <!-- RESULT + EXPORT -->
     <div class="screen-card" id="export">
-      <h3>Export</h3>
-      <p class="screen-desc">Select target marketplaces. Auto-resize and optimize for each platform's requirements.</p>
+      <h3>4. Result + Export</h3>
+      <p class="screen-desc">Shows the final AI-generated image. Export to marketplaces, save to camera roll, or share directly.</p>
       <div class="phone">
         <div class="phone-notch"></div>
-        <div class="phone-status"><span>9:41</span><span>●●● WiFi 🔋</span></div>
+        <div class="phone-status"><span>9:41</span><span style="display:flex;align-items:center;gap:4px;"><svg style="width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0 1 14 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01"/></svg> <svg style="width:12px;height:12px;fill:currentColor;stroke:none;" viewBox="0 0 24 24"><rect x="1" y="6" width="3" height="12" rx="1"/><rect x="6" y="4" width="3" height="14" rx="1"/><rect x="11" y="2" width="3" height="16" rx="1"/><rect x="16" y="7" width="3" height="11" rx="1"/></svg></span></div>
         <div class="phone-content">
           <div class="export-content">
+            <div class="export-topbar">
+              <div class="export-topbar-btn"><svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> Back</div>
+              <div style="font-size:13px;font-weight:600;color:var(--text);">Result</div>
+              <div style="width:40px;"></div>
+            </div>
             <div class="export-preview-box"><div class="export-product-sm"></div></div>
             <div class="export-section-title">Export to</div>
             <div class="export-marketplace">
-              <div class="export-mp-icon">🛒</div>
+              <div class="export-mp-icon"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></div>
               <div class="export-mp-name">Mercado Livre</div>
               <div class="export-mp-check checked"></div>
             </div>
             <div class="export-marketplace">
-              <div class="export-mp-icon">🟠</div>
+              <div class="export-mp-icon"><svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></div>
               <div class="export-mp-name">Shopee</div>
               <div class="export-mp-check checked"></div>
             </div>
             <div class="export-marketplace">
-              <div class="export-mp-icon">📸</div>
+              <div class="export-mp-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
               <div class="export-mp-name">Camera Roll</div>
               <div class="export-mp-check"></div>
             </div>
             <div class="export-marketplace">
-              <div class="export-mp-icon">📁</div>
-              <div class="export-mp-name">Custom Size</div>
+              <div class="export-mp-icon"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div>
+              <div class="export-mp-name">Share</div>
               <div class="export-mp-check"></div>
             </div>
-            <div class="export-btn">Export 2 Photos →</div>
+            <div class="export-btn"><svg viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg> Export</div>
           </div>
           <div class="phone-bottom-bar"></div>
         </div>
@@ -574,18 +528,20 @@ td:first-child { color: var(--text); font-weight: 500; }
   </div>
 </section>
 
-<!-- GALLERY -->
+<!-- GALLERY (secondary) -->
 <section id="gallery">
+  <h2>Secondary Screens</h2>
+  <p class="section-desc">Supporting screens accessible from the main flow. Not part of the core 4-step workflow.</p>
   <div class="screen-grid">
     <div class="screen-card">
       <h3>Gallery</h3>
       <p class="screen-desc">Accessible from camera via thumbnail tap. Grid view of all processed photos with search and filter.</p>
       <div class="phone">
         <div class="phone-notch"></div>
-        <div class="phone-status"><span>9:41</span><span>●●● WiFi 🔋</span></div>
+        <div class="phone-status"><span>9:41</span><span style="display:flex;align-items:center;gap:4px;"><svg style="width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0 1 14 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01"/></svg> <svg style="width:12px;height:12px;fill:currentColor;stroke:none;" viewBox="0 0 24 24"><rect x="1" y="6" width="3" height="12" rx="1"/><rect x="6" y="4" width="3" height="14" rx="1"/><rect x="11" y="2" width="3" height="16" rx="1"/><rect x="16" y="7" width="3" height="11" rx="1"/></svg></span></div>
         <div class="phone-content">
           <div class="gallery-header">
-            <div class="gallery-back">← Camera</div>
+            <div class="gallery-back"><svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> Camera</div>
             <div class="gallery-title">Gallery</div>
             <div style="font-size:12px;color:var(--text-muted);">Select</div>
           </div>
@@ -611,30 +567,30 @@ td:first-child { color: var(--text); font-weight: 500; }
       <p class="screen-desc">Clean pricing cards. Free tier with limits, Pro for serious sellers.</p>
       <div class="phone">
         <div class="phone-notch"></div>
-        <div class="phone-status"><span>9:41</span><span>●●● WiFi 🔋</span></div>
+        <div class="phone-status"><span>9:41</span><span style="display:flex;align-items:center;gap:4px;"><svg style="width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0 1 14 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01"/></svg> <svg style="width:12px;height:12px;fill:currentColor;stroke:none;" viewBox="0 0 24 24"><rect x="1" y="6" width="3" height="12" rx="1"/><rect x="6" y="4" width="3" height="14" rx="1"/><rect x="11" y="2" width="3" height="16" rx="1"/><rect x="16" y="7" width="3" height="11" rx="1"/></svg></span></div>
         <div class="phone-content">
           <div class="sub-content">
             <div class="sub-title">Choose your plan</div>
             <div class="sub-subtitle">Cancel anytime. No commitment.</div>
             <div class="plan-card">
               <div class="plan-name">Free</div>
-              <div class="plan-price">R$ 0<span>/mês</span></div>
+              <div class="plan-price">R$ 0<span>/mes</span></div>
               <ul class="plan-features">
-                <li>5 photos/month</li>
-                <li>Basic backgrounds</li>
-                <li>Standard export</li>
+                <li><span class="plan-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span>5 photos/month</li>
+                <li><span class="plan-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span>Basic backgrounds</li>
+                <li><span class="plan-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span>Standard export</li>
               </ul>
               <div class="plan-btn">Current Plan</div>
             </div>
             <div class="plan-card featured">
               <div class="plan-name">Pro</div>
-              <div class="plan-price">R$ 29<span>/mês</span></div>
+              <div class="plan-price">R$ 29<span>/mes</span></div>
               <ul class="plan-features">
-                <li>Unlimited photos</li>
-                <li>All backgrounds & templates</li>
-                <li>Mockup generator</li>
-                <li>Batch export</li>
-                <li>Priority processing</li>
+                <li><span class="plan-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span>Unlimited photos</li>
+                <li><span class="plan-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span>All backgrounds & templates</li>
+                <li><span class="plan-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span>Mockup generator</li>
+                <li><span class="plan-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span>Batch export</li>
+                <li><span class="plan-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span>Priority processing</li>
               </ul>
               <div class="plan-btn">Upgrade to Pro</div>
             </div>
@@ -654,10 +610,10 @@ td:first-child { color: var(--text); font-weight: 500; }
       <p class="screen-desc">Account, preferences, and app configuration. Clean grouped layout.</p>
       <div class="phone">
         <div class="phone-notch"></div>
-        <div class="phone-status"><span>9:41</span><span>●●● WiFi 🔋</span></div>
+        <div class="phone-status"><span>9:41</span><span style="display:flex;align-items:center;gap:4px;"><svg style="width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2;" viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0 1 14 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01"/></svg> <svg style="width:12px;height:12px;fill:currentColor;stroke:none;" viewBox="0 0 24 24"><rect x="1" y="6" width="3" height="12" rx="1"/><rect x="6" y="4" width="3" height="14" rx="1"/><rect x="11" y="2" width="3" height="16" rx="1"/><rect x="16" y="7" width="3" height="11" rx="1"/></svg></span></div>
         <div class="phone-content">
           <div class="settings-content">
-            <div class="settings-title">Settings</div>
+            <div class="settings-title"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> Settings</div>
             <div class="settings-group">
               <div class="settings-group-title">Camera</div>
               <div class="settings-row"><span class="settings-row-label">Composition Guides</span><div class="settings-toggle on"></div></div>
@@ -666,14 +622,14 @@ td:first-child { color: var(--text); font-weight: 500; }
             </div>
             <div class="settings-group">
               <div class="settings-group-title">Export</div>
-              <div class="settings-row"><span class="settings-row-label">Default Format</span><span class="settings-chevron">PNG ›</span></div>
-              <div class="settings-row"><span class="settings-row-label">Default Quality</span><span class="settings-chevron">High ›</span></div>
+              <div class="settings-row"><span class="settings-row-label">Default Format</span><span class="settings-chevron">PNG ></span></div>
+              <div class="settings-row"><span class="settings-row-label">Default Quality</span><span class="settings-chevron">High ></span></div>
               <div class="settings-row"><span class="settings-row-label">Watermark</span><div class="settings-toggle"></div></div>
             </div>
             <div class="settings-group">
               <div class="settings-group-title">Account</div>
-              <div class="settings-row"><span class="settings-row-label">Subscription</span><span class="settings-chevron">Free ›</span></div>
-              <div class="settings-row"><span class="settings-row-label">Sign Out</span><span class="settings-chevron">›</span></div>
+              <div class="settings-row"><span class="settings-row-label">Subscription</span><span class="settings-chevron">Free ></span></div>
+              <div class="settings-row"><span class="settings-row-label">Sign Out</span><span class="settings-chevron">></span></div>
             </div>
           </div>
           <div class="phone-bottom-bar"></div>
@@ -749,32 +705,32 @@ td:first-child { color: var(--text); font-weight: 500; }
   <p class="section-desc">Design decisions guided by clarity, speed, and trust.</p>
   <div class="principles-grid">
     <div class="principle-card">
-      <div class="principle-icon">⚡</div>
+      <div class="principle-icon"><svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
       <h4>Speed First</h4>
       <p>Camera opens instantly. No splash screens, no tutorials on first launch. Users can capture within 2 seconds of opening the app.</p>
     </div>
     <div class="principle-card">
-      <div class="principle-icon">🎯</div>
+      <div class="principle-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div>
       <h4>One Path Forward</h4>
-      <p>Linear flow: Camera → Processing → Editor → Export. Minimize decisions. Always show the next step clearly.</p>
+      <p>Linear flow: Camera, Preview + Edit, Processing, Export. Minimize decisions. Always show the next step clearly.</p>
     </div>
     <div class="principle-card">
-      <div class="principle-icon">👁️</div>
+      <div class="principle-icon"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
       <h4>Show, Don't Tell</h4>
       <p>Real-time previews everywhere. Background changes update instantly. Template selections show immediate results.</p>
     </div>
     <div class="principle-card">
-      <div class="principle-icon">↩️</div>
+      <div class="principle-icon"><svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg></div>
       <h4>Safe to Explore</h4>
       <p>Non-destructive editing. Undo always available. Originals preserved. Users should never fear losing their work.</p>
     </div>
     <div class="principle-card">
-      <div class="principle-icon">🇧🇷</div>
+      <div class="principle-icon"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
       <h4>Made for Brazil</h4>
       <p>Mercado Livre and Shopee as first-class export targets. Portuguese throughout. Currency in BRL. Local marketplace requirements built-in.</p>
     </div>
     <div class="principle-card">
-      <div class="principle-icon">✨</div>
+      <div class="principle-icon"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
       <h4>Professional Results</h4>
       <p>AI does the heavy lifting. Users get studio-quality output without studio knowledge. Smart defaults over manual controls.</p>
     </div>
@@ -789,37 +745,27 @@ td:first-child { color: var(--text); font-weight: 500; }
     <div class="interaction-item">
       <h4>Shutter Press</h4>
       <p>Brief screen flash (white, 80% opacity) + subtle haptic. Mimics real camera feedback.</p>
-      <div class="interaction-timing">duration: 150ms · easing: ease-out</div>
+      <div class="interaction-timing">duration: 150ms | easing: ease-out</div>
     </div>
     <div class="interaction-item">
       <h4>Processing Steps</h4>
       <p>Each step fades in with a checkmark on completion. Active step pulses subtly. Progress feels alive, not stuck.</p>
-      <div class="interaction-timing">step transition: 300ms · pulse: 1.5s infinite</div>
+      <div class="interaction-timing">step transition: 300ms | pulse: 1.5s infinite</div>
     </div>
     <div class="interaction-item">
-      <h4>Background Switch</h4>
-      <p>Cross-fade between backgrounds. Product stays anchored. Transition smooth enough to feel instant but visible enough to confirm the change.</p>
-      <div class="interaction-timing">duration: 200ms · easing: ease-in-out</div>
-    </div>
-    <div class="interaction-item">
-      <h4>Template Selection</h4>
-      <p>Bottom sheet springs up with slight overshoot. Selected template scales up with border highlight.</p>
-      <div class="interaction-timing">sheet: 350ms spring · selection: 150ms ease-out</div>
+      <h4>Edit Menu Selection</h4>
+      <p>Tapped option scales slightly with border highlight in accent color. Subtle haptic confirms selection before navigating to processing.</p>
+      <div class="interaction-timing">duration: 150ms | easing: ease-out</div>
     </div>
     <div class="interaction-item">
       <h4>Export Success</h4>
       <p>Checkmark draws itself in a single stroke. Subtle confetti particles (muted colors, 8 particles max). Celebratory but restrained.</p>
-      <div class="interaction-timing">checkmark: 400ms · confetti: 800ms · fade-out: 300ms</div>
+      <div class="interaction-timing">checkmark: 400ms | confetti: 800ms | fade-out: 300ms</div>
     </div>
     <div class="interaction-item">
-      <h4>Slider Drag</h4>
-      <p>Light haptic at min/max boundaries. Value label appears above thumb during drag, fades on release.</p>
-      <div class="interaction-timing">haptic: 10ms · label fade: 200ms</div>
-    </div>
-    <div class="interaction-item">
-      <h4>Gallery Thumbnail → Camera</h4>
+      <h4>Gallery Thumbnail to Camera</h4>
       <p>Thumbnail in camera corner expands to full gallery with shared element transition. Smooth, spatial, intuitive.</p>
-      <div class="interaction-timing">duration: 300ms · easing: cubic-bezier(0.4, 0, 0.2, 1)</div>
+      <div class="interaction-timing">duration: 300ms | easing: cubic-bezier(0.4, 0, 0.2, 1)</div>
     </div>
   </div>
 </section>
@@ -835,7 +781,7 @@ td:first-child { color: var(--text); font-weight: 500; }
     </div>
     <div class="a11y-card">
       <h4>Touch Targets</h4>
-      <p>Minimum 44×44pt for all interactive elements. Shutter button: 56pt. Adequate spacing between targets to prevent mis-taps.</p>
+      <p>Minimum 44x44pt for all interactive elements. Shutter button: 56pt. Adequate spacing between targets to prevent mis-taps.</p>
     </div>
     <div class="a11y-card">
       <h4>Screen Readers</h4>
