@@ -56,7 +56,7 @@
 | Primary AI | Google Gemini Flash 2.0 |
 | Fallback AI | GPT-4.1 nano (OpenAI) |
 | Food Database | TACO/TBCA (Brazilian Food Composition Table) |
-| Push Notifications | Firebase Cloud Messaging (FCM) |
+| Push Notifications | Supabase Edge Functions + OneSignal (or native APNs/FCM directly) |
 | Analytics | Mixpanel or PostHog |
 | Payments | RevenueCat (Apple/Google) + Stripe (PIX in the future) |
 | CI/CD | GitHub Actions + Codemagic |
@@ -136,7 +136,7 @@ Each card shows:
 - "+" button to add exercise
 
 ### 3.5 Central Capture Button (FAB)
-- Large, green Floating Action Button, centered on the bottom nav
+- Large, black Floating Action Button, centered on the bottom nav
 - Camera icon
 - On tap:
   1. Opens native camera in fullscreen
@@ -183,13 +183,13 @@ For each food item:
 - Macros: P / C / F
 - Edit icon (pencil) — allows portion adjustment
 - Remove icon (X)
-- AI confidence (visual indicator: green/yellow/red)
+- AI confidence (visual indicator: grayscale bar or percentage)
 
 #### Totals
 - Total meal calories
 - Total for each macro
 - "Adicionar mais alimentos" ("Add more foods") button (manual search)
-- "Salvar refeição" ("Save meal") button (primary CTA, green)
+- "Salvar refeição" ("Save meal") button (primary CTA, black)
 
 #### Portion Adjustment (Modal)
 - Slider to adjust grams
@@ -340,7 +340,7 @@ Sequential flow of 12 steps. Progress bar at the top. Each step = 1 screen.
 - Title: "Bem-vindo ao PratoIA" ("Welcome to PratoIA")
 - Subtitle: "O jeito mais fácil de controlar sua alimentação" ("The easiest way to control your diet")
 - Animation of a photo being taken of a plate → result with macros
-- Button: "Começar" ("Start") (green CTA)
+- Button: "Começar" ("Start") (black CTA)
 
 ### Step 2: Biological Sex
 - Question: "Qual seu sexo biológico?" ("What is your biological sex?")
@@ -532,35 +532,38 @@ Fat: 30% of calories → calories × 0.30 / 9
 - **Shadows:** Subtle, low elevation (2-4dp)
 - **Spacing:** 8px grid system
 
-### 6.2 Color Palette
+### 6.2 Color Palette (Cal AI Style — Monochrome Minimal)
 
-#### Light Mode
+#### Light Mode (Primary)
 | Element | Color | Hex |
 |---------|-------|-----|
-| Primary (CTA, highlights) | Vibrant green | `#2ECC71` |
-| Primary Dark | Dark green | `#27AE60` |
-| Secondary | Soft blue | `#3498DB` |
-| Background | Off-white | `#F8F9FA` |
-| Surface (cards) | Pure white | `#FFFFFF` |
-| Text Primary | Near black | `#1A1A2E` |
-| Text Secondary | Medium gray | `#6C757D` |
-| Protein | Blue | `#3498DB` |
-| Carbohydrate | Orange | `#F39C12` |
-| Fat | Yellow | `#F1C40F` |
-| Calories | Green | `#2ECC71` |
-| Error | Red | `#E74C3C` |
-| Success | Green | `#27AE60` |
-| Warning | Yellow | `#F39C12` |
+| Primary (CTA, highlights) | Black | `#000000` |
+| Primary Soft | Dark gray | `#1A1A1A` |
+| Background | Pure white | `#FFFFFF` |
+| Surface (cards) | Light gray | `#F5F5F5` |
+| Text Primary | Black | `#000000` |
+| Text Secondary | Medium gray | `#6B7280` |
+| Border / Dividers | Light gray | `#E5E7EB` |
+| Protein | Neutral dark | `#374151` |
+| Carbohydrate | Medium gray | `#6B7280` |
+| Fat | Light gray | `#9CA3AF` |
+| Calories | Black | `#000000` |
+| Error | Red (only functional color) | `#EF4444` |
+| Success | Dark gray | `#1A1A1A` |
+| Warning | Medium gray | `#6B7280` |
+
+> **Design philosophy:** Monochrome black/white like Cal AI. NO vibrant colors. The only color allowed is functional red for errors/destructive actions. Macro indicators use grayscale tones to differentiate. Clean, premium, minimal.
 
 #### Dark Mode
 | Element | Color | Hex |
 |---------|-------|-----|
-| Background | Deep dark | `#0D1117` |
-| Surface (cards) | Dark gray | `#161B22` |
-| Text Primary | White | `#F0F6FC` |
-| Text Secondary | Light gray | `#8B949E` |
-| Primary | Green (same) | `#2ECC71` |
-| Other colors | Same, with adjusted opacity | — |
+| Primary (CTA, highlights) | White | `#FFFFFF` |
+| Background | True black | `#000000` |
+| Surface (cards) | Near black | `#111111` |
+| Text Primary | White | `#F9FAFB` |
+| Text Secondary | Light gray | `#9CA3AF` |
+| Border / Dividers | Dark gray | `#1F2937` |
+| Other colors | Inverted grayscale | — |
 
 ### 6.3 Typography
 | Usage | Font | Weight | Size |
@@ -581,15 +584,15 @@ Fat: 30% of calories → calories × 0.30 / 9
 - Shadow: `0 2px 8px rgba(0,0,0,0.08)`
 
 #### Buttons
-- **Primary CTA:** Green background, white text, border-radius 12px, height 56px
-- **Secondary:** Green outline, transparent background
-- **Text button:** No background, green text
+- **Primary CTA:** Black background, white text, border-radius 12px, height 56px
+- **Secondary:** Black outline, transparent background
+- **Text button:** No background, black text
 - **Disabled:** 40% opacity
 
 #### Inputs
 - Border radius: 12px
 - Border: 1px solid `#E0E0E0`
-- Focus border: primary green
+- Focus border: primary black
 - Height: 52px
 - Horizontal padding: 16px
 
@@ -618,7 +621,7 @@ Fat: 30% of calories → calories × 0.30 / 9
 - Default size: 24px (bottom nav: 28px)
 
 ### 6.7 Illustrations
-- Style: Flat/minimal with app color palette
+- Style: Flat/minimal monochrome (black/white/gray only)
 - Usage: onboarding, empty states, errors
 - Option: Undraw.co or custom illustrations
 
@@ -1834,14 +1837,14 @@ For v1.1+ with subscription:
 | Build iOS (IPA) | Codemagic | Push to `main` or tag |
 | Deploy API | GitHub Actions → Railway/Render/Fly.io | Push to `main` |
 | Deploy Supabase migrations | Supabase CLI | Push to `main` |
-| Beta distribution | Firebase App Distribution | Tag `beta-*` |
+| Beta distribution | Codemagic / TestFlight / Google Play Internal | Tag `beta-*` |
 | Store publication | Manual via Codemagic | Tag `release-*` |
 
 ### 14.8 Monitoring
 
 | Component | Tool |
 |-----------|------|
-| Crashes (mobile) | Firebase Crashlytics |
+| Crashes (mobile) | Sentry |
 | Errors (API) | Sentry |
 | Uptime | UptimeRobot or Better Uptime |
 | Performance (API) | Sentry Performance |
