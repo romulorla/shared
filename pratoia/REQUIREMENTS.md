@@ -1,578 +1,578 @@
-# PratoIA — Documento de Requisitos Completo
+# PratoIA — Complete Requirements Document
 
-> **Versão:** 1.0 | **Data:** 2026-03-03
-> **Clone 1:1 do Cal AI (calai.app) para o mercado brasileiro**
+> **Version:** 1.0 | **Date:** 2026-03-03
+> **1:1 Clone of Cal AI (calai.app) for the Brazilian market**
 
 ---
 
-## Sumário
+## Table of Contents
 
-1. [Visão Geral](#1-visão-geral)
-2. [Stack Tecnológico](#2-stack-tecnológico)
-3. [Fluxo do App (Tela a Tela)](#3-fluxo-do-app-tela-a-tela)
-4. [Onboarding Detalhado](#4-onboarding-detalhado)
+1. [Overview](#1-overview)
+2. [Technology Stack](#2-technology-stack)
+3. [App Flow (Screen by Screen)](#3-app-flow-screen-by-screen)
+4. [Detailed Onboarding](#4-detailed-onboarding)
 5. [Feature Matrix](#5-feature-matrix)
-6. [Especificações UI/UX](#6-especificações-uiux)
-7. [Integração com IA](#7-integração-com-ia)
-8. [Modelos de Dados](#8-modelos-de-dados)
+6. [UI/UX Specifications](#6-uiux-specifications)
+7. [AI Integration](#7-ai-integration)
+8. [Data Models](#8-data-models)
 9. [API Endpoints](#9-api-endpoints)
-10. [Estrutura Supabase](#10-estrutura-supabase)
-11. [Gamificação & Engajamento](#11-gamificação--engajamento)
-12. [Localização Brasil](#12-localização-brasil)
-13. [Escopo MVP](#13-escopo-mvp)
-14. [Requisitos Não-Funcionais](#14-requisitos-não-funcionais)
+10. [Supabase Structure](#10-supabase-structure)
+11. [Gamification & Engagement](#11-gamification--engagement)
+12. [Brazil Localization](#12-brazil-localization)
+13. [MVP Scope](#13-mvp-scope)
+14. [Non-Functional Requirements](#14-non-functional-requirements)
 
 ---
 
-## 1. Visão Geral
+## 1. Overview
 
-**PratoIA** é um aplicativo de rastreamento calórico por IA, clone funcional 1:1 do Cal AI, adaptado para o mercado brasileiro. O usuário tira uma foto da refeição e a IA identifica os alimentos, estima porções e calcula macronutrientes automaticamente.
+**PratoIA** is an AI-powered calorie tracking app, a functional 1:1 clone of Cal AI, adapted for the Brazilian market. The user takes a photo of their meal and the AI identifies the foods, estimates portions, and calculates macronutrients automatically.
 
-### Proposta de Valor
-- Rastreamento calórico sem esforço via foto
-- Base de dados alimentar brasileira (TACO/TBCA)
-- Interface em português
-- Preço acessível: R$14,90/mês (pós-MVP)
+### Value Proposition
+- Effortless calorie tracking via photo
+- Brazilian food database (TACO/TBCA)
+- Interface in Portuguese
+- Affordable price: R$14.90/month (post-MVP)
 
-### Público-Alvo
-- Pessoas em dieta (emagrecimento, ganho de massa, manutenção)
-- Praticantes de musculação/fitness
-- Pessoas com restrições alimentares
-- Profissionais de saúde acompanhando pacientes
-- Faixa etária: 18-45 anos
-- Classe B/C brasileira
+### Target Audience
+- People on diets (weight loss, muscle gain, maintenance)
+- Gym-goers / fitness enthusiasts
+- People with dietary restrictions
+- Health professionals monitoring patients
+- Age range: 18-45 years
+- Brazilian middle class (Class B/C)
 
 ---
 
-## 2. Stack Tecnológico
+## 2. Technology Stack
 
-| Componente | Tecnologia |
+| Component | Technology |
 |---|---|
 | Frontend (Mobile) | Flutter (iOS + Android) |
 | Backend API | Node.js (Express/Fastify) |
-| Banco de Dados | Supabase (PostgreSQL) |
-| Autenticação | Supabase Auth |
-| Storage (fotos) | Supabase Storage |
-| IA Primária | Google Gemini Flash 2.0 |
-| IA Fallback | GPT-4.1 nano (OpenAI) |
-| Base Alimentar | TACO/TBCA (Tabela Brasileira de Composição de Alimentos) |
+| Database | Supabase (PostgreSQL) |
+| Authentication | Supabase Auth |
+| Storage (photos) | Supabase Storage |
+| Primary AI | Google Gemini Flash 2.0 |
+| Fallback AI | GPT-4.1 nano (OpenAI) |
+| Food Database | TACO/TBCA (Brazilian Food Composition Table) |
 | Push Notifications | Firebase Cloud Messaging (FCM) |
-| Analytics | Mixpanel ou PostHog |
-| Pagamentos | RevenueCat (Apple/Google) + Stripe (PIX futuramente) |
+| Analytics | Mixpanel or PostHog |
+| Payments | RevenueCat (Apple/Google) + Stripe (PIX in the future) |
 | CI/CD | GitHub Actions + Codemagic |
 | Barcode API | Open Food Facts BR |
 
 ---
 
-## 3. Fluxo do App (Tela a Tela)
+## 3. App Flow (Screen by Screen)
 
 ### 3.1 Splash Screen
-- Logo PratoIA centralizado com animação de fade-in
-- Duração: 1.5s
-- Verifica autenticação:
-  - Logado → Home Dashboard
-  - Primeiro acesso → Onboarding
-  - Conta existente sem onboarding completo → Retomar onboarding
+- Centered PratoIA logo with fade-in animation
+- Duration: 1.5s
+- Checks authentication:
+  - Logged in → Home Dashboard
+  - First access → Onboarding
+  - Existing account without completed onboarding → Resume onboarding
 
-### 3.2 Onboarding (ver seção 4 para detalhes)
-- Sequência de 10-12 telas com progresso visual
-- Cada tela = 1 pergunta
-- Transição: slide horizontal
-- Botão "Voltar" em todas as telas (exceto primeira)
+### 3.2 Onboarding (see section 4 for details)
+- Sequence of 10-12 screens with visual progress
+- Each screen = 1 question
+- Transition: horizontal slide
+- "Back" button on all screens (except the first)
 
-### 3.3 Paywall / Assinatura
-- Apresentado após onboarding completo
-- Mostra resultado personalizado ("Você atingirá seu objetivo em X semanas")
-- Planos:
-  - Semanal: R$9,90/semana
-  - Mensal: R$14,90/mês (destaque "MAIS POPULAR")
-  - Anual: R$99,90/ano (destaque "MELHOR VALOR")
-- Trial gratuito de 3 dias (MVP: app gratuito, sem paywall)
-- Botão "Continuar sem premium" discreto no topo
-- Garantia de 7 dias
+### 3.3 Paywall / Subscription
+- Presented after onboarding is complete
+- Shows personalized result ("Você atingirá seu objetivo em X semanas" / "You'll reach your goal in X weeks")
+- Plans:
+  - Weekly: R$9.90/week
+  - Monthly: R$14.90/month (highlighted as "MAIS POPULAR" / "MOST POPULAR")
+  - Annual: R$99.90/year (highlighted as "MELHOR VALOR" / "BEST VALUE")
+- Free 3-day trial (MVP: free app, no paywall)
+- Discreet "Continuar sem premium" ("Continue without premium") button at the top
+- 7-day guarantee
 
 ### 3.4 Home / Dashboard
-Tela principal com layout vertical scrollable:
+Main screen with vertical scrollable layout:
 
 #### Header
-- Saudação: "Olá, {nome}!" com avatar
-- Data atual por extenso: "Terça, 3 de março"
-- Ícone de configurações (engrenagem) no canto superior direito
-- Streak counter (🔥 5 dias)
+- Greeting: "Olá, {nome}!" ("Hello, {name}!") with avatar
+- Current date spelled out: "Terça, 3 de março" ("Tuesday, March 3rd")
+- Settings icon (gear) in the top right corner
+- Streak counter (🔥 5 dias / 5 days)
 
-#### Resumo Diário (Card Principal)
-- Círculo de progresso calórico grande (center)
-  - Calorias consumidas / meta
-  - Calorias restantes no centro
-- Barra de progresso para cada macro abaixo:
-  - Proteína (g) — cor azul
-  - Carboidratos (g) — cor laranja
-  - Gordura (g) — cor amarela
-- Cada barra mostra: consumido / meta
+#### Daily Summary (Main Card)
+- Large calorie progress circle (center)
+  - Calories consumed / goal
+  - Remaining calories in the center
+- Progress bar for each macro below:
+  - Protein (g) — blue color
+  - Carbohydrates (g) — orange color
+  - Fat (g) — yellow color
+- Each bar shows: consumed / goal
 
-#### Refeições do Dia
-Lista vertical de cards por refeição:
-- ☀️ **Café da Manhã** — horário sugerido: 06:00-10:00
-- 🌤️ **Lanche da Manhã** — horário: 10:00-11:30
-- ☀️ **Almoço** — horário: 11:30-14:00
-- 🍎 **Lanche da Tarde** — horário: 14:00-17:00
-- 🌙 **Jantar** — horário: 17:00-21:00
-- 🌜 **Ceia** — horário: 21:00-23:00
+#### Meals of the Day
+Vertical list of cards per meal:
+- ☀️ **Café da Manhã** (Breakfast) — suggested time: 06:00-10:00
+- 🌤️ **Lanche da Manhã** (Morning Snack) — time: 10:00-11:30
+- ☀️ **Almoço** (Lunch) — time: 11:30-14:00
+- 🍎 **Lanche da Tarde** (Afternoon Snack) — time: 14:00-17:00
+- 🌙 **Jantar** (Dinner) — time: 17:00-21:00
+- 🌜 **Ceia** (Late-Night Snack) — time: 21:00-23:00
 
-Cada card mostra:
-- Nome da refeição
-- Total de calorias (se já logado)
-- Lista de alimentos registrados (thumbnail + nome + calorias)
-- Botão "+" para adicionar alimento
+Each card shows:
+- Meal name
+- Total calories (if already logged)
+- List of logged foods (thumbnail + name + calories)
+- "+" button to add food
 
-#### Água
-- Card com copo d'água e progresso (ex: 5/8 copos)
-- Botão "+" para adicionar copo
-- Meta diária configurável
+#### Water
+- Card with water glass and progress (e.g., 5/8 glasses)
+- "+" button to add a glass
+- Configurable daily goal
 
-#### Exercício
-- Card resumo de exercício do dia
-- Calorias queimadas
-- Botão "+" para adicionar exercício
+#### Exercise
+- Exercise summary card for the day
+- Calories burned
+- "+" button to add exercise
 
-### 3.5 Botão Central de Captura (FAB)
-- Floating Action Button grande, verde, centralizado na bottom nav
-- Ícone de câmera
-- Ao tocar:
-  1. Abre câmera nativa em fullscreen
-  2. Overlay com guia de enquadramento ("Posicione o prato no centro")
-  3. Botão de captura
-  4. Opção de galeria (ícone no canto)
+### 3.5 Central Capture Button (FAB)
+- Large, green Floating Action Button, centered on the bottom nav
+- Camera icon
+- On tap:
+  1. Opens native camera in fullscreen
+  2. Overlay with framing guide ("Posicione o prato no centro" / "Position the plate in the center")
+  3. Capture button
+  4. Gallery option (icon in the corner)
   5. Flash toggle
 
-### 3.6 Câmera / Captura de Foto
-- Câmera fullscreen com overlay
-- Guidelines visuais para posicionar o prato
-- Texto: "Aponte para sua refeição"
-- Botões:
-  - Capturar (centro, grande)
-  - Galeria (canto inferior esquerdo)
-  - Flash (canto superior direito)
-  - Fechar/X (canto superior esquerdo)
-- Após captura:
-  - Preview da foto
-  - Botão "Analisar" (confirmar)
-  - Botão "Tirar outra" (refazer)
+### 3.6 Camera / Photo Capture
+- Fullscreen camera with overlay
+- Visual guidelines to position the plate
+- Text: "Aponte para sua refeição" ("Point at your meal")
+- Buttons:
+  - Capture (center, large)
+  - Gallery (bottom left corner)
+  - Flash (top right corner)
+  - Close/X (top left corner)
+- After capture:
+  - Photo preview
+  - "Analisar" ("Analyze") button (confirm)
+  - "Tirar outra" ("Take another") button (redo)
 
-### 3.7 Análise IA — Loading
-- Foto em background com blur
-- Animação de loading (pulse ou shimmer)
-- Textos rotativos:
-  - "Identificando alimentos..."
-  - "Estimando porções..."
-  - "Calculando nutrientes..."
-- Tempo alvo: < 3 segundos
+### 3.7 AI Analysis — Loading
+- Photo in background with blur
+- Loading animation (pulse or shimmer)
+- Rotating text:
+  - "Identificando alimentos..." ("Identifying foods...")
+  - "Estimando porções..." ("Estimating portions...")
+  - "Calculando nutrientes..." ("Calculating nutrients...")
+- Target time: < 3 seconds
 
-### 3.8 Resultado da Análise IA
-Tela de resultado pós-análise:
+### 3.8 AI Analysis Result
+Post-analysis result screen:
 
 #### Header
-- Foto da refeição (miniatura)
-- Tipo de refeição detectado (ou seletor: Café/Almoço/Janta/Lanche)
+- Meal photo (thumbnail)
+- Detected meal type (or selector: Café/Almoço/Janta/Lanche — Breakfast/Lunch/Dinner/Snack)
 
-#### Lista de Alimentos Identificados
-Para cada alimento:
-- Nome do alimento (ex: "Arroz branco")
-- Porção estimada (ex: "150g — 1 colher de servir")
-- Calorias
-- Macros: P / C / G
-- Ícone de editar (lápis) — permite ajustar porção
-- Ícone de remover (X)
-- Confiança da IA (indicador visual: verde/amarelo/vermelho)
+#### Identified Food List
+For each food item:
+- Food name (e.g., "Arroz branco" / white rice)
+- Estimated portion (e.g., "150g — 1 colher de servir" / "150g — 1 serving spoon")
+- Calories
+- Macros: P / C / F
+- Edit icon (pencil) — allows portion adjustment
+- Remove icon (X)
+- AI confidence (visual indicator: green/yellow/red)
 
-#### Totais
-- Total de calorias da refeição
-- Total de cada macro
-- Botão "Adicionar mais alimentos" (busca manual)
-- Botão "Salvar refeição" (CTA principal, verde)
+#### Totals
+- Total meal calories
+- Total for each macro
+- "Adicionar mais alimentos" ("Add more foods") button (manual search)
+- "Salvar refeição" ("Save meal") button (primary CTA, green)
 
-#### Ajuste de Porção (Modal)
-- Slider para ajustar gramas
-- Opções rápidas: "Metade", "Dobro", "Porção padrão"
-- Atualiza calorias/macros em tempo real
+#### Portion Adjustment (Modal)
+- Slider to adjust grams
+- Quick options: "Metade" ("Half"), "Dobro" ("Double"), "Porção padrão" ("Standard portion")
+- Updates calories/macros in real time
 
-### 3.9 Busca Manual de Alimentos
-- Campo de busca com autocomplete
-- Fonte: banco TACO/TBCA + alimentos customizados do usuário
-- Filtros:
-  - Favoritos
-  - Recentes
-  - Categorias (Frutas, Carnes, Grãos, Laticínios, etc.)
-- Cada resultado mostra:
-  - Nome do alimento
-  - Calorias por 100g
-  - Macro resumo
-- Ao selecionar:
-  - Tela de definir porção (gramas ou medida caseira)
-  - Medidas caseiras brasileiras: colher de sopa, concha, escumadeira, xícara, unidade
+### 3.9 Manual Food Search
+- Search field with autocomplete
+- Source: TACO/TBCA database + user's custom foods
+- Filters:
+  - Favorites
+  - Recent
+  - Categories (Fruits, Meats, Grains, Dairy, etc.)
+- Each result shows:
+  - Food name
+  - Calories per 100g
+  - Macro summary
+- On selection:
+  - Portion definition screen (grams or household measure)
+  - Brazilian household measures: colher de sopa (tablespoon), concha (ladle), escumadeira (slotted spoon), xícara (cup), unidade (unit)
 
-### 3.10 Scanner de Código de Barras
-- Câmera com overlay de scan area
-- Lê código EAN-13 (padrão brasileiro)
-- Busca em:
-  1. Base interna PratoIA
+### 3.10 Barcode Scanner
+- Camera with scan area overlay
+- Reads EAN-13 code (Brazilian standard)
+- Searches in:
+  1. PratoIA internal database
   2. Open Food Facts API
-  3. Se não encontrado: tela para cadastrar manualmente
-- Resultado: card do produto com info nutricional
-- Definir porção e salvar
+  3. If not found: screen to manually register
+- Result: product card with nutritional info
+- Set portion and save
 
-### 3.11 Diário Alimentar / Meal Log
-- Visualização dia a dia
-- Swipe horizontal para navegar entre dias
-- Calendário selecionável (topo)
-- Para cada dia:
-  - Lista de refeições com alimentos
-  - Totais do dia
-  - Gráfico de pizza (macros)
-- Opção de copiar refeição de outro dia
-- Opção de duplicar refeição
+### 3.11 Food Diary / Meal Log
+- Day-by-day view
+- Horizontal swipe to navigate between days
+- Selectable calendar (top)
+- For each day:
+  - List of meals with foods
+  - Daily totals
+  - Pie chart (macros)
+- Option to copy meal from another day
+- Option to duplicate meal
 
-### 3.12 Estatísticas (Stats)
-#### Visão Semanal
-- Gráfico de barras: calorias por dia (7 dias)
-- Linha de meta calórica
-- Média semanal de calorias
-- Média semanal de cada macro
-- Aderência à meta (%)
+### 3.12 Statistics (Stats)
+#### Weekly View
+- Bar chart: calories per day (7 days)
+- Calorie goal line
+- Weekly average calories
+- Weekly average for each macro
+- Goal adherence (%)
 
-#### Visão Mensal
-- Calendário heat map (cores por aderência)
-- Gráfico de linha: peso ao longo do tempo
-- Gráfico de barras: macros médios por semana
-- Tendências: "Você está consumindo 15% mais proteína esta semana"
+#### Monthly View
+- Calendar heat map (colors by adherence)
+- Line chart: weight over time
+- Bar chart: average macros per week
+- Trends: "Você está consumindo 15% mais proteína esta semana" ("You're consuming 15% more protein this week")
 
-#### Visão por Nutriente
-- Drill-down em qualquer macro
-- Top alimentos consumidos (ranking)
-- Distribuição por refeição
+#### Per-Nutrient View
+- Drill-down into any macro
+- Top consumed foods (ranking)
+- Distribution by meal
 
-### 3.13 Perfil & Configurações
-#### Perfil
-- Foto do usuário
-- Nome
+### 3.13 Profile & Settings
+#### Profile
+- User photo
+- Name
 - Email
-- Dados físicos (editáveis): peso atual, altura, idade
-- Meta de peso
-- Nível de atividade
-- Objetivo (emagrecer/manter/ganhar)
+- Physical data (editable): current weight, height, age
+- Weight goal
+- Activity level
+- Objective (lose/maintain/gain)
 
-#### Configurações
-- **Metas nutricionais**: editar calorias e macros manualmente
-- **Notificações**: ligar/desligar por tipo
-- **Unidades**: kg/lb, cm/ft (padrão: métrico)
-- **Tema**: Claro / Escuro / Automático
-- **Idioma**: Português (BR) — fixo no MVP
-- **Conta**: alterar email, senha
-- **Assinatura**: gerenciar plano
-- **Integrações**: Apple Health, Google Fit, Samsung Health
-- **Dados**: exportar dados (CSV), excluir conta
-- **LGPD**: política de privacidade, solicitar dados, consentimentos
-- **Sobre**: versão, termos de uso
-- **Feedback**: enviar feedback/sugestão
+#### Settings
+- **Nutritional goals**: manually edit calories and macros
+- **Notifications**: toggle on/off by type
+- **Units**: kg/lb, cm/ft (default: metric)
+- **Theme**: Light / Dark / Auto
+- **Language**: Português (BR) — fixed in MVP
+- **Account**: change email, password
+- **Subscription**: manage plan
+- **Integrations**: Apple Health, Google Fit, Samsung Health
+- **Data**: export data (CSV), delete account
+- **LGPD** (Brazilian Data Protection Law): privacy policy, request data, consents
+- **About**: version, terms of use
+- **Feedback**: send feedback/suggestion
 
-### 3.14 Configuração de Metas
-- Tela acessível pelo perfil ou onboarding
-- Meta calórica diária (calculada ou manual)
-- Distribuição de macros:
-  - Presets: Equilibrada, Low Carb, High Protein, Keto, Custom
-  - Ou percentuais customizados
-- Meta de água (ml/dia)
-- Meta de peso (kg)
-- Prazo estimado para atingir meta
+### 3.14 Goal Configuration
+- Screen accessible from profile or onboarding
+- Daily calorie goal (calculated or manual)
+- Macro distribution:
+  - Presets: Balanced, Low Carb, High Protein, Keto, Custom
+  - Or custom percentages
+- Water goal (ml/day)
+- Weight goal (kg)
+- Estimated timeline to reach goal
 
-### 3.15 Receitas / Recipe Builder
-- Criar receita customizada:
-  - Nome da receita
-  - Ingredientes (busca + quantidade)
-  - Número de porções
-  - Foto (opcional)
-  - Calorias/macros calculados automaticamente por porção
-- Salvar receita
-- Listar receitas salvas
-- Usar receita como entrada rápida no log
+### 3.15 Recipes / Recipe Builder
+- Create custom recipe:
+  - Recipe name
+  - Ingredients (search + quantity)
+  - Number of servings
+  - Photo (optional)
+  - Calories/macros automatically calculated per serving
+- Save recipe
+- List saved recipes
+- Use recipe as quick entry in the log
 
-### 3.16 Rastreamento de Água
-- Widget no dashboard
-- Tela dedicada com:
-  - Meta diária (padrão: 2000ml, configurável)
-  - Botões rápidos: +200ml, +300ml, +500ml
-  - Quantidade customizada
-  - Histórico do dia (lista de entradas)
-  - Gráfico semanal
+### 3.16 Water Tracking
+- Widget on dashboard
+- Dedicated screen with:
+  - Daily goal (default: 2000ml, configurable)
+  - Quick buttons: +200ml, +300ml, +500ml
+  - Custom amount
+  - Day's history (list of entries)
+  - Weekly chart
 
-### 3.17 Registro de Exercícios
-- Busca de exercícios (base pré-carregada)
-- Categorias: Cardio, Musculação, Funcional, Esportes, Yoga, Outros
-- Para cada exercício:
-  - Duração (minutos)
-  - Intensidade (leve, moderada, intensa)
-  - Calorias queimadas (calculado ou manual)
-- Integração com Apple Health / Google Fit para importar automaticamente
+### 3.17 Exercise Logging
+- Exercise search (pre-loaded database)
+- Categories: Cardio, Strength Training, Functional, Sports, Yoga, Other
+- For each exercise:
+  - Duration (minutes)
+  - Intensity (light, moderate, intense)
+  - Calories burned (calculated or manual)
+- Integration with Apple Health / Google Fit for automatic import
 
-### 3.18 Integrações
-- Apple Health (iOS): importar/exportar peso, exercícios, passos
-- Google Fit (Android): importar/exportar peso, exercícios, passos
-- Samsung Health: idem
+### 3.18 Integrations
+- Apple Health (iOS): import/export weight, exercises, steps
+- Google Fit (Android): import/export weight, exercises, steps
+- Samsung Health: same
 - Smartwatches: via Health APIs
-- Exportar dados em CSV
+- Export data as CSV
 
 ### 3.19 Bottom Navigation Bar
-5 itens:
-1. 🏠 **Início** — Dashboard
-2. 📊 **Stats** — Estatísticas
-3. 📸 **Câmera** (FAB central, elevado) — Captura de foto
-4. 📖 **Diário** — Meal Log
-5. 👤 **Perfil** — Configurações e perfil
+5 items:
+1. 🏠 **Início** (Home) — Dashboard
+2. 📊 **Stats** — Statistics
+3. 📸 **Câmera** (Camera) (central FAB, elevated) — Photo capture
+4. 📖 **Diário** (Diary) — Meal Log
+5. 👤 **Perfil** (Profile) — Settings and profile
 
 ---
 
-## 4. Onboarding Detalhado
+## 4. Detailed Onboarding
 
-Fluxo sequencial de 12 etapas. Progress bar no topo. Cada etapa = 1 tela.
+Sequential flow of 12 steps. Progress bar at the top. Each step = 1 screen.
 
-### Etapa 1: Boas-Vindas
-- Logo PratoIA
-- Título: "Bem-vindo ao PratoIA"
-- Subtítulo: "O jeito mais fácil de controlar sua alimentação"
-- Animação de uma foto sendo tirada de um prato → resultado com macros
-- Botão: "Começar" (CTA verde)
+### Step 1: Welcome
+- PratoIA logo
+- Title: "Bem-vindo ao PratoIA" ("Welcome to PratoIA")
+- Subtitle: "O jeito mais fácil de controlar sua alimentação" ("The easiest way to control your diet")
+- Animation of a photo being taken of a plate → result with macros
+- Button: "Começar" ("Start") (green CTA)
 
-### Etapa 2: Sexo Biológico
-- Pergunta: "Qual seu sexo biológico?"
-- Opções (cards visuais):
-  - 👨 Masculino
-  - 👩 Feminino
-  - ⚧ Outro / Prefiro não dizer
-- Usado para cálculo de TMB (Harris-Benedict / Mifflin-St Jeor)
+### Step 2: Biological Sex
+- Question: "Qual seu sexo biológico?" ("What is your biological sex?")
+- Options (visual cards):
+  - 👨 Masculino (Male)
+  - 👩 Feminino (Female)
+  - ⚧ Outro / Prefiro não dizer (Other / Prefer not to say)
+- Used for BMR calculation (Harris-Benedict / Mifflin-St Jeor)
 
-### Etapa 3: Data de Nascimento
-- Pergunta: "Qual sua data de nascimento?"
-- Date picker (scroll wheels estilo iOS)
-- Formato: DD/MM/AAAA
-- Validação: idade mínima 13 anos
+### Step 3: Date of Birth
+- Question: "Qual sua data de nascimento?" ("What is your date of birth?")
+- Date picker (iOS-style scroll wheels)
+- Format: DD/MM/YYYY
+- Validation: minimum age 13 years
 
-### Etapa 4: Altura
-- Pergunta: "Qual sua altura?"
-- Slider ou scroll picker
-- Unidade: cm (padrão BR)
+### Step 4: Height
+- Question: "Qual sua altura?" ("What is your height?")
+- Slider or scroll picker
+- Unit: cm (Brazilian default)
 - Range: 100cm — 250cm
-- Toggle para pés/polegadas
+- Toggle for feet/inches
 
-### Etapa 5: Peso Atual
-- Pergunta: "Qual seu peso atual?"
-- Scroll picker com decimais (0.1 kg)
-- Unidade: kg (padrão BR)
+### Step 5: Current Weight
+- Question: "Qual seu peso atual?" ("What is your current weight?")
+- Scroll picker with decimals (0.1 kg)
+- Unit: kg (Brazilian default)
 - Range: 30kg — 300kg
-- Toggle para libras
+- Toggle for pounds
 
-### Etapa 6: Objetivo
-- Pergunta: "Qual seu objetivo?"
-- Opções (cards visuais com ícones):
-  - 📉 Perder peso
-  - ⚖️ Manter peso
-  - 📈 Ganhar massa muscular
-- Animação de feedback ao selecionar
+### Step 6: Goal
+- Question: "Qual seu objetivo?" ("What is your goal?")
+- Options (visual cards with icons):
+  - 📉 Perder peso (Lose weight)
+  - ⚖️ Manter peso (Maintain weight)
+  - 📈 Ganhar massa muscular (Gain muscle mass)
+- Feedback animation on selection
 
-### Etapa 7: Peso Desejado (se objetivo ≠ manter)
-- Pergunta: "Qual seu peso desejado?"
-- Mesmo picker da etapa 5
-- Validação:
-  - Se perder peso: peso desejado < peso atual
-  - Se ganhar: peso desejado > peso atual
-- Mostra diferença: "Você quer [perder/ganhar] X kg"
+### Step 7: Target Weight (if goal ≠ maintain)
+- Question: "Qual seu peso desejado?" ("What is your target weight?")
+- Same picker as step 5
+- Validation:
+  - If losing weight: target weight < current weight
+  - If gaining: target weight > current weight
+- Shows difference: "Você quer [perder/ganhar] X kg" ("You want to [lose/gain] X kg")
 
-### Etapa 8: Nível de Atividade Física
-- Pergunta: "Qual seu nível de atividade?"
-- Opções (cards com descrição):
-  - 🛋️ **Sedentário** — Pouco ou nenhum exercício
-  - 🚶 **Levemente ativo** — 1-3 dias/semana
-  - 🏃 **Moderadamente ativo** — 3-5 dias/semana
-  - 💪 **Muito ativo** — 6-7 dias/semana
-  - 🏋️ **Extremamente ativo** — Atleta, 2x/dia
-- Fator multiplicador para TDEE
+### Step 8: Physical Activity Level
+- Question: "Qual seu nível de atividade?" ("What is your activity level?")
+- Options (cards with description):
+  - 🛋️ **Sedentário** (Sedentary) — Little or no exercise
+  - 🚶 **Levemente ativo** (Lightly active) — 1-3 days/week
+  - 🏃 **Moderadamente ativo** (Moderately active) — 3-5 days/week
+  - 💪 **Muito ativo** (Very active) — 6-7 days/week
+  - 🏋️ **Extremamente ativo** (Extremely active) — Athlete, 2x/day
+- Multiplier factor for TDEE
 
-### Etapa 9: Velocidade de Progresso
-- Pergunta: "Qual velocidade você prefere?"
-- Opções:
-  - 🐢 **Devagar** — 0.25 kg/semana (mais sustentável)
-  - 🐇 **Moderado** — 0.5 kg/semana (recomendado) ✨
-  - 🚀 **Rápido** — 0.75-1 kg/semana (mais agressivo)
-- Info: "Recomendamos a velocidade moderada para resultados sustentáveis"
+### Step 9: Progress Speed
+- Question: "Qual velocidade você prefere?" ("What speed do you prefer?")
+- Options:
+  - 🐢 **Devagar** (Slow) — 0.25 kg/week (more sustainable)
+  - 🐇 **Moderado** (Moderate) — 0.5 kg/week (recommended) ✨
+  - 🚀 **Rápido** (Fast) — 0.75-1 kg/week (more aggressive)
+- Info: "Recomendamos a velocidade moderada para resultados sustentáveis" ("We recommend moderate speed for sustainable results")
 
-### Etapa 10: Preferências Alimentares
-- Pergunta: "Você segue alguma dieta específica?"
-- Opções (multi-select, chips):
-  - Sem restrições
-  - Vegetariano
-  - Vegano
+### Step 10: Dietary Preferences
+- Question: "Você segue alguma dieta específica?" ("Do you follow any specific diet?")
+- Options (multi-select, chips):
+  - Sem restrições (No restrictions)
+  - Vegetariano (Vegetarian)
+  - Vegano (Vegan)
   - Low Carb
   - Keto
-  - Sem Glúten
-  - Sem Lactose
+  - Sem Glúten (Gluten-free)
+  - Sem Lactose (Lactose-free)
   - Halal
-  - Outro
-- Afeta sugestões e filtros de busca
+  - Outro (Other)
+- Affects suggestions and search filters
 
-### Etapa 11: Restrições / Alergias
-- Pergunta: "Tem alguma alergia alimentar?"
-- Opções (multi-select, chips):
-  - Nenhuma
-  - Amendoim
-  - Castanhas (tree nuts)
-  - Leite
-  - Ovos
-  - Soja
-  - Trigo/Glúten
-  - Frutos do mar
-  - Peixes
-  - Outra (campo de texto)
+### Step 11: Restrictions / Allergies
+- Question: "Tem alguma alergia alimentar?" ("Do you have any food allergies?")
+- Options (multi-select, chips):
+  - Nenhuma (None)
+  - Amendoim (Peanut)
+  - Castanhas (Tree nuts)
+  - Leite (Milk)
+  - Ovos (Eggs)
+  - Soja (Soy)
+  - Trigo/Glúten (Wheat/Gluten)
+  - Frutos do mar (Seafood)
+  - Peixes (Fish)
+  - Outra (Other) (text field)
 
-### Etapa 12: Resultado Personalizado
-- Título: "Seu plano está pronto! 🎉"
-- Card com resumo:
-  - Meta calórica diária: {X} kcal
-  - Proteína: {X}g | Carboidrato: {X}g | Gordura: {X}g
-  - Previsão: "Você atingirá {peso_desejado}kg em ~{X} semanas"
-- Gráfico de projeção (linha descendente/ascendente)
-- Botão: "Começar a usar o PratoIA" (CTA)
+### Step 12: Personalized Result
+- Title: "Seu plano está pronto! 🎉" ("Your plan is ready! 🎉")
+- Summary card:
+  - Daily calorie goal: {X} kcal
+  - Protein: {X}g | Carbohydrate: {X}g | Fat: {X}g
+  - Forecast: "Você atingirá {peso_desejado}kg em ~{X} semanas" ("You'll reach {target_weight}kg in ~{X} weeks")
+- Projection chart (descending/ascending line)
+- Button: "Começar a usar o PratoIA" ("Start using PratoIA") (CTA)
 
-### Cálculos do Onboarding
+### Onboarding Calculations
 
-#### TMB (Taxa Metabólica Basal) — Mifflin-St Jeor
+#### BMR (Basal Metabolic Rate) — Mifflin-St Jeor
 ```
-Homens:  TMB = 10 × peso(kg) + 6.25 × altura(cm) - 5 × idade - 5 + 161
-Mulheres: TMB = 10 × peso(kg) + 6.25 × altura(cm) - 5 × idade - 161
-```
-
-#### TDEE (Gasto Energético Total Diário)
-```
-TDEE = TMB × fator_atividade
-
-Sedentário: 1.2
-Levemente ativo: 1.375
-Moderadamente ativo: 1.55
-Muito ativo: 1.725
-Extremamente ativo: 1.9
+Men:   BMR = 10 × weight(kg) + 6.25 × height(cm) - 5 × age - 5 + 161
+Women: BMR = 10 × weight(kg) + 6.25 × height(cm) - 5 × age - 161
 ```
 
-#### Meta Calórica
+#### TDEE (Total Daily Energy Expenditure)
 ```
-Perder peso (0.5kg/sem): TDEE - 500 kcal
-Manter peso: TDEE
-Ganhar massa (0.5kg/sem): TDEE + 300-500 kcal
+TDEE = BMR × activity_factor
+
+Sedentary: 1.2
+Lightly active: 1.375
+Moderately active: 1.55
+Very active: 1.725
+Extremely active: 1.9
 ```
 
-#### Distribuição de Macros (Padrão Equilibrada)
+#### Calorie Goal
 ```
-Proteína: 30% das calorias → calorias × 0.30 / 4
-Carboidrato: 40% das calorias → calorias × 0.40 / 4
-Gordura: 30% das calorias → calorias × 0.30 / 9
+Lose weight (0.5kg/week): TDEE - 500 kcal
+Maintain weight: TDEE
+Gain muscle (0.5kg/week): TDEE + 300-500 kcal
+```
+
+#### Macro Distribution (Balanced Default)
+```
+Protein: 30% of calories → calories × 0.30 / 4
+Carbohydrate: 40% of calories → calories × 0.40 / 4
+Fat: 30% of calories → calories × 0.30 / 9
 ```
 
 ---
 
 ## 5. Feature Matrix
 
-| # | Feature | Cal AI | PratoIA | Prioridade | Notas |
-|---|---------|--------|---------|------------|-------|
-| 1 | Foto → análise calórica | IA com depth sensor | Gemini Flash 2.0 + fallback GPT-4.1 nano | **MVP** | Core feature |
-| 2 | Identificação de alimentos | Multi-item detection | Idem via prompt engineering | **MVP** | |
-| 3 | Estimativa de porção | Depth sensor + IA | IA visual (sem depth sensor) | **MVP** | Estimativa por referência visual |
-| 4 | Calorias + Macros (P/C/G) | Sim | Sim | **MVP** | |
-| 5 | Diário alimentar | Sim | Sim | **MVP** | |
-| 6 | Dashboard com progresso | Sim | Sim | **MVP** | |
-| 7 | Busca manual de alimentos | Base USDA/genérica | Base TACO/TBCA | **MVP** | Adaptação brasileira |
-| 8 | Medidas caseiras | Cups, tablespoons | Colher de sopa, concha, xícara | **MVP** | Localizado para BR |
-| 9 | Onboarding completo | 10-12 etapas | 12 etapas (ver seção 4) | **MVP** | |
-| 10 | Cálculo automático de metas | TMB + TDEE | Idem (Mifflin-St Jeor) | **MVP** | |
-| 11 | Registro de peso | Sim | Sim | **MVP** | |
-| 12 | Gráfico semanal de calorias | Sim | Sim | **MVP** | |
-| 13 | Scanner de código de barras | Sim | Open Food Facts + base própria | **MVP** | |
-| 14 | Autenticação (email/social) | Sim | Supabase Auth (email, Google, Apple) | **MVP** | |
-| 15 | Push notifications | Sim | FCM | **MVP** | Lembretes de refeição |
-| 16 | Rastreamento de água | Sim | Sim | **MVP** | |
-| 17 | Refeições favoritas/recentes | Sim | Sim | **MVP** | |
-| 18 | Copiar refeição | Sim | Sim | **MVP** | |
-| 19 | Dark mode | Sim | Sim | **MVP** | |
-| 20 | Análise de foto da galeria | Sim | Sim | **MVP** | |
-| 21 | Editar porção pós-análise | Sim | Slider + medidas caseiras | **MVP** | |
-| 22 | Receitas customizadas | Sim | Sim | **v1.1** | |
-| 23 | Registro de exercícios | Sim | Sim | **v1.1** | |
-| 24 | Integração Apple Health | Sim | Sim | **v1.1** | |
-| 25 | Integração Google Fit | Sim | Sim | **v1.1** | |
-| 26 | Estatísticas mensais | Sim | Sim | **v1.1** | |
-| 27 | Gráfico de peso ao longo do tempo | Sim | Sim | **v1.1** | |
-| 28 | Micronutrientes (vitaminas, minerais) | Parcial | TACO tem dados completos | **v1.1** | Diferencial! |
-| 29 | Paywall / Assinatura | Sim | RevenueCat | **v1.1** | MVP gratuito |
-| 30 | Streaks e gamificação | Sim | Sim | **v1.1** | |
-| 31 | Exportar dados CSV | Sim | Sim | **v1.1** | |
-| 32 | Alimentos customizados (criar) | Sim | Sim | **v1.1** | |
-| 33 | Análise de texto (descrever refeição) | Sim | Gemini prompt | **v2.0** | "Comi arroz, feijão e bife" |
-| 34 | Widget home screen | Sim | Flutter widget | **v2.0** | |
-| 35 | Apple Watch / Wear OS | Sim | Flutter companion | **v2.0** | |
-| 36 | Plano alimentar IA | Não | Diferencial PratoIA | **v2.0** | Geração de cardápio |
-| 37 | Social/Compartilhar | Parcial | Share card com resumo | **v2.0** | |
-| 38 | Multi-idioma | Inglês | Português BR (+ EN futuro) | **v2.0** | |
-| 39 | Integração com nutricionista | Não | Compartilhar diário | **v2.0** | Diferencial BR |
-| 40 | Scanner de rótulo nutricional | Parcial | OCR de tabela nutricional | **v2.0** | |
+| # | Feature | Cal AI | PratoIA | Priority | Notes |
+|---|---------|--------|---------|----------|-------|
+| 1 | Photo → calorie analysis | AI with depth sensor | Gemini Flash 2.0 + fallback GPT-4.1 nano | **MVP** | Core feature |
+| 2 | Food identification | Multi-item detection | Same via prompt engineering | **MVP** | |
+| 3 | Portion estimation | Depth sensor + AI | Visual AI (no depth sensor) | **MVP** | Estimation by visual reference |
+| 4 | Calories + Macros (P/C/F) | Yes | Yes | **MVP** | |
+| 5 | Food diary | Yes | Yes | **MVP** | |
+| 6 | Dashboard with progress | Yes | Yes | **MVP** | |
+| 7 | Manual food search | USDA/generic database | TACO/TBCA database | **MVP** | Brazilian adaptation |
+| 8 | Household measures | Cups, tablespoons | Colher de sopa (tablespoon), concha (ladle), xícara (cup) | **MVP** | Localized for Brazil |
+| 9 | Complete onboarding | 10-12 steps | 12 steps (see section 4) | **MVP** | |
+| 10 | Automatic goal calculation | BMR + TDEE | Same (Mifflin-St Jeor) | **MVP** | |
+| 11 | Weight logging | Yes | Yes | **MVP** | |
+| 12 | Weekly calorie chart | Yes | Yes | **MVP** | |
+| 13 | Barcode scanner | Yes | Open Food Facts + own database | **MVP** | |
+| 14 | Authentication (email/social) | Yes | Supabase Auth (email, Google, Apple) | **MVP** | |
+| 15 | Push notifications | Yes | FCM | **MVP** | Meal reminders |
+| 16 | Water tracking | Yes | Yes | **MVP** | |
+| 17 | Favorite/recent meals | Yes | Yes | **MVP** | |
+| 18 | Copy meal | Yes | Yes | **MVP** | |
+| 19 | Dark mode | Yes | Yes | **MVP** | |
+| 20 | Gallery photo analysis | Yes | Yes | **MVP** | |
+| 21 | Edit portion post-analysis | Yes | Slider + household measures | **MVP** | |
+| 22 | Custom recipes | Yes | Yes | **v1.1** | |
+| 23 | Exercise logging | Yes | Yes | **v1.1** | |
+| 24 | Apple Health integration | Yes | Yes | **v1.1** | |
+| 25 | Google Fit integration | Yes | Yes | **v1.1** | |
+| 26 | Monthly statistics | Yes | Yes | **v1.1** | |
+| 27 | Weight chart over time | Yes | Yes | **v1.1** | |
+| 28 | Micronutrients (vitamins, minerals) | Partial | TACO has complete data | **v1.1** | Differentiator! |
+| 29 | Paywall / Subscription | Yes | RevenueCat | **v1.1** | MVP is free |
+| 30 | Streaks and gamification | Yes | Yes | **v1.1** | |
+| 31 | Export data CSV | Yes | Yes | **v1.1** | |
+| 32 | Custom foods (create) | Yes | Yes | **v1.1** | |
+| 33 | Text analysis (describe meal) | Yes | Gemini prompt | **v2.0** | "Comi arroz, feijão e bife" ("I ate rice, beans, and steak") |
+| 34 | Home screen widget | Yes | Flutter widget | **v2.0** | |
+| 35 | Apple Watch / Wear OS | Yes | Flutter companion | **v2.0** | |
+| 36 | AI meal plan | No | PratoIA differentiator | **v2.0** | Menu generation |
+| 37 | Social/Share | Partial | Share card with summary | **v2.0** | |
+| 38 | Multi-language | English | Portuguese BR (+ EN future) | **v2.0** | |
+| 39 | Nutritionist integration | No | Share diary | **v2.0** | Brazilian differentiator |
+| 40 | Nutrition label scanner | Partial | OCR of nutrition table | **v2.0** | |
 
 ---
 
-## 6. Especificações UI/UX
+## 6. UI/UX Specifications
 
 ### 6.1 Design Language
-- **Estilo:** Clean, minimalista, moderno — similar ao Cal AI
-- **Inspiração:** Cal AI, MyFitnessPal, Yazio
-- **Cantos:** Arredondados (border-radius: 16px para cards, 12px para botões)
-- **Sombras:** Sutis, elevation baixa (2-4dp)
-- **Espaçamento:** Sistema de 8px grid
+- **Style:** Clean, minimalist, modern — similar to Cal AI
+- **Inspiration:** Cal AI, MyFitnessPal, Yazio
+- **Corners:** Rounded (border-radius: 16px for cards, 12px for buttons)
+- **Shadows:** Subtle, low elevation (2-4dp)
+- **Spacing:** 8px grid system
 
-### 6.2 Paleta de Cores
+### 6.2 Color Palette
 
 #### Light Mode
-| Elemento | Cor | Hex |
-|----------|-----|-----|
-| Primary (CTA, destaques) | Verde vibrante | `#2ECC71` |
-| Primary Dark | Verde escuro | `#27AE60` |
-| Secondary | Azul suave | `#3498DB` |
-| Background | Branco off-white | `#F8F9FA` |
-| Surface (cards) | Branco puro | `#FFFFFF` |
-| Text Primary | Quase preto | `#1A1A2E` |
-| Text Secondary | Cinza médio | `#6C757D` |
-| Proteína | Azul | `#3498DB` |
-| Carboidrato | Laranja | `#F39C12` |
-| Gordura | Amarelo | `#F1C40F` |
-| Calorias | Verde | `#2ECC71` |
-| Erro | Vermelho | `#E74C3C` |
-| Sucesso | Verde | `#27AE60` |
-| Warning | Amarelo | `#F39C12` |
+| Element | Color | Hex |
+|---------|-------|-----|
+| Primary (CTA, highlights) | Vibrant green | `#2ECC71` |
+| Primary Dark | Dark green | `#27AE60` |
+| Secondary | Soft blue | `#3498DB` |
+| Background | Off-white | `#F8F9FA` |
+| Surface (cards) | Pure white | `#FFFFFF` |
+| Text Primary | Near black | `#1A1A2E` |
+| Text Secondary | Medium gray | `#6C757D` |
+| Protein | Blue | `#3498DB` |
+| Carbohydrate | Orange | `#F39C12` |
+| Fat | Yellow | `#F1C40F` |
+| Calories | Green | `#2ECC71` |
+| Error | Red | `#E74C3C` |
+| Success | Green | `#27AE60` |
+| Warning | Yellow | `#F39C12` |
 
 #### Dark Mode
-| Elemento | Cor | Hex |
-|----------|-----|-----|
-| Background | Escuro profundo | `#0D1117` |
-| Surface (cards) | Cinza escuro | `#161B22` |
-| Text Primary | Branco | `#F0F6FC` |
-| Text Secondary | Cinza claro | `#8B949E` |
-| Primary | Verde (mesmo) | `#2ECC71` |
-| Demais cores | Mesmas, com opacidade ajustada | — |
+| Element | Color | Hex |
+|---------|-------|-----|
+| Background | Deep dark | `#0D1117` |
+| Surface (cards) | Dark gray | `#161B22` |
+| Text Primary | White | `#F0F6FC` |
+| Text Secondary | Light gray | `#8B949E` |
+| Primary | Green (same) | `#2ECC71` |
+| Other colors | Same, with adjusted opacity | — |
 
-### 6.3 Tipografia
-| Uso | Font | Peso | Tamanho |
-|-----|------|------|---------|
-| Display / Números grandes | Inter ou SF Pro | Bold (700) | 32-48px |
-| Título de seção | Inter | SemiBold (600) | 20-24px |
-| Subtítulo | Inter | Medium (500) | 16-18px |
+### 6.3 Typography
+| Usage | Font | Weight | Size |
+|-------|------|--------|------|
+| Display / Large numbers | Inter or SF Pro | Bold (700) | 32-48px |
+| Section title | Inter | SemiBold (600) | 20-24px |
+| Subtitle | Inter | Medium (500) | 16-18px |
 | Body text | Inter | Regular (400) | 14-16px |
 | Caption / Labels | Inter | Regular (400) | 12px |
-| Números (calorias/macros) | Inter | Bold (700) | Variável |
+| Numbers (calories/macros) | Inter | Bold (700) | Variable |
 
-### 6.4 Componentes
+### 6.4 Components
 
 #### Cards
 - Background: Surface color
@@ -580,81 +580,81 @@ Gordura: 30% das calorias → calorias × 0.30 / 9
 - Padding: 16px
 - Shadow: `0 2px 8px rgba(0,0,0,0.08)`
 
-#### Botões
-- **Primary CTA:** Background verde, texto branco, border-radius 12px, height 56px
-- **Secondary:** Outline verde, background transparente
-- **Text button:** Sem background, texto verde
-- **Disabled:** Opacidade 40%
+#### Buttons
+- **Primary CTA:** Green background, white text, border-radius 12px, height 56px
+- **Secondary:** Green outline, transparent background
+- **Text button:** No background, green text
+- **Disabled:** 40% opacity
 
 #### Inputs
 - Border radius: 12px
 - Border: 1px solid `#E0E0E0`
-- Focus border: verde primary
+- Focus border: primary green
 - Height: 52px
-- Padding horizontal: 16px
+- Horizontal padding: 16px
 
 #### Progress Indicators
-- **Circular (calorias):** Stroke width 12px, animação de preenchimento
-- **Linear (macros):** Height 8px, border-radius 4px, animação de progresso
-- **Onboarding:** Dots ou barra contínua no topo
+- **Circular (calories):** Stroke width 12px, fill animation
+- **Linear (macros):** Height 8px, border-radius 4px, progress animation
+- **Onboarding:** Dots or continuous bar at the top
 
-### 6.5 Animações e Transições
-| Contexto | Tipo | Duração | Curve |
-|----------|------|---------|-------|
-| Navegação entre telas | Slide horizontal | 300ms | easeInOut |
-| Onboarding | Slide horizontal | 300ms | easeInOut |
-| Cards aparecendo | Fade + slide up | 200ms | easeOut |
-| Progresso calórico | Animação circular | 800ms | easeInOut |
-| Barras de macro | Preenchimento animado | 600ms | easeOut |
+### 6.5 Animations and Transitions
+| Context | Type | Duration | Curve |
+|---------|------|----------|-------|
+| Screen navigation | Horizontal slide | 300ms | easeInOut |
+| Onboarding | Horizontal slide | 300ms | easeInOut |
+| Cards appearing | Fade + slide up | 200ms | easeOut |
+| Calorie progress | Circular animation | 800ms | easeInOut |
+| Macro bars | Animated fill | 600ms | easeOut |
 | FAB press | Scale down 0.95 | 100ms | easeIn |
 | Modal bottom sheet | Slide up | 250ms | decelerate |
-| Loading (análise IA) | Shimmer/pulse | Loop | linear |
-| Sucesso (salvar) | Check mark Lottie | 500ms | — |
+| Loading (AI analysis) | Shimmer/pulse | Loop | linear |
+| Success (save) | Check mark Lottie | 500ms | — |
 | Splash logo | Fade in + scale | 500ms | easeOut |
 
-### 6.6 Ícones
-- Biblioteca: **Phosphor Icons** ou **Lucide** (line style)
-- Consistência: todos line, stroke 1.5-2px
-- Tamanho padrão: 24px (bottom nav: 28px)
+### 6.6 Icons
+- Library: **Phosphor Icons** or **Lucide** (line style)
+- Consistency: all line, stroke 1.5-2px
+- Default size: 24px (bottom nav: 28px)
 
-### 6.7 Ilustrações
-- Estilo: Flat/minimal com paleta de cores do app
-- Uso: onboarding, estados vazios, erros
-- Opção: Undraw.co ou ilustrações customizadas
+### 6.7 Illustrations
+- Style: Flat/minimal with app color palette
+- Usage: onboarding, empty states, errors
+- Option: Undraw.co or custom illustrations
 
 ---
 
-## 7. Integração com IA
+## 7. AI Integration
 
-### 7.1 Fluxo Técnico de Análise de Foto
+### 7.1 Photo Analysis Technical Flow
 
 ```
-[Usuário tira foto]
+[User takes photo]
         ↓
-[Upload para Supabase Storage]
+[Upload to Supabase Storage]
         ↓
-[Frontend envia request para API]
+[Frontend sends request to API]
   POST /api/v1/meals/analyze
   Body: { image_url, meal_type?, user_id }
         ↓
 [Backend → Gemini Flash 2.0]
-  - Envia imagem + prompt estruturado
+  - Sends image + structured prompt
   - Timeout: 10s
         ↓
-  [Sucesso?]
-    Sim → Parse resposta JSON → retornar
-    Não → [Fallback: GPT-4.1 nano]
-            - Mesmo prompt, mesma imagem
+  [Success?]
+    Yes → Parse JSON response → return
+    No  → [Fallback: GPT-4.1 nano]
+            - Same prompt, same image
             - Timeout: 15s
             ↓
-            [Sucesso?]
-              Sim → Parse → retornar
-              Não → Retornar erro ao usuário
+            [Success?]
+              Yes → Parse → return
+              No  → Return error to user
         ↓
-[Frontend recebe resultado]
-  - Exibe alimentos identificados
-  - Usuário edita/confirma
-  - Salva no banco
+[Frontend receives result]
+  - Displays identified foods
+  - User edits/confirms
+  - Saves to database
 ```
 
 ### 7.2 Prompt Engineering
@@ -682,6 +682,9 @@ Regras:
 Responda SOMENTE com o JSON no formato especificado, sem texto adicional.
 ```
 
+*(Translation for reference — the actual prompt sent to the AI is in Portuguese as shown above:*
+*"You are a nutritionist specialized in visual analysis of Brazilian foods. Analyze the provided meal photo and identify ALL visible foods. For each food: 1. Identify the name in Brazilian Portuguese 2. Estimate the portion in grams based on visual size relative to the plate/container 3. Calculate nutritional values using the TACO/TBCA table as reference 4. Assign a confidence level (high/medium/low). Rules: Use common Brazilian names, consider typical Brazilian preparations, estimate portions using visual references (standard plate = 26cm diameter), prioritize accuracy over completeness, list unidentified items as 'Unidentified food' with 'low' confidence, consider visible sauces/seasonings/sides, rice and beans together are very common in Brazilian dishes. Respond ONLY with JSON in the specified format, no additional text.")*
+
 #### User Prompt
 ```
 Analise esta foto de refeição. 
@@ -689,7 +692,9 @@ Tipo de refeição: {meal_type ou "detectar automaticamente"}
 Contexto adicional: {user_notes se houver}
 ```
 
-### 7.3 Formato de Resposta (JSON Schema)
+*(Translation: "Analyze this meal photo. Meal type: {meal_type or 'detect automatically'}. Additional context: {user_notes if any}")*
+
+### 7.3 Response Format (JSON Schema)
 
 ```json
 {
@@ -743,36 +748,38 @@ Contexto adicional: {user_notes se houver}
 }
 ```
 
+*(Note: Food names and suggestions remain in Portuguese as they are part of the AI response targeting Brazilian users. Example items: "Arroz branco cozido" = cooked white rice, "Feijão carioca cozido" = cooked carioca beans (pinto beans), "colher de servir cheia" = full serving spoon, "concha média" = medium ladle.)*
+
 ### 7.4 Error Handling
 
-| Cenário | Ação | UX |
-|---------|------|----|
-| Foto escura/borrada | Retornar erro de qualidade | "A foto está escura. Tente novamente com melhor iluminação" |
-| Nenhum alimento detectado | Retornar lista vazia | "Não conseguimos identificar alimentos. Tente tirar a foto mais de perto" |
-| Confiança baixa (< 50%) | Flag visual amarelo/vermelho | Item marcado com "⚠️ Verificar" e sugestão de alternativas |
-| Timeout Gemini | Fallback para GPT-4.1 nano | Loading continua, sem percepção do usuário |
-| Timeout ambas IAs | Erro genérico | "Não foi possível analisar. Tente novamente ou adicione manualmente" |
-| Alimento não-brasileiro | Buscar equivalente | Mapear nome internacional → TACO |
-| Foto de não-alimento | Detectar e rejeitar | "Não identificamos alimentos nesta foto" |
-| Rate limiting | Queue com retry | Loading com mensagem de espera |
+| Scenario | Action | UX |
+|----------|--------|----|
+| Dark/blurry photo | Return quality error | "A foto está escura. Tente novamente com melhor iluminação" ("The photo is dark. Try again with better lighting") |
+| No food detected | Return empty list | "Não conseguimos identificar alimentos. Tente tirar a foto mais de perto" ("We couldn't identify foods. Try taking the photo closer") |
+| Low confidence (< 50%) | Yellow/red visual flag | Item marked with "⚠️ Verificar" ("⚠️ Verify") and alternative suggestions |
+| Gemini timeout | Fallback to GPT-4.1 nano | Loading continues, seamless to user |
+| Both AIs timeout | Generic error | "Não foi possível analisar. Tente novamente ou adicione manualmente" ("Unable to analyze. Try again or add manually") |
+| Non-Brazilian food | Find equivalent | Map international name → TACO |
+| Non-food photo | Detect and reject | "Não identificamos alimentos nesta foto" ("We didn't identify food in this photo") |
+| Rate limiting | Queue with retry | Loading with wait message |
 
-### 7.5 Estimativa de Porção
+### 7.5 Portion Estimation
 
-#### Estratégia
-Sem sensor de profundidade (LiDAR), usamos referências visuais:
+#### Strategy
+Without a depth sensor (LiDAR), we use visual references:
 
-1. **Prato como referência**: Prato padrão brasileiro = 26cm diâmetro
-2. **Proporção visual**: Área do alimento relativa ao prato
-3. **Referências comuns**:
-   - Colher de sopa = ~15g (arroz), ~25g (feijão)
-   - Concha = ~120g (feijão)
-   - Escumadeira = ~100g (arroz)
-   - Xícara = ~240ml
-   - Copo = ~200ml
-4. **Espessura**: Estimada pela aparência 3D (shadows, textura)
-5. **Calibração**: Usuário pode informar tamanho do prato nas configurações
+1. **Plate as reference**: Standard Brazilian plate = 26cm diameter
+2. **Visual proportion**: Food area relative to plate
+3. **Common references**:
+   - Colher de sopa (tablespoon) = ~15g (rice), ~25g (beans)
+   - Concha (ladle) = ~120g (beans)
+   - Escumadeira (slotted spoon) = ~100g (rice)
+   - Xícara (cup) = ~240ml
+   - Copo (glass) = ~200ml
+4. **Thickness**: Estimated by 3D appearance (shadows, texture)
+5. **Calibration**: User can set plate size in settings
 
-#### Prompt de Porção Adicional
+#### Additional Portion Prompt
 ```
 Para estimar porções, considere:
 - O prato padrão brasileiro tem ~26cm de diâmetro
@@ -782,17 +789,19 @@ Para estimar porções, considere:
 - Na dúvida, estime para baixo (melhor subestimar)
 ```
 
-### 7.6 Cache e Otimização
-- Cache de análises idênticas (hash da imagem) por 24h
-- Respostas comuns em cache local (arroz, feijão, salada)
-- Compressão de imagem antes de enviar (máx 1MB, 1024px maior lado)
-- Formato: JPEG quality 85%
+*(Translation: "To estimate portions, consider: The standard Brazilian plate is ~26cm in diameter. Use the food's proportion relative to the plate. Consider the apparent height/volume of the food. Round to the nearest household measure. When in doubt, estimate lower (better to underestimate).")*
+
+### 7.6 Cache and Optimization
+- Cache identical analyses (image hash) for 24h
+- Common responses in local cache (rice, beans, salad)
+- Image compression before sending (max 1MB, 1024px longest side)
+- Format: JPEG quality 85%
 
 ---
 
-## 8. Modelos de Dados
+## 8. Data Models
 
-### 8.1 Entidades
+### 8.1 Entities
 
 #### User
 ```typescript
@@ -834,7 +843,7 @@ interface MealLog {
   date: Date;                    // YYYY-MM-DD
   meal_type: 'breakfast' | 'morning_snack' | 'lunch' | 'afternoon_snack' | 'dinner' | 'supper';
   photo_url: string | null;
-  ai_analysis_raw: object | null; // JSON bruto da IA
+  ai_analysis_raw: object | null; // Raw AI JSON
   total_calories: number;
   total_protein: number;
   total_carbs: number;
@@ -851,10 +860,10 @@ interface MealLog {
 interface MealItem {
   id: string;                    // UUID, PK
   meal_log_id: string;           // FK → meal_logs
-  food_id: string | null;        // FK → foods (null se customizado)
+  food_id: string | null;        // FK → foods (null if custom)
   name: string;
   portion_grams: number;
-  portion_description: string;   // "1 colher de servir"
+  portion_description: string;   // "1 colher de servir" (1 serving spoon)
   calories: number;
   protein: number;
   carbs: number;
@@ -862,19 +871,19 @@ interface MealItem {
   fiber: number;
   source: 'ai' | 'manual' | 'barcode' | 'recipe' | 'favorite';
   ai_confidence: 'high' | 'medium' | 'low' | null;
-  is_verified: boolean;          // usuário confirmou/editou
+  is_verified: boolean;          // user confirmed/edited
   created_at: Date;
 }
 ```
 
-#### Food (Base TACO)
+#### Food (TACO Database)
 ```typescript
 interface Food {
   id: string;                    // UUID, PK
-  taco_id: string | null;        // ID original TACO
+  taco_id: string | null;        // Original TACO ID
   barcode: string | null;        // EAN-13
   name: string;
-  name_normalized: string;       // lowercase, sem acentos (busca)
+  name_normalized: string;       // lowercase, no accents (search)
   category: string;              // "Cereais", "Carnes", "Frutas", etc.
   portion_default_g: number;
   calories_per_100g: number;
@@ -883,12 +892,12 @@ interface Food {
   fat_per_100g: number;
   fiber_per_100g: number;
   sodium_per_100g: number | null;
-  // Micronutrientes TACO
+  // TACO micronutrients
   calcium_mg: number | null;
   iron_mg: number | null;
   vitamin_c_mg: number | null;
   vitamin_a_mcg: number | null;
-  // ... demais micronutrientes TACO
+  // ... remaining TACO micronutrients
   household_measures: HouseholdMeasure[];
   source: 'taco' | 'open_food_facts' | 'user' | 'admin';
   is_verified: boolean;
@@ -896,8 +905,8 @@ interface Food {
 }
 
 interface HouseholdMeasure {
-  name: string;       // "colher de sopa", "concha média", "fatia"
-  grams: number;      // equivalência em gramas
+  name: string;       // "colher de sopa" (tablespoon), "concha média" (medium ladle), "fatia" (slice)
+  grams: number;      // gram equivalence
 }
 ```
 
@@ -970,7 +979,7 @@ interface RecipeIngredient {
 interface UserStreak {
   id: string;                    // UUID, PK
   user_id: string;               // FK → users
-  current_streak: number;        // dias consecutivos
+  current_streak: number;        // consecutive days
   longest_streak: number;
   last_log_date: Date;
   updated_at: Date;
@@ -1003,108 +1012,108 @@ interface UserAchievement {
 
 ### Base URL: `https://api.pratoia.com.br/v1`
 
-### Autenticação
-Todos os endpoints (exceto auth) requerem header: `Authorization: Bearer {supabase_jwt}`
+### Authentication
+All endpoints (except auth) require header: `Authorization: Bearer {supabase_jwt}`
 
 ### Endpoints
 
-#### Auth (via Supabase Auth — não precisa de API custom)
-- `POST /auth/signup` — Criar conta
+#### Auth (via Supabase Auth — no custom API needed)
+- `POST /auth/signup` — Create account
 - `POST /auth/login` — Login
 - `POST /auth/logout` — Logout
 - `POST /auth/forgot-password` — Reset password
 - `POST /auth/oauth/{provider}` — OAuth (Google, Apple)
 
 #### Users
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| GET | `/users/me` | Perfil do usuário logado |
-| PUT | `/users/me` | Atualizar perfil |
-| PUT | `/users/me/onboarding` | Salvar dados do onboarding |
-| PUT | `/users/me/goals` | Atualizar metas nutricionais |
-| DELETE | `/users/me` | Excluir conta (LGPD) |
-| GET | `/users/me/export` | Exportar dados (LGPD) |
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/users/me` | Logged-in user profile |
+| PUT | `/users/me` | Update profile |
+| PUT | `/users/me/onboarding` | Save onboarding data |
+| PUT | `/users/me/goals` | Update nutritional goals |
+| DELETE | `/users/me` | Delete account (LGPD) |
+| GET | `/users/me/export` | Export data (LGPD) |
 
-#### Meals (Refeições)
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| POST | `/meals/analyze` | Enviar foto para análise IA |
-| POST | `/meals` | Salvar refeição (com itens) |
-| GET | `/meals?date={YYYY-MM-DD}` | Listar refeições do dia |
-| GET | `/meals/{id}` | Detalhe de uma refeição |
-| PUT | `/meals/{id}` | Editar refeição |
-| DELETE | `/meals/{id}` | Excluir refeição |
-| POST | `/meals/{id}/copy` | Copiar refeição para outro dia/tipo |
+#### Meals
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/meals/analyze` | Send photo for AI analysis |
+| POST | `/meals` | Save meal (with items) |
+| GET | `/meals?date={YYYY-MM-DD}` | List meals for the day |
+| GET | `/meals/{id}` | Meal detail |
+| PUT | `/meals/{id}` | Edit meal |
+| DELETE | `/meals/{id}` | Delete meal |
+| POST | `/meals/{id}/copy` | Copy meal to another day/type |
 
 #### Meal Items
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| POST | `/meals/{meal_id}/items` | Adicionar item à refeição |
-| PUT | `/meals/{meal_id}/items/{item_id}` | Editar item |
-| DELETE | `/meals/{meal_id}/items/{item_id}` | Remover item |
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/meals/{meal_id}/items` | Add item to meal |
+| PUT | `/meals/{meal_id}/items/{item_id}` | Edit item |
+| DELETE | `/meals/{meal_id}/items/{item_id}` | Remove item |
 
-#### Foods (Alimentos)
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| GET | `/foods/search?q={query}` | Buscar alimento (TACO + custom) |
-| GET | `/foods/{id}` | Detalhe do alimento |
-| GET | `/foods/barcode/{code}` | Buscar por código de barras |
-| POST | `/foods` | Criar alimento customizado |
-| GET | `/foods/categories` | Listar categorias |
-| GET | `/foods/recent` | Alimentos recentes do usuário |
-| GET | `/foods/favorites` | Favoritos do usuário |
-| POST | `/foods/{id}/favorite` | Favoritar/desfavoritar |
+#### Foods
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/foods/search?q={query}` | Search food (TACO + custom) |
+| GET | `/foods/{id}` | Food detail |
+| GET | `/foods/barcode/{code}` | Search by barcode |
+| POST | `/foods` | Create custom food |
+| GET | `/foods/categories` | List categories |
+| GET | `/foods/recent` | User's recent foods |
+| GET | `/foods/favorites` | User's favorites |
+| POST | `/foods/{id}/favorite` | Favorite/unfavorite |
 
 #### Water
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| POST | `/water` | Registrar água |
-| GET | `/water?date={YYYY-MM-DD}` | Total do dia |
-| DELETE | `/water/{id}` | Remover entrada |
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/water` | Log water |
+| GET | `/water?date={YYYY-MM-DD}` | Day's total |
+| DELETE | `/water/{id}` | Remove entry |
 
 #### Weight
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| POST | `/weight` | Registrar peso |
-| GET | `/weight?from={date}&to={date}` | Histórico de peso |
-| DELETE | `/weight/{id}` | Remover entrada |
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/weight` | Log weight |
+| GET | `/weight?from={date}&to={date}` | Weight history |
+| DELETE | `/weight/{id}` | Remove entry |
 
 #### Exercise
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| POST | `/exercises` | Registrar exercício |
-| GET | `/exercises?date={YYYY-MM-DD}` | Exercícios do dia |
-| DELETE | `/exercises/{id}` | Remover exercício |
-| GET | `/exercises/catalog` | Catálogo de exercícios |
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/exercises` | Log exercise |
+| GET | `/exercises?date={YYYY-MM-DD}` | Day's exercises |
+| DELETE | `/exercises/{id}` | Remove exercise |
+| GET | `/exercises/catalog` | Exercise catalog |
 
 #### Recipes
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| POST | `/recipes` | Criar receita |
-| GET | `/recipes` | Listar receitas do usuário |
-| GET | `/recipes/{id}` | Detalhe da receita |
-| PUT | `/recipes/{id}` | Editar receita |
-| DELETE | `/recipes/{id}` | Excluir receita |
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/recipes` | Create recipe |
+| GET | `/recipes` | List user's recipes |
+| GET | `/recipes/{id}` | Recipe detail |
+| PUT | `/recipes/{id}` | Edit recipe |
+| DELETE | `/recipes/{id}` | Delete recipe |
 
 #### Stats
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| GET | `/stats/daily?date={YYYY-MM-DD}` | Resumo do dia |
-| GET | `/stats/weekly?date={YYYY-MM-DD}` | Resumo semanal |
-| GET | `/stats/monthly?month={YYYY-MM}` | Resumo mensal |
-| GET | `/stats/streak` | Dados de streak |
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/stats/daily?date={YYYY-MM-DD}` | Daily summary |
+| GET | `/stats/weekly?date={YYYY-MM-DD}` | Weekly summary |
+| GET | `/stats/monthly?month={YYYY-MM}` | Monthly summary |
+| GET | `/stats/streak` | Streak data |
 
 #### Notifications
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| PUT | `/notifications/preferences` | Configurar preferências |
-| POST | `/notifications/token` | Registrar FCM token |
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| PUT | `/notifications/preferences` | Configure preferences |
+| POST | `/notifications/token` | Register FCM token |
 
 ---
 
-## 10. Estrutura Supabase
+## 10. Supabase Structure
 
-### 10.1 Tabelas SQL
+### 10.1 SQL Tables
 
 ```sql
 -- ============================================
@@ -1142,14 +1151,14 @@ CREATE TABLE users (
 );
 
 -- ============================================
--- FOODS (Base TACO + customizados)
+-- FOODS (TACO database + custom)
 -- ============================================
 CREATE TABLE foods (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   taco_id TEXT,
   barcode TEXT,
   name TEXT NOT NULL,
-  name_normalized TEXT NOT NULL, -- para busca full-text
+  name_normalized TEXT NOT NULL, -- for full-text search
   category TEXT NOT NULL,
   portion_default_g NUMERIC(7,1) DEFAULT 100,
   calories_per_100g NUMERIC(7,1) NOT NULL,
@@ -1189,7 +1198,7 @@ CREATE TABLE meal_logs (
   )),
   photo_url TEXT,
   ai_analysis_raw JSONB,
-  ai_model_used TEXT, -- 'gemini_flash_2' ou 'gpt_4_1_nano'
+  ai_model_used TEXT, -- 'gemini_flash_2' or 'gpt_4_1_nano'
   total_calories NUMERIC(7,1) DEFAULT 0,
   total_protein NUMERIC(7,2) DEFAULT 0,
   total_carbs NUMERIC(7,2) DEFAULT 0,
@@ -1291,7 +1300,7 @@ CREATE TABLE recipes (
 CREATE INDEX idx_recipes_user ON recipes(user_id);
 
 -- ============================================
--- USER_FAVORITES (alimentos favoritos)
+-- USER_FAVORITES (favorite foods)
 -- ============================================
 CREATE TABLE user_favorites (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -1349,7 +1358,7 @@ ALTER TABLE user_favorites ENABLE ROW LEVEL SECURITY;
 ALTER TABLE user_streaks ENABLE ROW LEVEL SECURITY;
 ALTER TABLE user_achievements ENABLE ROW LEVEL SECURITY;
 
--- Políticas RLS: cada usuário vê/edita apenas seus dados
+-- RLS Policies: each user can only see/edit their own data
 CREATE POLICY "Users can view own data" ON users
   FOR SELECT USING (auth.uid() = auth_id);
 
@@ -1364,9 +1373,9 @@ CREATE POLICY "Users own meal_items" ON meal_items
     SELECT id FROM meal_logs WHERE user_id = (SELECT id FROM users WHERE auth_id = auth.uid())
   ));
 
--- Repetir padrão para demais tabelas...
+-- Repeat pattern for remaining tables...
 
--- Foods: todos podem ler, apenas criador pode editar user-created
+-- Foods: everyone can read, only creator can edit user-created
 CREATE POLICY "Anyone can read foods" ON foods
   FOR SELECT USING (true);
 
@@ -1377,7 +1386,7 @@ CREATE POLICY "Users can create foods" ON foods
 -- FUNCTIONS (Supabase Edge Functions / DB Functions)
 -- ============================================
 
--- Função para calcular totais de um meal_log
+-- Function to calculate meal_log totals
 CREATE OR REPLACE FUNCTION update_meal_totals()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -1397,7 +1406,7 @@ CREATE TRIGGER trg_update_meal_totals
 AFTER INSERT OR UPDATE OR DELETE ON meal_items
 FOR EACH ROW EXECUTE FUNCTION update_meal_totals();
 
--- Função para atualizar streak
+-- Function to update streak
 CREATE OR REPLACE FUNCTION update_user_streak(p_user_id UUID, p_date DATE)
 RETURNS void AS $$
 DECLARE
@@ -1416,7 +1425,7 @@ BEGIN
   END IF;
 
   IF v_last_date = p_date THEN
-    RETURN; -- já logou hoje
+    RETURN; -- already logged today
   ELSIF v_last_date = p_date - 1 THEN
     v_current := v_current + 1;
   ELSE
@@ -1439,336 +1448,336 @@ $$ LANGUAGE plpgsql;
 
 ### 10.2 Supabase Storage Buckets
 
-| Bucket | Uso | Acesso |
-|--------|-----|--------|
-| `meal-photos` | Fotos de refeições | Privado (user own) |
-| `avatars` | Fotos de perfil | Público |
-| `recipe-photos` | Fotos de receitas | Privado (user own) |
+| Bucket | Usage | Access |
+|--------|-------|--------|
+| `meal-photos` | Meal photos | Private (user own) |
+| `avatars` | Profile photos | Public |
+| `recipe-photos` | Recipe photos | Private (user own) |
 
 ### 10.3 Supabase Edge Functions
 
-| Função | Trigger | Descrição |
-|--------|---------|-----------|
-| `analyze-meal` | HTTP POST | Processa foto via Gemini/GPT |
-| `calculate-goals` | HTTP POST | Recalcula metas após onboarding |
-| `daily-stats` | HTTP GET | Retorna resumo diário compilado |
-| `send-notification` | Cron (schedule) | Envia push notifications |
-| `export-data` | HTTP GET | Gera CSV para LGPD |
+| Function | Trigger | Description |
+|----------|---------|-------------|
+| `analyze-meal` | HTTP POST | Processes photo via Gemini/GPT |
+| `calculate-goals` | HTTP POST | Recalculates goals after onboarding |
+| `daily-stats` | HTTP GET | Returns compiled daily summary |
+| `send-notification` | Cron (schedule) | Sends push notifications |
+| `export-data` | HTTP GET | Generates CSV for LGPD compliance |
 
 ---
 
-## 11. Gamificação & Engajamento
+## 11. Gamification & Engagement
 
-### 11.1 Sistema de Streaks
+### 11.1 Streak System
 
-#### Regras
-- Streak incrementa quando o usuário registra pelo menos 1 refeição no dia
-- Streak reseta se um dia inteiro passar sem registro
-- Streak não reseta por dias futuros (apenas passados)
-- Grace period: nenhum (rigoroso, como Cal AI)
+#### Rules
+- Streak increments when the user logs at least 1 meal in the day
+- Streak resets if an entire day passes without a log
+- Streak does not reset for future days (only past)
+- Grace period: none (strict, like Cal AI)
 
 #### Visual
-- 🔥 Ícone de chama no header do dashboard
-- Número ao lado: "🔥 7"
-- Animação de celebração ao atingir marcos (7, 14, 30, 60, 90, 365 dias)
+- 🔥 Flame icon in the dashboard header
+- Number beside it: "🔥 7"
+- Celebration animation when reaching milestones (7, 14, 30, 60, 90, 365 days)
 
-### 11.2 Conquistas (Achievements)
+### 11.2 Achievements
 
-| Key | Nome | Descrição | Requisito |
-|-----|------|-----------|-----------|
-| `first_meal` | Primeira Refeição | Registrou sua primeira refeição | 1 refeição |
-| `first_photo` | Fotógrafo | Usou a câmera pela primeira vez | 1 foto analisada |
-| `streak_3` | Consistência | 3 dias seguidos registrando | 3 dias streak |
-| `streak_7` | Semana Completa | 7 dias seguidos | 7 dias streak |
-| `streak_14` | Duas Semanas | 14 dias seguidos | 14 dias streak |
-| `streak_30` | Mês de Fogo | 30 dias seguidos | 30 dias streak |
-| `streak_90` | Trimestre Perfeito | 90 dias seguidos | 90 dias streak |
-| `streak_365` | Um Ano Inteiro | 365 dias seguidos | 365 dias streak |
-| `meals_10` | Explorador | 10 refeições registradas | 10 total |
-| `meals_50` | Dedicado | 50 refeições registradas | 50 total |
-| `meals_100` | Centenário | 100 refeições registradas | 100 total |
-| `meals_500` | Mestre Chef | 500 refeições registradas | 500 total |
-| `weight_first` | Na Balança | Primeiro registro de peso | 1 registro |
-| `weight_goal` | Objetivo Alcançado! | Atingiu o peso desejado | peso = meta |
-| `water_perfect` | Hidratado | Bateu a meta de água | 1 dia 100% |
-| `water_week` | Semana Hidratada | 7 dias seguidos batendo meta de água | 7 dias |
-| `macros_balanced` | Equilibrado | Ficou dentro de ±5% em todos os macros | 1 dia |
-| `recipe_first` | Chef | Criou primeira receita | 1 receita |
-| `barcode_first` | Scanner | Usou o scanner pela primeira vez | 1 scan |
-| `all_meals_day` | Dia Completo | Registrou todas as refeições do dia | 4+ refeições |
+| Key | Name | Description | Requirement |
+|-----|------|-------------|-------------|
+| `first_meal` | Primeira Refeição (First Meal) | Logged your first meal | 1 meal |
+| `first_photo` | Fotógrafo (Photographer) | Used the camera for the first time | 1 photo analyzed |
+| `streak_3` | Consistência (Consistency) | 3 consecutive days logging | 3-day streak |
+| `streak_7` | Semana Completa (Complete Week) | 7 consecutive days | 7-day streak |
+| `streak_14` | Duas Semanas (Two Weeks) | 14 consecutive days | 14-day streak |
+| `streak_30` | Mês de Fogo (Month on Fire) | 30 consecutive days | 30-day streak |
+| `streak_90` | Trimestre Perfeito (Perfect Quarter) | 90 consecutive days | 90-day streak |
+| `streak_365` | Um Ano Inteiro (A Full Year) | 365 consecutive days | 365-day streak |
+| `meals_10` | Explorador (Explorer) | 10 meals logged | 10 total |
+| `meals_50` | Dedicado (Dedicated) | 50 meals logged | 50 total |
+| `meals_100` | Centenário (Centurion) | 100 meals logged | 100 total |
+| `meals_500` | Mestre Chef (Master Chef) | 500 meals logged | 500 total |
+| `weight_first` | Na Balança (On the Scale) | First weight log | 1 log |
+| `weight_goal` | Objetivo Alcançado! (Goal Achieved!) | Reached target weight | weight = goal |
+| `water_perfect` | Hidratado (Hydrated) | Hit water goal | 1 day at 100% |
+| `water_week` | Semana Hidratada (Hydrated Week) | 7 consecutive days hitting water goal | 7 days |
+| `macros_balanced` | Equilibrado (Balanced) | Stayed within ±5% on all macros | 1 day |
+| `recipe_first` | Chef | Created first recipe | 1 recipe |
+| `barcode_first` | Scanner | Used the scanner for the first time | 1 scan |
+| `all_meals_day` | Dia Completo (Complete Day) | Logged all meals of the day | 4+ meals |
 
-### 11.3 Estratégia de Notificações
+### 11.3 Notification Strategy
 
-#### Tipos de Notificação
+#### Notification Types
 
-| Tipo | Horário | Frequência | Texto (PT-BR) |
-|------|---------|------------|----------------|
-| Lembrete café da manhã | 08:00 | Diário | "☀️ Bom dia! Não esqueça de registrar seu café da manhã" |
-| Lembrete almoço | 12:30 | Diário | "🍽️ Hora do almoço! Tire uma foto do seu prato" |
-| Lembrete jantar | 19:30 | Diário | "🌙 Boa noite! Registre seu jantar para manter a sequência" |
-| Streak em risco | 20:00 | Diário (se não logou) | "🔥 Sua sequência de {X} dias está em risco! Registre algo antes de dormir" |
-| Streak celebração | Ao logar | No marco | "🎉 Parabéns! {X} dias seguidos! Você é incrível!" |
-| Conquista desbloqueada | Ao desbloquear | Único | "🏆 Conquista desbloqueada: {nome}!" |
-| Lembrete de água | 15:00 | Diário | "💧 Já bebeu água hoje? Você está em {X}% da sua meta" |
-| Resumo semanal | Domingo 10:00 | Semanal | "📊 Seu resumo semanal está pronto! Veja como você foi" |
-| Peso | Sábado 09:00 | Semanal | "⚖️ Que tal se pesar hoje? Acompanhar o peso ajuda a manter o foco" |
-| Re-engajamento (inativo 3d) | 10:00 | Único | "Sentimos sua falta! 😢 Volte e retome o controle da sua alimentação" |
-| Re-engajamento (inativo 7d) | 10:00 | Único | "Faz uma semana! Que tal recomeçar hoje? Um prato de cada vez 💪" |
+| Type | Time | Frequency | Text (PT-BR with translation) |
+|------|------|-----------|-------------------------------|
+| Breakfast reminder | 08:00 | Daily | "☀️ Bom dia! Não esqueça de registrar seu café da manhã" ("Good morning! Don't forget to log your breakfast") |
+| Lunch reminder | 12:30 | Daily | "🍽️ Hora do almoço! Tire uma foto do seu prato" ("Lunchtime! Take a photo of your plate") |
+| Dinner reminder | 19:30 | Daily | "🌙 Boa noite! Registre seu jantar para manter a sequência" ("Good evening! Log your dinner to keep your streak") |
+| Streak at risk | 20:00 | Daily (if not logged) | "🔥 Sua sequência de {X} dias está em risco! Registre algo antes de dormir" ("Your {X}-day streak is at risk! Log something before bed") |
+| Streak celebration | On log | At milestone | "🎉 Parabéns! {X} dias seguidos! Você é incrível!" ("Congrats! {X} consecutive days! You're amazing!") |
+| Achievement unlocked | On unlock | One-time | "🏆 Conquista desbloqueada: {nome}!" ("Achievement unlocked: {name}!") |
+| Water reminder | 15:00 | Daily | "💧 Já bebeu água hoje? Você está em {X}% da sua meta" ("Have you had water today? You're at {X}% of your goal") |
+| Weekly summary | Sunday 10:00 | Weekly | "📊 Seu resumo semanal está pronto! Veja como você foi" ("Your weekly summary is ready! See how you did") |
+| Weight | Saturday 09:00 | Weekly | "⚖️ Que tal se pesar hoje? Acompanhar o peso ajuda a manter o foco" ("How about weighing yourself today? Tracking weight helps maintain focus") |
+| Re-engagement (inactive 3d) | 10:00 | One-time | "Sentimos sua falta! 😢 Volte e retome o controle da sua alimentação" ("We miss you! Come back and take control of your diet") |
+| Re-engagement (inactive 7d) | 10:00 | One-time | "Faz uma semana! Que tal recomeçar hoje? Um prato de cada vez 💪" ("It's been a week! How about starting again today? One plate at a time 💪") |
 
-#### Configurações do Usuário
-- Toggle global: ligar/desligar todas
-- Toggle por tipo: lembretes de refeição, água, peso, conquistas
-- Horário customizável para lembretes de refeição
-- Modo silencioso: sem notificações entre 22:00-07:00
-
----
-
-## 12. Localização Brasil
-
-### 12.1 Categorias de Alimentos (TACO)
-
-| Categoria | Exemplos |
-|-----------|----------|
-| Cereais e derivados | Arroz, pão francês, macarrão, farinha de mandioca, cuscuz |
-| Verduras, hortaliças e derivados | Alface, tomate, cenoura, brócolis, couve |
-| Frutas e derivados | Banana, maçã, laranja, manga, açaí |
-| Gorduras e óleos | Azeite, óleo de soja, manteiga, margarina |
-| Pescados e frutos do mar | Tilápia, sardinha, camarão, atum |
-| Carnes e derivados | Frango, carne bovina, carne suína, linguiça |
-| Leite e derivados | Leite, queijo minas, iogurte, requeijão |
-| Bebidas | Café, suco de laranja, refrigerante, cerveja |
-| Ovos e derivados | Ovo cozido, ovo frito, omelete |
-| Produtos açucarados | Açúcar, mel, chocolate, doce de leite |
-| Miscelâneas | Catchup, mostarda, maionese, molho de tomate |
-| Outros alimentos industrializados | Biscoitos, salgadinhos, embutidos |
-| Alimentos preparados | Feijoada, estrogonofe, moqueca |
-| Leguminosas e derivados | Feijão carioca, feijão preto, lentilha, grão-de-bico |
-| Nozes e sementes | Castanha-do-pará, amendoim, chia |
-| Tubérculos, raízes e derivados | Batata, mandioca, inhame, batata-doce |
-
-### 12.2 Refeições Brasileiras
-
-| Código | Nome | Horário Típico | Ícone |
-|--------|------|----------------|-------|
-| `breakfast` | Café da Manhã | 06:00-10:00 | ☀️ |
-| `morning_snack` | Lanche da Manhã | 10:00-11:30 | 🥤 |
-| `lunch` | Almoço | 11:30-14:00 | 🍽️ |
-| `afternoon_snack` | Lanche da Tarde | 14:00-17:00 | 🍎 |
-| `dinner` | Jantar | 17:00-21:00 | 🌙 |
-| `supper` | Ceia | 21:00-23:00 | 🌜 |
-
-### 12.3 Medidas Caseiras Brasileiras
-
-| Medida | Gramas (referência) |
-|--------|---------------------|
-| Colher de chá | 5g |
-| Colher de sobremesa | 10g |
-| Colher de sopa | 15g |
-| Colher de sopa cheia | 25g |
-| Colher de servir | 45g |
-| Concha pequena | 80g |
-| Concha média | 120g |
-| Concha grande | 160g |
-| Escumadeira | 100g |
-| Xícara de chá | 240ml / variável em g |
-| Copo americano | 200ml |
-| Copo de requeijão | 250ml |
-| Fatia (pão de forma) | 25g |
-| Fatia fina (queijo) | 15g |
-| Fatia média (queijo) | 30g |
-| Unidade pequena | Variável |
-| Unidade média | Variável |
-| Unidade grande | Variável |
-| Pedaço pequeno | Variável |
-| Pedaço médio | Variável |
-| Pedaço grande | Variável |
-| Ponta de faca | 3g |
-
-### 12.4 Considerações Culturais
-
-- **Prato feito (PF)**: Arroz + feijão + carne + salada é a refeição padrão — IA deve reconhecer esse padrão
-- **Açaí**: Extremamente popular, tratar como categoria especial com toppings
-- **Churrasco**: Reconhecer diferentes cortes (picanha, maminha, fraldinha, etc.)
-- **Comida de boteco**: Pastel, coxinha, bolinho de bacalhau
-- **Café**: Café coado com açúcar é muito comum — perguntar se tem açúcar
-- **Suco natural**: Muito mais comum que em outros países
-- **Tapioca**: Item regional nordestino popular nacionalmente
-- **Pão francês**: Diferente de "french bread" internacional — item específico BR
-- **Marmita/Quentinha**: Conceito importante — refeição em recipiente de transporte
-
-### 12.5 Pagamento — PIX (Futuro, pós-MVP)
-
-Para v1.1+ com assinatura:
-- **RevenueCat** para Apple App Store e Google Play (padrão)
-- **Stripe** com PIX para pagamento direto (alternativa web)
-- Considerar: PIX recorrente quando disponível
-- Planos:
-  - Semanal: R$9,90
-  - Mensal: R$14,90
-  - Anual: R$99,90
-
-### 12.6 LGPD (Lei Geral de Proteção de Dados)
-
-#### Obrigatório
-1. **Consentimento explícito**: Checkbox no cadastro para aceitar termos e política de privacidade
-2. **Política de Privacidade**: Documento acessível no app, descrevendo:
-   - Quais dados são coletados
-   - Como são usados
-   - Com quem são compartilhados
-   - Tempo de retenção
-3. **Direito de acesso**: Botão "Exportar meus dados" nas configurações → gera CSV/JSON
-4. **Direito de exclusão**: Botão "Excluir minha conta" → apaga todos os dados em até 48h
-5. **Direito de retificação**: Usuário pode editar todos seus dados pessoais
-6. **Consentimento para notificações**: Solicitação explícita antes de enviar push
-7. **Consentimento para analytics**: Opt-in/opt-out para tracking
-8. **DPO (Data Protection Officer)**: Email de contato visível na política
-
-#### Dados Coletados
-| Dado | Finalidade | Base Legal |
-|------|-----------|------------|
-| Email, nome | Autenticação e identificação | Consentimento |
-| Dados físicos (peso, altura, etc.) | Cálculo de metas nutricionais | Consentimento |
-| Fotos de refeições | Análise nutricional por IA | Consentimento |
-| Registros alimentares | Histórico e estatísticas | Consentimento |
-| Dados de uso (analytics) | Melhoria do produto | Legítimo interesse (opt-out) |
-| FCM token | Envio de notificações | Consentimento |
-
-#### Implementação Técnica
-- Supabase RLS garante isolamento de dados por usuário
-- Fotos armazenadas em bucket privado com acesso por signed URL (expira em 1h)
-- Endpoint de exclusão: soft delete (30 dias) → hard delete
-- Log de consentimentos em tabela separada
-- Não compartilhar dados pessoais com terceiros (IA recebe apenas imagem, não dados do user)
+#### User Settings
+- Global toggle: turn all on/off
+- Per-type toggle: meal reminders, water, weight, achievements
+- Customizable times for meal reminders
+- Silent mode: no notifications between 22:00-07:00
 
 ---
 
-## 13. Escopo MVP
+## 12. Brazil Localization
 
-### 13.1 MVP — Must Have para Lançamento
+### 12.1 Food Categories (TACO)
 
-| # | Feature | Critério de Aceite |
-|---|---------|-------------------|
-| 1 | Cadastro/Login (email + Google + Apple) | Usuário consegue criar conta e fazer login com email ou OAuth |
-| 2 | Onboarding completo (12 etapas) | Todas as etapas funcionam, dados salvos, metas calculadas automaticamente |
-| 3 | Dashboard com resumo diário | Exibe calorias/macros do dia com progresso visual, lista de refeições |
-| 4 | Câmera → Análise IA | Tirar foto → enviar para Gemini → receber lista de alimentos com calorias/macros em < 5s |
-| 5 | Análise de foto da galeria | Selecionar foto existente e analisar |
-| 6 | Resultado da análise editável | Usuário pode editar nome, porção, remover itens; macros recalculam |
-| 7 | Salvar refeição | Refeição salva no banco com todos os itens e aparece no diário |
-| 8 | Diário alimentar | Visualizar refeições por dia, navegar entre dias |
-| 9 | Busca manual de alimentos | Buscar na base TACO por nome, selecionar porção em gramas ou medida caseira |
-| 10 | Scanner de código de barras | Escanear EAN-13, buscar em Open Food Facts, exibir info nutricional |
-| 11 | Rastreamento de água | Adicionar/remover água, meta diária, progresso visual |
-| 12 | Registro de peso | Registrar peso com data, visualizar última entrada |
-| 13 | Perfil editável | Editar todos os dados pessoais e metas |
-| 14 | Configurações básicas | Tema (claro/escuro/auto), notificações on/off |
-| 15 | Estatísticas semanais | Gráfico de barras de calorias dos últimos 7 dias |
-| 16 | Alimentos recentes e favoritos | Favoritar alimentos, seção de recentes na busca |
-| 17 | Push notifications (lembretes) | Lembretes de refeição (café, almoço, jantar) via FCM |
-| 18 | Copiar refeição | Duplicar refeição de outro dia/tipo |
-| 19 | Dark mode | Tema escuro completo |
-| 20 | LGPD básico | Política de privacidade, exportar dados, excluir conta |
+| Category | Examples |
+|----------|----------|
+| Cereais e derivados (Cereals and derivatives) | Arroz (rice), pão francês (French bread roll), macarrão (pasta), farinha de mandioca (cassava flour), cuscuz (couscous) |
+| Verduras, hortaliças e derivados (Vegetables and derivatives) | Alface (lettuce), tomate (tomato), cenoura (carrot), brócolis (broccoli), couve (collard greens) |
+| Frutas e derivados (Fruits and derivatives) | Banana, maçã (apple), laranja (orange), manga (mango), açaí |
+| Gorduras e óleos (Fats and oils) | Azeite (olive oil), óleo de soja (soy oil), manteiga (butter), margarina (margarine) |
+| Pescados e frutos do mar (Fish and seafood) | Tilápia, sardinha (sardine), camarão (shrimp), atum (tuna) |
+| Carnes e derivados (Meats and derivatives) | Frango (chicken), carne bovina (beef), carne suína (pork), linguiça (sausage) |
+| Leite e derivados (Dairy) | Leite (milk), queijo minas (minas cheese), iogurte (yogurt), requeijão (cream cheese spread) |
+| Bebidas (Beverages) | Café (coffee), suco de laranja (orange juice), refrigerante (soda), cerveja (beer) |
+| Ovos e derivados (Eggs and derivatives) | Ovo cozido (boiled egg), ovo frito (fried egg), omelete (omelette) |
+| Produtos açucarados (Sugary products) | Açúcar (sugar), mel (honey), chocolate, doce de leite (milk caramel) |
+| Miscelâneas (Miscellaneous) | Catchup (ketchup), mostarda (mustard), maionese (mayonnaise), molho de tomate (tomato sauce) |
+| Outros alimentos industrializados (Other processed foods) | Biscoitos (crackers/cookies), salgadinhos (snacks), embutidos (deli meats) |
+| Alimentos preparados (Prepared foods) | Feijoada (black bean stew with pork), estrogonofe (stroganoff, Brazilian style), moqueca (Bahian fish/shrimp stew) |
+| Leguminosas e derivados (Legumes and derivatives) | Feijão carioca (pinto beans), feijão preto (black beans), lentilha (lentils), grão-de-bico (chickpeas) |
+| Nozes e sementes (Nuts and seeds) | Castanha-do-pará (Brazil nut), amendoim (peanut), chia |
+| Tubérculos, raízes e derivados (Tubers, roots and derivatives) | Batata (potato), mandioca (cassava), inhame (yam), batata-doce (sweet potato) |
 
-### 13.2 v1.1 — Pós-Lançamento (2-4 semanas)
+### 12.2 Brazilian Meals
+
+| Code | Name | Typical Time | Icon |
+|------|------|--------------|------|
+| `breakfast` | Café da Manhã (Breakfast) | 06:00-10:00 | ☀️ |
+| `morning_snack` | Lanche da Manhã (Morning Snack) | 10:00-11:30 | 🥤 |
+| `lunch` | Almoço (Lunch) | 11:30-14:00 | 🍽️ |
+| `afternoon_snack` | Lanche da Tarde (Afternoon Snack) | 14:00-17:00 | 🍎 |
+| `dinner` | Jantar (Dinner) | 17:00-21:00 | 🌙 |
+| `supper` | Ceia (Late-Night Snack) | 21:00-23:00 | 🌜 |
+
+### 12.3 Brazilian Household Measures
+
+| Measure | Grams (reference) |
+|---------|-------------------|
+| Colher de chá (teaspoon) | 5g |
+| Colher de sobremesa (dessert spoon) | 10g |
+| Colher de sopa (tablespoon) | 15g |
+| Colher de sopa cheia (heaping tablespoon) | 25g |
+| Colher de servir (serving spoon) | 45g |
+| Concha pequena (small ladle) | 80g |
+| Concha média (medium ladle) | 120g |
+| Concha grande (large ladle) | 160g |
+| Escumadeira (slotted spoon) | 100g |
+| Xícara de chá (teacup) | 240ml / variable in g |
+| Copo americano (American glass — standard Brazilian drinking glass) | 200ml |
+| Copo de requeijão (requeijão jar glass) | 250ml |
+| Fatia - pão de forma (slice — sliced bread) | 25g |
+| Fatia fina - queijo (thin slice — cheese) | 15g |
+| Fatia média - queijo (medium slice — cheese) | 30g |
+| Unidade pequena (small unit) | Variable |
+| Unidade média (medium unit) | Variable |
+| Unidade grande (large unit) | Variable |
+| Pedaço pequeno (small piece) | Variable |
+| Pedaço médio (medium piece) | Variable |
+| Pedaço grande (large piece) | Variable |
+| Ponta de faca (knife tip) | 3g |
+
+### 12.4 Cultural Considerations
+
+- **Prato feito (PF)** (set meal plate): Arroz (rice) + feijão (beans) + carne (meat) + salada (salad) is the standard meal — AI must recognize this pattern
+- **Açaí**: Extremely popular, treat as a special category with toppings
+- **Churrasco** (Brazilian barbecue): Recognize different cuts — picanha (top sirloin cap), maminha (tri-tip), fraldinha (flank steak), etc.
+- **Comida de boteco** (bar food): Pastel (fried pastry), coxinha (chicken croquette), bolinho de bacalhau (codfish fritters)
+- **Café** (coffee): Filtered coffee with sugar is very common — ask whether it has sugar
+- **Suco natural** (fresh juice): Much more common than in other countries
+- **Tapioca**: Regional Northeastern item popular nationwide
+- **Pão francês** (French bread roll): Different from international "French bread" — Brazil-specific item
+- **Marmita/Quentinha** (packed lunch): Important concept — meal in a transport container
+
+### 12.5 Payment — PIX (Future, post-MVP)
+
+For v1.1+ with subscription:
+- **RevenueCat** for Apple App Store and Google Play (standard)
+- **Stripe** with PIX for direct payment (web alternative)
+- Consider: recurring PIX when available
+- Plans:
+  - Weekly: R$9.90
+  - Monthly: R$14.90
+  - Annual: R$99.90
+
+### 12.6 LGPD (Brazilian General Data Protection Law)
+
+#### Mandatory
+1. **Explicit consent**: Checkbox at registration to accept terms and privacy policy
+2. **Privacy Policy**: Document accessible in the app, describing:
+   - What data is collected
+   - How it is used
+   - With whom it is shared
+   - Retention period
+3. **Right of access**: "Exportar meus dados" ("Export my data") button in settings → generates CSV/JSON
+4. **Right of deletion**: "Excluir minha conta" ("Delete my account") button → deletes all data within 48h
+5. **Right of rectification**: User can edit all personal data
+6. **Consent for notifications**: Explicit request before sending push
+7. **Consent for analytics**: Opt-in/opt-out for tracking
+8. **DPO (Data Protection Officer)**: Contact email visible in policy
+
+#### Data Collected
+| Data | Purpose | Legal Basis |
+|------|---------|-------------|
+| Email, name | Authentication and identification | Consent |
+| Physical data (weight, height, etc.) | Nutritional goal calculation | Consent |
+| Meal photos | AI nutritional analysis | Consent |
+| Food logs | History and statistics | Consent |
+| Usage data (analytics) | Product improvement | Legitimate interest (opt-out) |
+| FCM token | Sending notifications | Consent |
+
+#### Technical Implementation
+- Supabase RLS ensures data isolation per user
+- Photos stored in private bucket with signed URL access (expires in 1h)
+- Deletion endpoint: soft delete (30 days) → hard delete
+- Consent log in separate table
+- Do not share personal data with third parties (AI receives only image, not user data)
+
+---
+
+## 13. MVP Scope
+
+### 13.1 MVP — Must Have for Launch
+
+| # | Feature | Acceptance Criteria |
+|---|---------|---------------------|
+| 1 | Registration/Login (email + Google + Apple) | User can create account and log in with email or OAuth |
+| 2 | Complete onboarding (12 steps) | All steps work, data saved, goals automatically calculated |
+| 3 | Dashboard with daily summary | Shows daily calories/macros with visual progress, meal list |
+| 4 | Camera → AI Analysis | Take photo → send to Gemini → receive food list with calories/macros in < 5s |
+| 5 | Gallery photo analysis | Select existing photo and analyze |
+| 6 | Editable analysis result | User can edit name, portion, remove items; macros recalculate |
+| 7 | Save meal | Meal saved to database with all items and appears in diary |
+| 8 | Food diary | View meals by day, navigate between days |
+| 9 | Manual food search | Search TACO database by name, select portion in grams or household measure |
+| 10 | Barcode scanner | Scan EAN-13, search Open Food Facts, display nutritional info |
+| 11 | Water tracking | Add/remove water, daily goal, visual progress |
+| 12 | Weight logging | Log weight with date, view latest entry |
+| 13 | Editable profile | Edit all personal data and goals |
+| 14 | Basic settings | Theme (light/dark/auto), notifications on/off |
+| 15 | Weekly statistics | Bar chart of calories for the last 7 days |
+| 16 | Recent and favorite foods | Favorite foods, recent section in search |
+| 17 | Push notifications (reminders) | Meal reminders (breakfast, lunch, dinner) via FCM |
+| 18 | Copy meal | Duplicate meal from another day/type |
+| 19 | Dark mode | Complete dark theme |
+| 20 | Basic LGPD compliance | Privacy policy, export data, delete account |
+
+### 13.2 v1.1 — Post-Launch (2-4 weeks)
 
 | # | Feature |
 |---|---------|
-| 1 | Receitas customizadas (criar, salvar, usar como entrada rápida) |
-| 2 | Registro de exercícios (catálogo + manual) |
-| 3 | Integração Apple Health (peso, exercícios, passos) |
-| 4 | Integração Google Fit |
-| 5 | Estatísticas mensais (calendar heatmap, tendências) |
-| 6 | Gráfico de evolução de peso |
-| 7 | Streaks e conquistas (gamificação) |
-| 8 | Alimentos customizados (criar) |
-| 9 | Micronutrientes (dados TACO completos) |
-| 10 | Paywall / assinatura (RevenueCat) |
-| 11 | Exportar dados em CSV |
-| 12 | Notificações inteligentes (streak em risco, resumo semanal) |
+| 1 | Custom recipes (create, save, use as quick entry) |
+| 2 | Exercise logging (catalog + manual) |
+| 3 | Apple Health integration (weight, exercises, steps) |
+| 4 | Google Fit integration |
+| 5 | Monthly statistics (calendar heatmap, trends) |
+| 6 | Weight evolution chart |
+| 7 | Streaks and achievements (gamification) |
+| 8 | Custom foods (create) |
+| 9 | Micronutrients (complete TACO data) |
+| 10 | Paywall / subscription (RevenueCat) |
+| 11 | Export data as CSV |
+| 12 | Smart notifications (streak at risk, weekly summary) |
 
-### 13.3 v2.0 — Futuro
+### 13.3 v2.0 — Future
 
 | # | Feature |
 |---|---------|
-| 1 | Análise por texto ("comi arroz, feijão e bife") |
-| 2 | Widget home screen (iOS/Android) |
+| 1 | Text analysis ("comi arroz, feijão e bife" / "I ate rice, beans, and steak") |
+| 2 | Home screen widget (iOS/Android) |
 | 3 | Apple Watch / Wear OS |
-| 4 | Plano alimentar gerado por IA |
-| 5 | Compartilhamento social (card com resumo) |
-| 6 | Multi-idioma (inglês) |
-| 7 | Compartilhar diário com nutricionista |
-| 8 | Scanner de rótulo nutricional (OCR) |
-| 9 | PIX como método de pagamento |
-| 10 | Comunidade / social features |
-| 11 | Integração com restaurantes (cardápios) |
-| 12 | Modo offline completo |
+| 4 | AI-generated meal plan |
+| 5 | Social sharing (summary card) |
+| 6 | Multi-language (English) |
+| 7 | Share diary with nutritionist |
+| 8 | Nutrition label scanner (OCR) |
+| 9 | PIX as payment method |
+| 10 | Community / social features |
+| 11 | Restaurant integration (menus) |
+| 12 | Full offline mode |
 
 ---
 
-## 14. Requisitos Não-Funcionais
+## 14. Non-Functional Requirements
 
 ### 14.1 Performance
 
-| Métrica | Alvo | Aceitável |
-|---------|------|-----------|
-| Tempo de análise de foto (IA) | < 3s | < 5s |
-| Tempo de carregamento do app (cold start) | < 2s | < 3s |
-| Tempo de busca de alimentos | < 500ms | < 1s |
-| Tempo de scan de barcode | < 2s | < 3s |
-| Tamanho do APK/IPA | < 30MB | < 50MB |
-| Uso de RAM | < 150MB | < 250MB |
-| Frames por segundo (UI) | 60fps | 30fps mínimo |
-| Tamanho de upload de foto (comprimida) | < 500KB | < 1MB |
+| Metric | Target | Acceptable |
+|--------|--------|------------|
+| Photo analysis time (AI) | < 3s | < 5s |
+| App load time (cold start) | < 2s | < 3s |
+| Food search time | < 500ms | < 1s |
+| Barcode scan time | < 2s | < 3s |
+| APK/IPA size | < 30MB | < 50MB |
+| RAM usage | < 150MB | < 250MB |
+| Frames per second (UI) | 60fps | 30fps minimum |
+| Photo upload size (compressed) | < 500KB | < 1MB |
 
-### 14.2 Disponibilidade e Escalabilidade
+### 14.2 Availability and Scalability
 
-| Requisito | Especificação |
-|-----------|---------------|
+| Requirement | Specification |
+|-------------|---------------|
 | Uptime | 99.5% |
-| Usuários simultâneos (MVP) | 1.000 |
-| Usuários simultâneos (v1.1) | 10.000 |
-| Latência API (P95) | < 500ms (exceto análise IA) |
-| Rate limit por usuário | 60 requests/min |
-| Rate limit análise IA | 10 análises/min por usuário |
-| Backup do banco | Diário (Supabase automático) |
+| Concurrent users (MVP) | 1,000 |
+| Concurrent users (v1.1) | 10,000 |
+| API latency (P95) | < 500ms (except AI analysis) |
+| Rate limit per user | 60 requests/min |
+| AI analysis rate limit | 10 analyses/min per user |
+| Database backup | Daily (Supabase automatic) |
 
 ### 14.3 Offline
 
 #### MVP
-- Cache local de dados do dia atual (SQLite via Drift/Hive)
-- Busca de alimentos funciona offline (base TACO embarcada ~2MB)
-- Registro manual de alimentos funciona offline (sync ao reconectar)
-- Análise de foto requer internet (mostrar mensagem)
+- Local cache of current day's data (SQLite via Drift/Hive)
+- Food search works offline (embedded TACO database ~2MB)
+- Manual food logging works offline (syncs on reconnect)
+- Photo analysis requires internet (show message)
 
 #### v2.0
-- Queue de fotos para análise quando reconectar
-- Cache de dias recentes (últimos 7 dias)
-- Sync bidirecional com resolução de conflitos
+- Queue photos for analysis when reconnecting
+- Cache recent days (last 7 days)
+- Bidirectional sync with conflict resolution
 
-### 14.4 Segurança
+### 14.4 Security
 
-| Requisito | Implementação |
-|-----------|---------------|
-| Autenticação | Supabase Auth (JWT) |
-| Autorização | RLS (Row Level Security) por user_id |
-| HTTPS | Obrigatório em todas as comunicações |
-| Armazenamento sensível | Flutter Secure Storage para tokens |
-| Fotos | Signed URLs com expiração (1h) |
-| API Keys (Gemini, GPT) | Apenas no backend, nunca no client |
-| Input validation | Sanitização no backend (zod/joi) |
+| Requirement | Implementation |
+|-------------|----------------|
+| Authentication | Supabase Auth (JWT) |
+| Authorization | RLS (Row Level Security) by user_id |
+| HTTPS | Required for all communications |
+| Sensitive storage | Flutter Secure Storage for tokens |
+| Photos | Signed URLs with expiration (1h) |
+| API Keys (Gemini, GPT) | Backend only, never on client |
+| Input validation | Backend sanitization (zod/joi) |
 | SQL Injection | Prepared statements (Supabase default) |
-| XSS | Não aplicável (mobile nativo) |
-| Certificate pinning | Implementar para API própria |
-| Dados pessoais | Criptografia em repouso (Supabase default) |
-| Logs | Sem dados pessoais em logs |
-| Senha | Mínimo 8 caracteres, Supabase managed |
+| XSS | Not applicable (native mobile) |
+| Certificate pinning | Implement for own API |
+| Personal data | Encryption at rest (Supabase default) |
+| Logs | No personal data in logs |
+| Password | Minimum 8 characters, Supabase managed |
 
-### 14.5 Analytics e Tracking
+### 14.5 Analytics and Tracking
 
-#### Eventos a Rastrear
+#### Events to Track
 
-| Evento | Propriedades |
-|--------|-------------|
+| Event | Properties |
+|-------|------------|
 | `app_opened` | source (push, organic, deeplink) |
 | `onboarding_started` | - |
 | `onboarding_step_completed` | step_number, step_name |
@@ -1790,58 +1799,58 @@ Para v1.1+ com assinatura:
 | `achievement_unlocked` | achievement_key |
 | `settings_changed` | setting_name, new_value |
 | `export_requested` | format |
-| `account_deleted` | reason (se coletado) |
+| `account_deleted` | reason (if collected) |
 | `paywall_shown` | source |
 | `subscription_started` | plan, price |
 | `subscription_cancelled` | reason |
 | `notification_received` | type |
 | `notification_opened` | type |
 
-#### Ferramenta
-- **Mixpanel** (preferencial) ou **PostHog** (self-hosted)
-- Respeitar opt-out LGPD
-- Não enviar PII (dados pessoais identificáveis) para analytics
-- User ID anonimizado (hash)
+#### Tool
+- **Mixpanel** (preferred) or **PostHog** (self-hosted)
+- Respect LGPD opt-out
+- Do not send PII (personally identifiable information) to analytics
+- Anonymized user ID (hash)
 
-### 14.6 Testes
+### 14.6 Testing
 
-| Tipo | Cobertura Alvo | Ferramenta |
-|------|----------------|-----------|
+| Type | Target Coverage | Tool |
+|------|-----------------|------|
 | Unit tests (Flutter) | 80%+ business logic | flutter_test |
 | Unit tests (Node.js) | 80%+ | Jest |
-| Widget tests (Flutter) | Telas principais | flutter_test |
-| Integration tests | Fluxos críticos (onboarding, análise, log) | integration_test |
-| E2E (opcional) | Smoke tests | Patrol ou Appium |
-| API tests | Todos os endpoints | Supertest |
-| Performance | Análise IA, busca | k6 ou Artillery |
+| Widget tests (Flutter) | Main screens | flutter_test |
+| Integration tests | Critical flows (onboarding, analysis, log) | integration_test |
+| E2E (optional) | Smoke tests | Patrol or Appium |
+| API tests | All endpoints | Supertest |
+| Performance | AI analysis, search | k6 or Artillery |
 
 ### 14.7 CI/CD
 
-| Etapa | Ferramenta | Trigger |
-|-------|-----------|---------|
-| Lint + Format | `flutter analyze`, ESLint | Push em qualquer branch |
-| Testes | `flutter test`, `jest` | Push em qualquer branch |
-| Build Android (APK/AAB) | Codemagic | Push em `main` ou tag |
-| Build iOS (IPA) | Codemagic | Push em `main` ou tag |
-| Deploy API | GitHub Actions → Railway/Render/Fly.io | Push em `main` |
-| Deploy Supabase migrations | Supabase CLI | Push em `main` |
-| Distribuição beta | Firebase App Distribution | Tag `beta-*` |
-| Publicação stores | Manual via Codemagic | Tag `release-*` |
+| Stage | Tool | Trigger |
+|-------|------|---------|
+| Lint + Format | `flutter analyze`, ESLint | Push to any branch |
+| Tests | `flutter test`, `jest` | Push to any branch |
+| Build Android (APK/AAB) | Codemagic | Push to `main` or tag |
+| Build iOS (IPA) | Codemagic | Push to `main` or tag |
+| Deploy API | GitHub Actions → Railway/Render/Fly.io | Push to `main` |
+| Deploy Supabase migrations | Supabase CLI | Push to `main` |
+| Beta distribution | Firebase App Distribution | Tag `beta-*` |
+| Store publication | Manual via Codemagic | Tag `release-*` |
 
-### 14.8 Monitoramento
+### 14.8 Monitoring
 
-| Componente | Ferramenta |
-|-----------|-----------|
+| Component | Tool |
+|-----------|------|
 | Crashes (mobile) | Firebase Crashlytics |
 | Errors (API) | Sentry |
-| Uptime | UptimeRobot ou Better Uptime |
+| Uptime | UptimeRobot or Better Uptime |
 | Performance (API) | Sentry Performance |
 | Logs | Supabase Logs + Logflare |
-| Custos IA | Dashboard custom (tokens consumidos) |
+| AI costs | Custom dashboard (tokens consumed) |
 
 ---
 
-## Apêndice A: Seed Data — Achievements
+## Appendix A: Seed Data — Achievements
 
 ```sql
 INSERT INTO achievements (key, name, description, icon, requirement_type, requirement_value, sort_order) VALUES
@@ -1867,15 +1876,17 @@ INSERT INTO achievements (key, name, description, icon, requirement_type, requir
 ('all_meals_day', 'Dia Completo', 'Registrou todas as refeições do dia', '✅', 'full_day', 1, 20);
 ```
 
-## Apêndice B: Categorias TACO Completas
+*(Note: Achievement names and descriptions are kept in Portuguese as they are user-facing strings in a Brazilian app.)*
 
-A tabela TACO (Tabela Brasileira de Composição de Alimentos — UNICAMP) contém ~597 alimentos organizados em categorias. A base deve ser importada na íntegra como seed do banco `foods`.
+## Appendix B: Complete TACO Categories
+
+The TACO table (Tabela Brasileira de Composição de Alimentos — Brazilian Food Composition Table, by UNICAMP) contains ~597 foods organized in categories. The entire database should be imported as seed data for the `foods` table.
 
 Download: https://www.cfn.org.br/wp-content/uploads/2017/03/taco_4_edicao_ampliada_e_revisada.pdf
 
-Formato de importação: converter PDF → CSV → SQL INSERT via script de migração.
+Import format: convert PDF → CSV → SQL INSERT via migration script.
 
-## Apêndice C: Estrutura de Pastas Flutter
+## Appendix C: Flutter Folder Structure
 
 ```
 lib/
@@ -1984,7 +1995,7 @@ lib/
     └── app_pt.arb
 ```
 
-## Apêndice D: Estrutura Node.js Backend
+## Appendix D: Node.js Backend Structure
 
 ```
 src/
@@ -2012,7 +2023,7 @@ src/
 │   ├── ai/
 │   │   ├── gemini.service.ts
 │   │   ├── openai.service.ts
-│   │   ├── analyzer.service.ts  (orchestrator com fallback)
+│   │   ├── analyzer.service.ts  (orchestrator with fallback)
 │   │   └── prompts.ts
 │   ├── nutrition.service.ts
 │   ├── streak.service.ts
@@ -2035,7 +2046,7 @@ src/
 
 ---
 
-> **Este documento é a fonte única de verdade para o desenvolvimento do PratoIA.**
-> Qualquer alteração deve ser versionada e aprovada antes de implementação.
+> **This document is the single source of truth for PratoIA development.**
+> Any changes must be versioned and approved before implementation.
 >
-> **Última atualização:** 2026-03-03
+> **Last updated:** 2026-03-03
