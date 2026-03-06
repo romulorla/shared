@@ -105,10 +105,10 @@
   <tbody>
     <tr><td><strong>Program ID</strong></td><td>Unique number identifying the recipe (1–100)</td></tr>
     <tr><td><strong>Name</strong></td><td>Product name</td></tr>
-    <tr><td><strong>Nennweite</strong></td><td>Nominal diameter</td></tr>
-    <tr><td><strong>Höhe</strong></td><td>Product height</td></tr>
-    <tr><td><strong>Wandstärke</strong></td><td>Wall thickness</td></tr>
-    <tr><td><strong>Produkttyp</strong></td><td>Product type</td></tr>
+    <tr><td><strong>Diameter</strong></td><td>Nominal diameter</td></tr>
+    <tr><td><strong>Height</strong></td><td>Product height</td></tr>
+    <tr><td><strong>Wall Thickness</strong></td><td>Wall thickness</td></tr>
+    <tr><td><strong>Product Type</strong></td><td>Product type</td></tr>
   </tbody>
 </table>
 <p>You can <strong>select a recipe</strong> by tapping on its row in the list.</p>
@@ -116,7 +116,7 @@
 <h3>Search and Filters (top bar)</h3>
 <ul>
   <li><strong>Suchen</strong> (Search): Type a name to search for a specific recipe.</li>
-  <li><strong>Nennweite / Höhe / Produkttyp</strong> dropdown filters: Filter the recipe list by diameter, height, or product type.</li>
+  <li><strong>Diameter / Height / Product Type</strong> dropdown filters: Filter the recipe list by diameter, height, or product type.</li>
 </ul>
 
 <h3>Action Buttons (bottom bar)</h3>
@@ -126,12 +126,12 @@
 
 <h2>Button Reference</h2>
 
-<h3>Lesen (Read)</h3>
+<h3>Read</h3>
 <p><strong>What it does:</strong> Loads the selected recipe from storage into the HMI so you can view and edit it.</p>
 <p><strong>How to use:</strong></p>
 <ol>
   <li>Select a recipe from the list by tapping its row.</li>
-  <li>Press <strong>Lesen</strong>.</li>
+  <li>Press <strong>Read</strong>.</li>
   <li>The recipe parameters are now loaded and visible on the HMI.</li>
 </ol>
 <p><strong>When to use:</strong> When you want to view a stored recipe's full parameters, or before downloading it to the machine.</p>
@@ -168,21 +168,21 @@
   <li>Confirm to apply the changes.</li>
 </ol>
 <p><strong>When to use:</strong> When product information (name, diameter, height, wall thickness, or type) needs to be corrected or updated.</p>
-<blockquote><strong>Note:</strong> This edits the product identity information only. To change machine parameters (speeds, positions, timings), load the recipe first with <strong>Lesen</strong>, adjust the parameters on the respective module screens, and then save with <strong>Speichern</strong>.</blockquote>
+<blockquote><strong>Note:</strong> This edits the product identity information only. To change machine parameters (speeds, positions, timings), load the recipe first with <strong>Read</strong>, adjust the parameters on the respective module screens, and then save with <strong>Save</strong>.</blockquote>
 
 <hr>
 
-<h3>Speichern (Save)</h3>
+<h3>Save</h3>
 <p><strong>What it does:</strong> Saves the currently loaded recipe (including any parameter changes) back to its storage slot.</p>
 <p><strong>How to use:</strong></p>
 <ol>
-  <li>Make sure the recipe you want to save is currently loaded (use <strong>Lesen</strong> first if needed).</li>
+  <li>Make sure the recipe you want to save is currently loaded (use <strong>Read</strong> first if needed).</li>
   <li>Adjust any parameters on the module screens as needed.</li>
-  <li>Return to the recipe screen and press <strong>Speichern</strong>.</li>
+  <li>Return to the recipe screen and press <strong>Save</strong>.</li>
   <li>The recipe is saved to storage.</li>
 </ol>
 <p><strong>When to use:</strong> After making parameter changes that you want to keep permanently.</p>
-<blockquote class="warning"><strong>Important:</strong> If you change parameters but do not press <strong>Speichern</strong>, your changes will be lost if the recipe is reloaded or the system loses power.</blockquote>
+<blockquote class="warning"><strong>Important:</strong> If you change parameters but do not press <strong>Save</strong>, your changes will be lost if the recipe is reloaded or the system loses power.</blockquote>
 
 <hr>
 
@@ -204,22 +204,22 @@
 <p><strong>What it does:</strong> Updates the loaded HMI recipe with the current machine values. The product information (name, type, dimensions) stays unchanged — only the machine parameters (speeds, positions, timings) are updated.</p>
 <p><strong>How to use:</strong></p>
 <ol>
-  <li>Make sure the correct recipe is loaded on the HMI (use <strong>Lesen</strong> if needed).</li>
+  <li>Make sure the correct recipe is loaded on the HMI (use <strong>Read</strong> if needed).</li>
   <li>Press <strong>Sync</strong>.</li>
   <li>The HMI recipe now reflects the actual values currently running on the machine.</li>
 </ol>
 <p><strong>When to use:</strong> When the machine has been running and parameters may have been adjusted during production. Use this to pull the current runtime values back into the HMI before saving.</p>
-<p><strong>Typical workflow:</strong> Sync → review changes → Speichern (to keep them permanently).</p>
+<p><strong>Typical workflow:</strong> Sync → review changes → Save (to keep them permanently).</p>
 
 <hr>
 
-<h3>Laden (Download)</h3>
+<h3>Download</h3>
 <p><strong>What it does:</strong> Sends the currently loaded HMI recipe to the machine. The machine will immediately begin using these parameters.</p>
 <p><strong>How to use:</strong></p>
 <ol>
-  <li>Load a recipe using <strong>Lesen</strong>.</li>
+  <li>Load a recipe using <strong>Read</strong>.</li>
   <li>Review the parameters to make sure everything is correct.</li>
-  <li>Press <strong>Laden</strong>.</li>
+  <li>Press <strong>Download</strong>.</li>
   <li>The recipe is now active on the machine.</li>
 </ol>
 <p><strong>When to use:</strong> When switching to a different product or when you want to apply a modified recipe to the machine.</p>
@@ -262,9 +262,9 @@
   <li>Open the recipe screen.</li>
   <li>Find the recipe in the list (use the search bar or filters if needed).</li>
   <li>Select the recipe by tapping its row.</li>
-  <li>Press <strong>Lesen</strong> (Read) to load it.</li>
+  <li>Press <strong>Read</strong> (Read) to load it.</li>
   <li>Review the parameters.</li>
-  <li>Press <strong>Laden</strong> (Download) to send it to the machine.</li>
+  <li>Press <strong>Download</strong> (Download) to send it to the machine.</li>
 </ol>
 
 <h3>Creating a new recipe from scratch</h3>
@@ -272,18 +272,18 @@
   <li>Press <strong>Erstellen</strong> (Create).</li>
   <li>Enter the product information (ID, name, type, dimensions).</li>
   <li>Confirm to create the recipe.</li>
-  <li>Press <strong>Lesen</strong> (Read) to load the new recipe.</li>
+  <li>Press <strong>Read</strong> (Read) to load the new recipe.</li>
   <li>Go to each module screen and configure the machine parameters.</li>
-  <li>Return to the recipe screen and press <strong>Speichern</strong> (Save) to store all parameters.</li>
+  <li>Return to the recipe screen and press <strong>Save</strong> (Save) to store all parameters.</li>
 </ol>
 
 <h3>Saving machine adjustments made during production</h3>
 <ol>
   <li>After production adjustments are made on the machine, open the recipe screen.</li>
-  <li>Make sure the correct recipe is loaded (press <strong>Lesen</strong> if needed).</li>
+  <li>Make sure the correct recipe is loaded (press <strong>Read</strong> if needed).</li>
   <li>Press <strong>Sync</strong> to pull the current machine values into the HMI.</li>
   <li>Review the synced values.</li>
-  <li>Press <strong>Speichern</strong> (Save) to permanently store the updated parameters.</li>
+  <li>Press <strong>Save</strong> (Save) to permanently store the updated parameters.</li>
 </ol>
 
 <h3>Creating a variation of an existing recipe</h3>
@@ -292,9 +292,9 @@
   <li>Press <strong>Sp. unter</strong> (Save As).</li>
   <li>Enter a new Program ID and name for the copy.</li>
   <li>Confirm to create the copy.</li>
-  <li>Press <strong>Lesen</strong> to load the new copy.</li>
+  <li>Press <strong>Read</strong> to load the new copy.</li>
   <li>Adjust the parameters as needed on the module screens.</li>
-  <li>Press <strong>Speichern</strong> (Save) to store the changes.</li>
+  <li>Press <strong>Save</strong> (Save) to store the changes.</li>
 </ol>
 
 </div>

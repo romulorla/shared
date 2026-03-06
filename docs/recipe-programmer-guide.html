@@ -171,9 +171,9 @@ flowchart LR
     HMI["RecipeHMI<br/>(working copy)"]
     Active["Recipe<br/>(active on machine)"]
 
-    Storage -->|"Read (Lesen)"| HMI
-    HMI -->|"Save (Speichern)"| Storage
-    HMI -->|"Download (Laden)"| Active
+    Storage -->|"Read"| HMI
+    HMI -->|"Save"| Storage
+    HMI -->|"Download"| Active
     Active -->|"Sync"| HMI
     Active -.->|"Save From Module<br/>(async multi-scan)"| HMI
   </pre>
