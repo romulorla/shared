@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recipe System — Common Workflows</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --font-body: 'Barlow', system-ui, sans-serif;
+    --font-mono: 'Share Tech Mono', 'SF Mono', Consolas, monospace;
+
+    --bg: #f1f4f8;
+    --surface: #ffffff;
+    --surface2: #e8ecf2;
+    --surface-elevated: #ffffff;
+    --border: rgba(0, 0, 0, 0.08);
+    --border-bright: rgba(0, 0, 0, 0.16);
+    --text: #1b2a4a;
+    --text-dim: #6b7a94;
+
+    --blue: #2563eb;
+    --blue-dim: rgba(37, 99, 235, 0.08);
+    --green: #16a34a;
+    --green-dim: rgba(22, 163, 74, 0.08);
+    --red: #dc2626;
+    --red-dim: rgba(220, 38, 38, 0.08);
+    --amber: #d97706;
+    --amber-dim: rgba(217, 119, 6, 0.08);
+    --steel: #475569;
+    --steel-dim: rgba(71, 85, 105, 0.08);
+    --teal: #0d9488;
+    --teal-dim: rgba(13, 148, 136, 0.08);
+    --accent: var(--blue);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0f1726;
+      --surface: #182033;
+      --surface2: #1e2940;
+      --surface-elevated: #1e2940;
+      --border: rgba(255, 255, 255, 0.07);
+      --border-bright: rgba(255, 255, 255, 0.14);
+      --text: #e2e8f0;
+      --text-dim: #8b9ab8;
+
+      --blue: #60a5fa;
+      --blue-dim: rgba(96, 165, 250, 0.12);
+      --green: #4ade80;
+      --green-dim: rgba(74, 222, 128, 0.12);
+      --red: #f87171;
+      --red-dim: rgba(248, 113, 113, 0.12);
+      --amber: #fbbf24;
+      --amber-dim: rgba(251, 191, 36, 0.12);
+      --steel: #94a3b8;
+      --steel-dim: rgba(148, 163, 184, 0.12);
+      --teal: #2dd4bf;
+      --teal-dim: rgba(45, 212, 191, 0.12);
+    }
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 39px, var(--border) 39px, var(--border) 40px),
+      repeating-linear-gradient(90deg, transparent, transparent 39px, var(--border) 39px, var(--border) 40px);
+    background-size: 40px 40px;
+    color: var(--text);
+    font-family: var(--font-body);
+    padding: 40px;
+    min-height: 100vh;
+    overflow-wrap: break-word;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate {
+    animation: fadeUp 0.4s ease-out both;
+    animation-delay: calc(var(--i, 0) * 0.06s);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-delay: 0ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  /* Layout */
+  .wrap {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 170px 1fr;
+    gap: 0 40px;
+  }
+  .main { min-width: 0; }
+
+  /* TOC */
+  .toc {
+    position: sticky; top: 24px; align-self: start;
+    padding: 14px 0; grid-row: 1 / -1;
+    max-height: calc(100dvh - 48px); overflow-y: auto;
+  }
+  .toc::-webkit-scrollbar { width: 3px; }
+  .toc::-webkit-scrollbar-thumb { background: var(--surface-elevated); border-radius: 2px; }
+  .toc-title {
+    font-family: var(--font-mono); font-size: 9px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 2px; color: var(--text-dim);
+    padding: 0 0 10px; margin-bottom: 8px; border-bottom: 1px solid var(--border);
+  }
+  .toc a {
+    display: block; font-size: 11px; color: var(--text-dim); text-decoration: none;
+    padding: 4px 8px; border-radius: 5px; border-left: 2px solid transparent;
+    transition: all 0.15s; line-height: 1.4; margin-bottom: 1px;
+  }
+  .toc a:hover { color: var(--text); background: var(--surface2); }
+  .toc a.active { color: var(--text); border-left-color: var(--blue); }
+
+  /* Typography */
+  h1 { font-size: 38px; font-weight: 700; letter-spacing: -1px; margin-bottom: 6px; text-wrap: balance; }
+  .subtitle { font-family: var(--font-mono); font-size: 12px; color: var(--text-dim); margin-bottom: 12px; }
+
+  /* Hero section */
+  .hero {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--blue);
+    border-radius: 0 12px 12px 0;
+    padding: 28px 32px;
+    margin-bottom: 32px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+  }
+  .hero h2 { font-size: 20px; font-weight: 700; margin-bottom: 12px; }
+  .hero p { font-size: 14px; line-height: 1.7; color: var(--text-dim); max-width: 720px; }
+  .hero strong { color: var(--text); }
+
+  /* Section headers */
+  .sec-head {
+    font-family: var(--font-mono); font-size: 13px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 1.5px;
+    padding: 12px 0; margin-top: 36px; margin-bottom: 16px;
+    border-bottom: 2px solid var(--border-bright);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .sec-head .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+
+  .workflow-desc {
+    font-size: 14px; line-height: 1.7; color: var(--text-dim);
+    max-width: 720px; margin-bottom: 20px;
+  }
+
+  /* Mermaid container */
+  .mermaid-wrap {
+    position: relative; background: var(--surface);
+    border: 1px solid var(--border); border-radius: 12px;
+    padding: 32px 24px; overflow: auto; margin-bottom: 24px;
+    scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+  }
+  .mermaid-wrap::-webkit-scrollbar { width: 6px; height: 6px; }
+  .mermaid-wrap::-webkit-scrollbar-track { background: transparent; }
+  .mermaid-wrap::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  .mermaid-wrap::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
+  .mermaid-wrap .mermaid {
+    display: flex; justify-content: center;
+    transition: transform 0.2s ease; transform-origin: top center;
+  }
+  .mermaid-wrap.is-zoomed { cursor: grab; }
+  .mermaid-wrap.is-panning { cursor: grabbing; user-select: none; }
+
+  .zoom-controls {
+    position: absolute; top: 8px; right: 8px;
+    display: flex; gap: 2px; z-index: 10;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 6px; padding: 2px;
+  }
+  .zoom-controls button {
+    width: 28px; height: 28px; border: none; background: transparent;
+    color: var(--text-dim); font-family: var(--font-mono); font-size: 14px;
+    cursor: pointer; border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .zoom-controls button:hover { background: var(--border); color: var(--text); }
+
+  /* Mermaid overrides */
+  .mermaid .nodeLabel { font-family: var(--font-body) !important; font-size: 14px !important; }
+  .mermaid .edgeLabel { font-family: var(--font-mono) !important; font-size: 12px !important; }
+  .mermaid .node rect, .mermaid .node circle, .mermaid .node polygon { stroke-width: 1.5px !important; }
+
+  /* Legend */
+  .legend { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 16px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); }
+  .legend-swatch { width: 12px; height: 12px; border-radius: 3px; }
+
+  /* Callout */
+  .callout {
+    background: var(--surface); border: 1px solid var(--border);
+    border-left: 3px solid var(--blue); border-radius: 0 10px 10px 0;
+    padding: 16px 20px; font-size: 13px; line-height: 1.6;
+    color: var(--text-dim); margin-bottom: 24px;
+  }
+  .callout strong { color: var(--text); }
+
+  /* Responsive */
+  @media (max-width: 1000px) {
+    .wrap { grid-template-columns: 1fr; padding-top: 0; }
+    body { padding-top: 0; }
+    .toc {
+      position: sticky; top: 0; z-index: 200; max-height: none;
+      display: flex; gap: 4px; align-items: center; overflow-x: auto;
+      background: var(--bg); border-bottom: 1px solid var(--border);
+      padding: 10px 0; margin: 0 -40px; padding-left: 40px; padding-right: 40px;
+      grid-row: auto;
+    }
+    .toc::-webkit-scrollbar { display: none; }
+    .toc-title { display: none; }
+    .toc a {
+      white-space: nowrap; flex-shrink: 0; border-left: none;
+      border-bottom: 2px solid transparent; border-radius: 4px 4px 0 0;
+      padding: 6px 10px; font-size: 10px;
+    }
+    .toc a.active { border-left: none; border-bottom-color: var(--blue); background: var(--surface); }
+    .main { padding-top: 20px; }
+    .sec-head { scroll-margin-top: 52px; }
+  }
+  @media (max-width: 768px) {
+    body { padding: 16px; }
+    h1 { font-size: 24px; }
+    .hero { padding: 20px; }
+    .mermaid-wrap { padding: 16px 12px; }
+    .toc { margin: 0 -16px; padding-left: 16px; padding-right: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <nav class="toc" id="toc">
+    <div class="toc-title">Workflows</div>
+    <a href="#s-intro">What is a Recipe?</a>
+    <a href="#s-load">Load &amp; Run</a>
+    <a href="#s-create">Create New</a>
+    <a href="#s-save">Save Adjustments</a>
+    <a href="#s-vary">Create Variation</a>
+  </nav>
+
+  <div class="main">
+
+    <h1 class="animate" style="--i:0">Recipe System — Common Workflows</h1>
+    <p class="subtitle animate" style="--i:1">Step-by-step operator workflows with flowcharts</p>
+
+    <!-- Hero: What is a Recipe? -->
+    <div id="s-intro" class="hero animate" style="--i:2">
+      <h2>What is a Recipe?</h2>
+      <p>A recipe stores <strong>all the settings</strong> needed to produce a specific pipe product — product name, dimensions (diameter, height, wall thickness), product type, and all machine parameters (speeds, positions, timings). The system stores up to <strong>100 recipes</strong> in the PLC's permanent memory, preserved across power cycles.</p>
+    </div>
+
+    <div class="legend animate" style="--i:3">
+      <div class="legend-item"><div class="legend-swatch" style="background:var(--blue)"></div> Read action</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:var(--green)"></div> Write action</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:var(--amber)"></div> Sync/Transfer</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:var(--steel)"></div> Operator step</div>
+    </div>
+
+    <!-- Workflow 1: Load & Run -->
+    <div id="s-load" class="sec-head animate" style="--i:4">
+      <span class="dot" style="background:var(--blue)"></span> Workflow 1 — Loading and Running a Recipe
+    </div>
+    <p class="workflow-desc animate" style="--i:5">The most common workflow: select a stored recipe, load it into the HMI, review, and send it to the machine.</p>
+
+    <div class="mermaid-wrap animate" style="--i:6">
+      <div class="zoom-controls">
+        <button onclick="zoomDiagram(this, 1.2)" title="Zoom in">+</button>
+        <button onclick="zoomDiagram(this, 0.8)" title="Zoom out">&minus;</button>
+        <button onclick="resetZoom(this)" title="Reset zoom">&#8634;</button>
+      </div>
+      <pre class="mermaid">
+        graph TD
+          A["Open Recipe Screen"]:::op --> B["Find recipe in list\n(use Search / Filters)"]:::op
+          B --> C["Select recipe\n(tap row)"]:::op
+          C --> D["Press LESEN\n(Read)"]:::read
+          D --> E["Review parameters"]:::op
+          E --> F{"Parameters\ncorrect?"}:::op
+          F -->|Yes| G["Press LADEN\n(Download to machine)"]:::sync
+          F -->|No| H["Adjust on\nmodule screens"]:::op
+          H --> E
+          G --> I["Recipe active\non machine ✓"]:::done
+
+          classDef read fill:#dbeafe,stroke:#2563eb,stroke-width:2px,color:#1e3a5f
+          classDef write fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#14532d
+          classDef sync fill:#fef3c7,stroke:#d97706,stroke-width:2px,color:#78350f
+          classDef op fill:#f1f5f9,stroke:#475569,stroke-width:1.5px,color:#1e293b
+          classDef done fill:#d1fae5,stroke:#059669,stroke-width:2px,color:#064e3b
+      </pre>
+    </div>
+
+    <!-- Workflow 2: Create New -->
+    <div id="s-create" class="sec-head animate" style="--i:7">
+      <span class="dot" style="background:var(--green)"></span> Workflow 2 — Creating a New Recipe from Scratch
+    </div>
+    <p class="workflow-desc animate" style="--i:8">Set up a recipe for a brand-new product: create the identity, then configure all machine parameters.</p>
+
+    <div class="mermaid-wrap animate" style="--i:9">
+      <div class="zoom-controls">
+        <button onclick="zoomDiagram(this, 1.2)" title="Zoom in">+</button>
+        <button onclick="zoomDiagram(this, 0.8)" title="Zoom out">&minus;</button>
+        <button onclick="resetZoom(this)" title="Reset zoom">&#8634;</button>
+      </div>
+      <pre class="mermaid">
+        graph TD
+          A["Press ERSTELLEN\n(Create)"]:::write --> B["Enter product info:\nID, Name, Type,\nDiameter, Height,\nWall Thickness"]:::op
+          B --> C["Confirm creation"]:::op
+          C --> D["New recipe appears\nin list"]:::op
+          D --> E["Press LESEN\n(Read) to load\nnew recipe"]:::read
+          E --> F["Go to each\nmodule screen"]:::op
+          F --> G["Configure machine\nparameters:\nspeeds, positions,\ntimings"]:::op
+          G --> H["Return to\nRecipe screen"]:::op
+          H --> I["Press SPEICHERN\n(Save)"]:::write
+          I --> J["Recipe complete\nand stored ✓"]:::done
+
+          classDef read fill:#dbeafe,stroke:#2563eb,stroke-width:2px,color:#1e3a5f
+          classDef write fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#14532d
+          classDef sync fill:#fef3c7,stroke:#d97706,stroke-width:2px,color:#78350f
+          classDef op fill:#f1f5f9,stroke:#475569,stroke-width:1.5px,color:#1e293b
+          classDef done fill:#d1fae5,stroke:#059669,stroke-width:2px,color:#064e3b
+      </pre>
+    </div>
+
+    <!-- Workflow 3: Save Adjustments -->
+    <div id="s-save" class="sec-head animate" style="--i:10">
+      <span class="dot" style="background:var(--amber)"></span> Workflow 3 — Saving Machine Adjustments During Production
+    </div>
+    <p class="workflow-desc animate" style="--i:11">After the operator adjusts parameters during production, use Sync to pull runtime values, then save them permanently.</p>
+
+    <div class="mermaid-wrap animate" style="--i:12">
+      <div class="zoom-controls">
+        <button onclick="zoomDiagram(this, 1.2)" title="Zoom in">+</button>
+        <button onclick="zoomDiagram(this, 0.8)" title="Zoom out">&minus;</button>
+        <button onclick="resetZoom(this)" title="Reset zoom">&#8634;</button>
+      </div>
+      <pre class="mermaid">
+        graph TD
+          A["Production adjustments\nmade on machine"]:::op --> B["Open Recipe screen"]:::op
+          B --> C["Press LESEN\n(Read) if recipe\nnot loaded"]:::read
+          C --> D["Press SYNC\n(Pull machine values)"]:::sync
+          D --> E["Review synced\nparameters"]:::op
+          E --> F{"Values\nacceptable?"}:::op
+          F -->|Yes| G["Press SPEICHERN\n(Save)"]:::write
+          F -->|No| H["Make further\nadjustments on\nmodule screens"]:::op
+          H --> D
+          G --> I["Updated recipe\nstored permanently ✓"]:::done
+
+          classDef read fill:#dbeafe,stroke:#2563eb,stroke-width:2px,color:#1e3a5f
+          classDef write fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#14532d
+          classDef sync fill:#fef3c7,stroke:#d97706,stroke-width:2px,color:#78350f
+          classDef op fill:#f1f5f9,stroke:#475569,stroke-width:1.5px,color:#1e293b
+          classDef done fill:#d1fae5,stroke:#059669,stroke-width:2px,color:#064e3b
+      </pre>
+    </div>
+
+    <div class="callout animate" style="--i:13">
+      <strong>⚠ Remember:</strong> If you skip the <strong>Speichern</strong> step, your runtime adjustments exist only in the HMI's temporary memory. A power loss or recipe reload will discard them.
+    </div>
+
+    <!-- Workflow 4: Create Variation -->
+    <div id="s-vary" class="sec-head animate" style="--i:14">
+      <span class="dot" style="background:var(--teal)"></span> Workflow 4 — Creating a Variation of an Existing Recipe
+    </div>
+    <p class="workflow-desc animate" style="--i:15">Duplicate an existing recipe to create a variant — the original stays untouched.</p>
+
+    <div class="mermaid-wrap animate" style="--i:16">
+      <div class="zoom-controls">
+        <button onclick="zoomDiagram(this, 1.2)" title="Zoom in">+</button>
+        <button onclick="zoomDiagram(this, 0.8)" title="Zoom out">&minus;</button>
+        <button onclick="resetZoom(this)" title="Reset zoom">&#8634;</button>
+      </div>
+      <pre class="mermaid">
+        graph TD
+          A["Select original\nrecipe from list"]:::op --> B["Press SP. UNTER\n(Save As)"]:::write
+          B --> C["Enter new\nProgram ID and Name"]:::op
+          C --> D["Confirm to\ncreate copy"]:::op
+          D --> E["New recipe appears\nwith all parameters\nfrom original"]:::op
+          E --> F["Press LESEN\n(Read) to load\nthe copy"]:::read
+          F --> G["Adjust parameters\non module screens"]:::op
+          G --> H["Press SPEICHERN\n(Save)"]:::write
+          H --> I["Variation stored\nOriginal unchanged ✓"]:::done
+
+          classDef read fill:#dbeafe,stroke:#2563eb,stroke-width:2px,color:#1e3a5f
+          classDef write fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#14532d
+          classDef sync fill:#fef3c7,stroke:#d97706,stroke-width:2px,color:#78350f
+          classDef op fill:#f1f5f9,stroke:#475569,stroke-width:1.5px,color:#1e293b
+          classDef done fill:#d1fae5,stroke:#059669,stroke-width:2px,color:#064e3b
+      </pre>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /wrap -->
+
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+
+  const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'base',
+    look: 'classic',
+    themeVariables: {
+      primaryColor: isDark ? '#1e2940' : '#f1f5f9',
+      primaryBorderColor: isDark ? '#94a3b8' : '#475569',
+      primaryTextColor: isDark ? '#e2e8f0' : '#1e293b',
+      secondaryColor: isDark ? '#1e2940' : '#dbeafe',
+      secondaryBorderColor: isDark ? '#60a5fa' : '#2563eb',
+      secondaryTextColor: isDark ? '#e2e8f0' : '#1e3a5f',
+      tertiaryColor: isDark ? '#2e2618' : '#fef3c7',
+      tertiaryBorderColor: isDark ? '#fbbf24' : '#d97706',
+      tertiaryTextColor: isDark ? '#e2e8f0' : '#78350f',
+      lineColor: isDark ? '#8b9ab8' : '#6b7a94',
+      fontSize: '14px',
+      fontFamily: "'Barlow', system-ui, sans-serif",
+    }
+  });
+</script>
+<script>
+  function updateZoomState(wrap) {
+    var target = wrap.querySelector('.mermaid');
+    var zoom = parseFloat(target.dataset.zoom || '1');
+    wrap.classList.toggle('is-zoomed', zoom > 1);
+  }
+  function zoomDiagram(btn, factor) {
+    var wrap = btn.closest('.mermaid-wrap');
+    var target = wrap.querySelector('.mermaid');
+    var current = parseFloat(target.dataset.zoom || '1');
+    var next = Math.min(Math.max(current * factor, 0.3), 5);
+    target.dataset.zoom = next;
+    target.style.transform = 'scale(' + next + ')';
+    updateZoomState(wrap);
+  }
+  function resetZoom(btn) {
+    var wrap = btn.closest('.mermaid-wrap');
+    var target = wrap.querySelector('.mermaid');
+    target.dataset.zoom = '1';
+    target.style.transform = 'scale(1)';
+    updateZoomState(wrap);
+  }
+  document.querySelectorAll('.mermaid-wrap').forEach(function(wrap) {
+    wrap.addEventListener('wheel', function(e) {
+      if (!e.ctrlKey && !e.metaKey) return;
+      e.preventDefault();
+      var target = wrap.querySelector('.mermaid');
+      var current = parseFloat(target.dataset.zoom || '1');
+      var factor = e.deltaY < 0 ? 1.1 : 0.9;
+      var next = Math.min(Math.max(current * factor, 0.3), 5);
+      target.dataset.zoom = next;
+      target.style.transform = 'scale(' + next + ')';
+      updateZoomState(wrap);
+    }, { passive: false });
+    var startX, startY, scrollL, scrollT;
+    wrap.addEventListener('mousedown', function(e) {
+      if (e.target.closest('.zoom-controls')) return;
+      var target = wrap.querySelector('.mermaid');
+      if (parseFloat(target.dataset.zoom || '1') <= 1) return;
+      wrap.classList.add('is-panning');
+      startX = e.clientX; startY = e.clientY;
+      scrollL = wrap.scrollLeft; scrollT = wrap.scrollTop;
+    });
+    window.addEventListener('mousemove', function(e) {
+      if (!wrap.classList.contains('is-panning')) return;
+      wrap.scrollLeft = scrollL - (e.clientX - startX);
+      wrap.scrollTop = scrollT - (e.clientY - startY);
+    });
+    window.addEventListener('mouseup', function() {
+      wrap.classList.remove('is-panning');
+    });
+  });
+
+  // TOC scroll spy
+  (function() {
+    const toc = document.getElementById('toc');
+    const links = toc.querySelectorAll('a');
+    const sections = [];
+    links.forEach(link => {
+      const id = link.getAttribute('href').slice(1);
+      const el = document.getElementById(id);
+      if (el) sections.push({ id, el, link });
+    });
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          links.forEach(l => l.classList.remove('active'));
+          const match = sections.find(s => s.el === entry.target);
+          if (match) {
+            match.link.classList.add('active');
+            if (window.innerWidth <= 1000) {
+              match.link.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
+          }
+        }
+      });
+    }, { rootMargin: '-10% 0px -80% 0px' });
+    sections.forEach(s => observer.observe(s.el));
+    links.forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        const id = link.getAttribute('href').slice(1);
+        const el = document.getElementById(id);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          history.replaceState(null, '', '#' + id);
+        }
+      });
+    });
+  })();
+</script>
+
+</body>
+</html>
