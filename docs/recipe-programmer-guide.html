@@ -166,7 +166,6 @@ flowchart LR
     HMI -->|"Save (Speichern)"| Storage
     HMI -->|"Download (Laden)"| Active
     Active -->|"Sync"| HMI
-    Storage -->|"Save As<br/>(copy slot A to B)"| Storage
     Active -.->|"Save From Module<br/>(async multi-scan)"| HMI -.->|"then save"| Storage
   </pre>
 </div>
