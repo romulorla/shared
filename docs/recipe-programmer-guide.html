@@ -23,24 +23,7 @@
     --font: system-ui, -apple-system, sans-serif;
     --font-mono: 'SF Mono', Consolas, 'Liberation Mono', monospace;
   }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #0d1117;
-      --surface: #161b22;
-      --border: #30363d;
-      --border-light: #21262d;
-      --text: #e6edf3;
-      --text-dim: #8b949e;
-      --accent: #58a6ff;
-      --accent-dim: rgba(88,166,255,0.1);
-      --green: #3fb950;
-      --green-dim: rgba(63,185,80,0.1);
-      --red: #f85149;
-      --red-dim: rgba(248,81,73,0.1);
-      --orange: #d29922;
-      --orange-dim: rgba(210,153,34,0.1);
-    }
-  }
+  /* Light theme only — print-friendly */
   * { margin:0; padding:0; box-sizing:border-box; }
   body { background:var(--bg); color:var(--text); font-family:var(--font); line-height:1.6; padding:40px 20px; overflow-wrap:break-word; }
   .container { max-width:860px; margin:0 auto; }
@@ -85,12 +68,42 @@
 
   @media (max-width:768px) { body { padding:16px 12px; } h1 { font-size:22px; } .storage-compare { grid-template-columns:1fr; } }
   @media (prefers-reduced-motion:reduce) { .mermaid-wrap .mermaid { transition:none; } }
+
+  /* Print styles */
+  @media print {
+    body { padding:0; font-size:11pt; }
+    .container { max-width:100%; }
+    .zoom-controls { display:none !important; }
+    .mermaid-wrap { border:1px solid #ccc; break-inside:avoid; page-break-inside:avoid; overflow:visible; }
+    h2 { page-break-after:avoid; }
+    h3 { page-break-after:avoid; }
+    table { page-break-inside:avoid; font-size:10pt; }
+    .storage-compare { page-break-inside:avoid; }
+    blockquote { page-break-inside:avoid; }
+    hr { border-top:1px solid #ddd; }
+    a { color:var(--text); text-decoration:none; }
+  }
+
+  .doc-header { margin-bottom:32px; padding-bottom:16px; border-bottom:2px solid var(--border); }
+  .doc-header h1 { margin-bottom:4px; }
+  .doc-header .subtitle { font-size:15px; color:var(--text-dim); margin-bottom:12px; }
+  .doc-meta { display:flex; flex-wrap:wrap; gap:24px; font-size:13px; color:var(--text-dim); }
+  .doc-meta span { display:flex; align-items:center; gap:4px; }
 </style>
 </head>
 <body>
 <div class="container">
 
-<h1>Recipe System — Programmer Guide</h1>
+<div class="doc-header">
+  <h1>Recipe System — Programmer Guide</h1>
+  <p class="subtitle">PLC architecture, data flow, storage optimization, and function block reference</p>
+  <div class="doc-meta">
+    <span><strong>Author:</strong> Romulo Lange</span>
+    <span><strong>Date:</strong> March 2026</span>
+    <span><strong>Platform:</strong> Siemens S7-1500 / TIA Portal</span>
+    <span><strong>Version:</strong> 1.0</span>
+  </div>
+</div>
 
 <h2>1. Overview</h2>
 <p>The recipe system allows operators to create, edit, store, and load product recipes from the HMI panel. Each recipe defines the product dimensions and all machine module parameters (setpoints and switches) needed to produce a specific pipe.</p>
@@ -145,16 +158,16 @@
   </div>
   <pre class="mermaid">
 flowchart LR
-    Storage["RecipeStorage\n[1..100]\n(RETAIN)"]
-    HMI["RecipeHMI\n(working copy)"]
-    Active["Recipe\n(active on machine)"]
+    Storage["RecipeStorage<br/>[1..100]<br/>(RETAIN)"]
+    HMI["RecipeHMI<br/>(working copy)"]
+    Active["Recipe<br/>(active on machine)"]
 
     Storage -->|"Read (Lesen)"| HMI
     HMI -->|"Save (Speichern)"| Storage
     HMI -->|"Download (Laden)"| Active
     Active -->|"Sync"| HMI
-    Storage -->|"Save As\n(copy slot A→B)"| Storage
-    Active -.->|"Save From Module\n(async multi-scan)"| HMI -.->|"then save"| Storage
+    Storage -->|"Save As<br/>(copy slot A to B)"| Storage
+    Active -.->|"Save From Module<br/>(async multi-scan)"| HMI -.->|"then save"| Storage
   </pre>
 </div>
 
@@ -270,15 +283,15 @@ flowchart LR
   </div>
   <pre class="mermaid">
 flowchart TD
-    A["saveFromModule triggered"] --> B{"RecipeHMI.programNo\n== Recipe.programNo?"}
-    B -->|No| C["Scan N: Load correct recipe\nfrom Storage via StorageMap"]
+    A["saveFromModule triggered"] --> B{"RecipeHMI.programNo<br/>== Recipe.programNo?"}
+    B -->|No| C["Scan N: Load correct recipe<br/>from Storage via StorageMap"]
     C --> D["Set asyncOperationRunning = TRUE"]
     D --> E["Wait for next scan"]
     E --> B
-    B -->|Yes| F["Sync: Copy Recipe → RecipeHMI\n(preserve identity fields)"]
-    F --> G["Save: Copy RecipeHMI → Storage"]
+    B -->|Yes| F["Sync: Copy Recipe to RecipeHMI<br/>(preserve identity fields)"]
+    F --> G["Save: Copy RecipeHMI to Storage"]
     G --> H["Clear asyncOperationRunning"]
-    H --> I["Done ✓"]
+    H --> I["Done"]
   </pre>
 </div>
 
@@ -318,16 +331,17 @@ flowchart TD
 
 <script type="module">
   import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
-  const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
   mermaid.initialize({
     startOnLoad: true,
     theme: 'base',
     look: 'classic',
     themeVariables: {
-      primaryColor: isDark ? '#1c2333' : '#f0f4ff',
-      primaryBorderColor: isDark ? '#58a6ff' : '#0969da',
-      primaryTextColor: isDark ? '#e6edf3' : '#1f2328',
-      lineColor: isDark ? '#8b949e' : '#656d76',
+      primaryColor: '#f0f4ff',
+      primaryBorderColor: '#0969da',
+      primaryTextColor: '#1f2328',
+      lineColor: '#656d76',
+      secondaryColor: '#f0fff0',
+      tertiaryColor: '#fff8f0',
       fontSize: '14px',
       fontFamily: "system-ui, sans-serif",
     }
