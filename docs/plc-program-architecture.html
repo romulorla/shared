@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PLC Program Architecture — RadialPress</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --surface: #f6f8fa;
+    --border: #d0d7de;
+    --border-light: #e8ecf0;
+    --text: #1f2328;
+    --text-dim: #656d76;
+    --accent: #0969da;
+    --accent-dim: rgba(9,105,218,0.08);
+    --green: #1a7f37;
+    --green-dim: rgba(26,127,55,0.08);
+    --red: #cf222e;
+    --red-dim: rgba(207,34,46,0.08);
+    --orange: #bc4c00;
+    --orange-dim: rgba(188,76,0,0.08);
+    --font: system-ui, -apple-system, sans-serif;
+    --font-mono: 'SF Mono', Consolas, 'Liberation Mono', monospace;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:var(--font); line-height:1.6; padding:40px 20px; overflow-wrap:break-word; }
+  .container { max-width:860px; margin:0 auto; }
+  h1 { font-size:28px; font-weight:600; margin-bottom:8px; }
+  h2 { font-size:22px; font-weight:600; margin-top:40px; margin-bottom:12px; padding-bottom:8px; border-bottom:1px solid var(--border-light); }
+  h3 { font-size:17px; font-weight:600; margin-top:28px; margin-bottom:8px; }
+  h4 { font-size:15px; font-weight:600; margin-top:20px; margin-bottom:8px; }
+  p { margin-bottom:12px; font-size:15px; }
+  hr { border:none; border-top:1px solid var(--border-light); margin:32px 0; }
+  strong { font-weight:600; }
+  blockquote { border-left:3px solid var(--accent); padding:8px 16px; margin:12px 0; background:var(--accent-dim); border-radius:0 6px 6px 0; font-size:14px; }
+  ol, ul { margin:8px 0 12px 24px; font-size:15px; }
+  li { margin-bottom:4px; }
+  code { font-family:var(--font-mono); font-size:13px; background:var(--surface); padding:1px 5px; border-radius:4px; border:1px solid var(--border-light); }
+
+  table { width:100%; border-collapse:collapse; margin:12px 0 20px; font-size:14px; }
+  th { text-align:left; padding:8px 12px; border-bottom:2px solid var(--border); font-weight:600; background:var(--surface); font-size:13px; }
+  td { padding:8px 12px; border-bottom:1px solid var(--border-light); vertical-align:top; }
+  tr:hover td { background:var(--accent-dim); }
+
+  @media (max-width:768px) { body { padding:16px 12px; } h1 { font-size:22px; } }
+
+  @page {
+    margin: 20mm 15mm 20mm 15mm;
+    @top-left { content: none; }
+    @top-center { content: none; }
+    @top-right { content: none; }
+    @bottom-left { content: none; }
+    @bottom-center { content: counter(page); font-size: 9pt; color: #999; }
+    @bottom-right { content: none; }
+  }
+  @media print {
+    body { padding:0; font-size:11pt; }
+    .container { max-width:100%; }
+    h2 { page-break-after:avoid; }
+    h3 { page-break-after:avoid; }
+    table { page-break-inside:avoid; font-size:10pt; }
+    blockquote { page-break-inside:avoid; }
+    hr { border-top:1px solid #ddd; }
+    .tree { page-break-inside:avoid; }
+  }
+
+  .doc-header { margin-bottom:32px; padding-bottom:16px; border-bottom:2px solid var(--border); }
+  .doc-header h1 { margin-bottom:4px; }
+  .doc-header .subtitle { font-size:15px; color:var(--text-dim); margin-bottom:12px; }
+  .doc-meta { display:flex; flex-wrap:wrap; gap:24px; font-size:13px; color:var(--text-dim); }
+  .doc-meta span { display:flex; align-items:center; gap:4px; }
+
+  /* Tree styling */
+  .tree {
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: 6px;
+    padding: 16px 16px 16px 8px;
+    margin: 12px 0 20px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 1.7;
+    overflow-x: auto;
+  }
+  .tree ul {
+    list-style: none;
+    margin: 0;
+    padding: 0 0 0 20px;
+    font-size: 13px;
+  }
+  .tree > ul { padding-left: 4px; }
+  .tree li {
+    position: relative;
+    margin: 0;
+    padding: 0 0 0 16px;
+  }
+  .tree li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    border-left: 1px solid var(--border);
+  }
+  .tree li::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.85em;
+    width: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .tree li:last-child::before {
+    height: 0.85em;
+  }
+  .tree .node {
+    display: inline;
+  }
+  .tree .node-label { color: var(--text-dim); }
+  .tree .node-name { font-weight: 600; color: var(--text); }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="doc-header">
+  <h1>PLC Program Architecture</h1>
+  <p class="subtitle">RadialPress — Siemens S7-1516 / TIA Portal V19</p>
+  <div class="doc-meta">
+    <span><strong>Author:</strong> Romulo Lange</span>
+    <span><strong>Date:</strong> March 2026</span>
+    <span><strong>Version:</strong> 1.0</span>
+  </div>
+</div>
+
+<h2>Platform</h2>
+<ul>
+  <li><strong>PLC</strong>: Siemens S7-1516 (S7-1500 series)</li>
+  <li><strong>Programming Environment</strong>: TIA Portal V19 Update 3, STEP 7 Professional</li>
+  <li><strong>Languages Used</strong>: LAD (Ladder Diagram), GRAPH (Sequential Function Chart), SCL (Structured Control Language), STL (Statement List), DB (Data Block)</li>
+  <li><strong>Author</strong>: Romulo Lange, Prinzing Pfeiffer</li>
+</ul>
+
+<hr>
+
+<h2>Module Pattern</h2>
+<p>Every module in the RadialPress PLC program follows a standardized block structure:</p>
+
+<div class="tree">
+  <ul>
+    <li><span class="node"><span class="node-name">[XX]Main</span> (OB) <span class="node-label">– Module entry point (individual OB per module)</span></span>
+      <ul>
+        <li><span class="node"><span class="node-name">[XX]Call</span> (FB) <span class="node-label">– Orchestrator: calls all sub-blocks in order</span></span>
+          <ul>
+            <li><span class="node"><span class="node-name">[XX]Simulation</span> (FB) <span class="node-label">– Simulation mode: forces I/O signals for testing</span></span></li>
+            <li><span class="node"><span class="node-name">[XX]EquipmentInput</span> (FB) <span class="node-label">– Maps physical inputs (sensors → variables)</span></span></li>
+            <li><span class="node"><span class="node-name">[XX]Core</span> (FB) <span class="node-label">– Core logic: mode management, state coordination</span></span>
+              <ul>
+                <li><span class="node"><span class="node-name">[XX]Alarms</span> (FB) <span class="node-label">– Alarm/fault detection via Program_Alarm</span></span></li>
+                <li><span class="node"><span class="node-name">[XX]Interlocks</span> (FB) <span class="node-label">– Safety interlocks via LInterlock8Block-AND</span></span></li>
+                <li><span class="node"><span class="node-name">[XX]Buttons</span> (FB) <span class="node-label">– HMI button handling and manual commands</span></span></li>
+                <li><span class="node"><span class="node-name">[XX]StateMachine</span> (FB) <span class="node-label">– GRAPH sequencer: automatic cycle steps</span></span></li>
+                <li><span class="node"><span class="node-name">[XX]Control</span> (FB) <span class="node-label">– Control logic: actuator commands, setpoints</span></span>
+                  <ul>
+                    <li><span class="node"><span class="node-name">Components/</span> <span class="node-label">– Module-specific component blocks</span></span>
+                      <ul>
+                        <li><span class="node"><span class="node-name">[XX]ComponentA</span> (FB)</span></li>
+                        <li><span class="node"><span class="node-name">[XX]ComponentB</span> (FB)</span></li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+            <li><span class="node"><span class="node-name">[XX]EquipmentOutput</span> (FB) <span class="node-label">– Maps variables → physical actuator outputs</span></span></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+
+<p>Where <code>[XX]</code> is the 2-letter module prefix (e.g., WT for Work Table, GB for Gearbox).</p>
+
+<h3>Execution Order Within a Module</h3>
+<p>The call order within each module's <code>Call</code> block is significant:</p>
+<ol>
+  <li><strong>Simulation</strong> – First, so simulation can override I/O before processing</li>
+  <li><strong>EquipmentInput</strong> – Read physical inputs (or simulated ones)</li>
+  <li><strong>Core</strong> – Process logic with current inputs (calls Alarms → Interlocks → Buttons → StateMachine → Control)</li>
+  <li><strong>EquipmentOutput</strong> – Write computed outputs to physical actuators</li>
+</ol>
+
+<h3>Variations From the Standard Pattern</h3>
+<p>Not all modules implement every block:</p>
+<ul>
+  <li><strong>Module 1300 (Hydraulics)</strong>: No StateMachine, Buttons, or Interlocks (operates as a utility/service module)</li>
+  <li><strong>Module 900 (Water Sprinkling)</strong>: No Alarms or Simulation</li>
+  <li><strong>Module 1000 (Pallet Centering)</strong>: No Alarms or Simulation</li>
+  <li><strong>Module 1400 (Skip Hoist)</strong>: No Alarms or Simulation. Still not completely developed.</li>
+</ul>
+
+<hr>
+
+<h2>Naming Conventions</h2>
+
+<h3>Block Prefixes</h3>
+<p>Each module uses a consistent 2-letter prefix:</p>
+<ul>
+  <li><strong>WT</strong> – Work Table (100)</li>
+  <li><strong>CC</strong> – Cage Centering (200)</li>
+  <li><strong>TT</strong> – Turn Table (300)</li>
+  <li><strong>BC</strong> – Bell End Compactor (400)</li>
+  <li><strong>CB</strong> – Conveyor Belt (500)</li>
+  <li><strong>GB</strong> – Gearbox (600)</li>
+  <li><strong>PS</strong> – Press Shaft (700)</li>
+  <li><strong>DS</strong> – Distributor Shaft (800)</li>
+  <li><strong>WS</strong> – Water Sprinkling (900)</li>
+  <li><strong>PC</strong> – Pallet Centering (1000)</li>
+  <li><strong>HY</strong> – Hydraulics (1300)</li>
+  <li><strong>SH</strong> – Skip Hoist (1400)</li>
+  <li><strong>CO</strong> – Concrete Order (1500)</li>
+</ul>
+
+<h3>Variable Naming</h3>
+<ul>
+  <li><code>i</code> prefix – Input parameters (e.g., <code>iSensorTop</code>, <code>iEncoderValue</code>)</li>
+  <li><code>o</code> prefix – Output parameters (e.g., <code>oValveOpen</code>, <code>oMotorRun</code>)</li>
+  <li><code>io</code> prefix – In/Out parameters (e.g., <code>ioModuleData</code>)</li>
+  <li><code>s</code> prefix – Static variables (internal state, e.g., <code>sTimer</code>, <code>sStepActive</code>)</li>
+</ul>
+
+<h3>Block Numbering Scheme</h3>
+<table>
+  <tr><th>Module</th><th>OB Number</th><th>FB Range</th><th>Main DB</th></tr>
+  <tr><td>Work Table</td><td>OB 123</td><td>FB 100–199</td><td>DB 100</td></tr>
+  <tr><td>Cage Centering</td><td>OB 200</td><td>FB 200–299</td><td>DB 200</td></tr>
+  <tr><td>Turn Table</td><td>OB 300</td><td>FB 300–399</td><td>DB 300</td></tr>
+  <tr><td>Bell End Compactor</td><td>OB 400</td><td>FB 400–499</td><td>DB 400</td></tr>
+  <tr><td>Conveyor Belt</td><td>OB 500</td><td>FB 500–599</td><td>DB 500</td></tr>
+  <tr><td>Gearbox</td><td>OB 600</td><td>FB 600–699</td><td>DB 600</td></tr>
+  <tr><td>Press Shaft</td><td>OB 700</td><td>FB 700–799</td><td>DB 700</td></tr>
+  <tr><td>Distributor Shaft</td><td>OB 800</td><td>FB 800–899</td><td>DB 800</td></tr>
+  <tr><td>Water Sprinkling</td><td>OB 900</td><td>FB 900–999</td><td>DB 900</td></tr>
+  <tr><td>Pallet Centering</td><td>OB 1000</td><td>FB 1000–1099</td><td>DB 1000</td></tr>
+  <tr><td>Hydraulics</td><td>OB 1300</td><td>FB 1300–1399</td><td>DB 1300</td></tr>
+  <tr><td>Skip Hoist</td><td>OB 1400</td><td>FB 1400–1499</td><td>DB 1400</td></tr>
+  <tr><td>Concrete Order</td><td>OB 1500</td><td>FB 1500–1599</td><td>DB 1500</td></tr>
+</table>
+
+<ul>
+  <li>Each module's Main block is an OB (Organization Block) with the module number</li>
+  <li>Component FBs use numbers in the module's 50+ range (e.g., WTPositionHandler = FB 150, GBPositionHandler = FB 650)</li>
+  <li>StateMachineDB uses the module number + 98 (e.g., GB StateMachineDB = DB 698)</li>
+  <li>Simulation FBs use the module number + 99 (e.g., GBSimulation = FB 699, WTSimulation = FB 199)</li>
+</ul>
+
+<hr>
+
+<h2>Block Types</h2>
+<table>
+  <tr><th>Type</th><th>Purpose</th></tr>
+  <tr><td>OB (Organization Block)</td><td>Entry points called by the PLC OS. Each module has its own OB</td></tr>
+  <tr><td>FB (Function Block)</td><td>Blocks with instance data. The primary block type used throughout</td></tr>
+  <tr><td>DB (Data Block)</td><td>Instance DBs for FBs, or standalone data storage (Recipe, MachineData)</td></tr>
+  <tr><td>GRAPH</td><td>Sequential Function Charts for automatic cycle state machines</td></tr>
+</table>
+
+<hr>
+
+<h2>Data Block Pattern</h2>
+<p>Each module has a main instance DB named after the module (e.g., <code>WorkTable</code>, <code>Gearbox</code>, <code>PressShaft</code>). This DB serves as the instance DB for the module's <code>Call</code> FB and contains all the module's internal state.</p>
+
+<h3>Data Organization Within Module DBs</h3>
+<p>Module DBs typically contain sections for:</p>
+<ul>
+  <li><strong>Recipe</strong> – Parameters for the automatic sequence (setpoints, speeds, positions, timers) that change per product/pipe type</li>
+  <li><strong>MachineData</strong> – Hardware configuration parameters (sensor types, calibration, physical limits) that are set during commissioning</li>
+  <li><strong>Status</strong> – Runtime status variables (current state, positions, flags)</li>
+  <li><strong>Interface</strong> – Cross-module communication variables</li>
+</ul>
+
+<h3>Recipe vs MachineData Pattern</h3>
+<ul>
+  <li><strong>Recipe data</strong> defines <em>what</em> the machine should do for a given product (e.g., target positions, speeds, fill times). Operators may change these per pipe type.</li>
+  <li><strong>MachineData</strong> defines <em>how</em> the hardware is configured (e.g., sensor scaling, encoder resolution, mechanical limits). These are set during commissioning and rarely change.</li>
+</ul>
+
+<hr>
+
+<h2>Call Hierarchy</h2>
+
+<div class="tree">
+  <ul>
+    <li><span class="node"><span class="node-name">PLC Cycle</span> (OB 1 / Cyclic)</span>
+      <ul>
+        <li><span class="node"><span class="node-name">OB 123</span> (WTMain) → WTCall (FB 100, DB 100 "WorkTable")</span>
+          <ul>
+            <li><span class="node">WTSimulation (FB 199)</span></li>
+            <li><span class="node">WTEquipmentInput (FB 101)</span></li>
+            <li><span class="node"><span class="node-name">WTCore</span> (FB 102)</span>
+              <ul>
+                <li><span class="node">WTAlarms (FB 107)</span></li>
+                <li><span class="node">WTInterlocks (FB 108)</span></li>
+                <li><span class="node">WTButtons (FB 105)</span></li>
+                <li><span class="node">WTStateMachine (FB 110, DB 198)</span></li>
+                <li><span class="node"><span class="node-name">WTControl</span> (FB 104)</span>
+                  <ul>
+                    <li><span class="node">WTPositionHandler (FB 150)</span></li>
+                    <li><span class="node">WTLiftAnalog (FB 151)</span></li>
+                    <li><span class="node">WTSpigotFormer (FB 152)</span></li>
+                    <li><span class="node">WTConcreteFeeder (FB 153)</span></li>
+                    <li><span class="node">WTEncoder (FB 154)</span></li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+            <li><span class="node">WTEquipmentOutput (FB 103)</span></li>
+          </ul>
+        </li>
+        <li><span class="node">OB 200 (CCMain) → CCCall → [CC sub-blocks]</span></li>
+        <li><span class="node">OB 300 (TTMain) → TTCall → [TT sub-blocks]</span></li>
+        <li><span class="node">OB 400 (BCMain) → BCCall → [BC sub-blocks]</span></li>
+        <li><span class="node">OB 500 (CBMain) → CBCall → [CB sub-blocks]</span></li>
+        <li><span class="node">OB 600 (GBMain) → GBCall → [GB sub-blocks]</span></li>
+        <li><span class="node">OB 700 (PSMain) → PSCall → [PS sub-blocks]</span></li>
+        <li><span class="node">OB 800 (DSMain) → DSCall → [DS sub-blocks]</span></li>
+        <li><span class="node">OB 900 (WSMain) → WSCall → [WS sub-blocks]</span></li>
+        <li><span class="node">OB 1000 (PCMain) → PCCall → [PC sub-blocks]</span></li>
+        <li><span class="node">OB 1300 (HYMain) → HYCall → [HY sub-blocks]</span></li>
+        <li><span class="node">OB 1400 (SHMain) → SHCall → [SH sub-blocks]</span></li>
+        <li><span class="node">OB 1500 (COMain) → COCall → [CO sub-blocks]</span></li>
+      </ul>
+    </li>
+  </ul>
+</div>
+
+<hr>
+
+<h2>Programming Patterns</h2>
+
+<h3>State Machine Pattern (GRAPH)</h3>
+<ul>
+  <li>Each module's <code>StateMachine</code> block is a GRAPH sequencer defining the automatic cycle</li>
+  <li>Steps represent physical states/actions (e.g., "Move down", "Start feeder", "Compacting")</li>
+  <li>Each step has actions (outputs set while the step is active)</li>
+  <li>Transitions between steps contain conditions (sensor feedback, timers, interlocks, cross-module signals)</li>
+  <li>The <code>StateMachineDB</code> is the instance DB that stores the GRAPH block's state</li>
+  <li>Some modules have branching/alternative paths (e.g., repetition cycles in Gearbox and Conveyor Belt)</li>
+  <li>Dual sequences exist in Water Sprinkling (two parallel GRAPH sequences)</li>
+</ul>
+
+<h3>Interlock Pattern</h3>
+<ul>
+  <li>Interlocks are checked in the <code>Interlocks</code> block using library block <code>LInterlock8Block-AND</code></li>
+  <li>Each interlock group combines up to 8 conditions with AND logic</li>
+  <li>Conditions include: safety signals, position feedback, cross-module states, mode flags</li>
+  <li>Interlock outputs are passed to Control/Component blocks to enable/disable actuator movement</li>
+  <li>Common interlock groups: "Common" (applies to all movements), directional groups (e.g., "Move Up", "Move Down")</li>
+</ul>
+
+<h3>Equipment I/O Pattern</h3>
+<ul>
+  <li><code>EquipmentInput</code> maps physical sensor signals to module-internal variables</li>
+  <li><code>EquipmentOutput</code> maps internal command variables to physical actuator outputs</li>
+  <li>This abstraction layer enables simulation: in simulation mode, <code>Simulation</code> block forces signals before <code>EquipmentInput</code> reads them</li>
+  <li>Physical I/O addresses appear as <code>%I</code> (inputs) and <code>%Q</code> (outputs) in these blocks only</li>
+  <li>Library blocks used: <code>LDigitalInput</code> for debounced digital inputs, <code>L_AnalogScaling</code> for analog signal scaling</li>
+</ul>
+
+<h3>Alarm Pattern</h3>
+<ul>
+  <li>Alarms use the <code>Program_Alarm</code> instruction from the Siemens library</li>
+  <li>Each alarm has a unique ID within the module (e.g., 101–106 for Work Table, 601–603 for Gearbox)</li>
+  <li>Alarm acknowledgment uses the <code>Ack_Alarms</code> library block</li>
+  <li>Alarm conditions are typically: false positions (actuator didn't reach expected position in time), circuit breaker trips, sensor faults, communication errors</li>
+</ul>
+
+<h3>Safety Integration</h3>
+<ul>
+  <li>Safety outputs come from <code>SFOutputDB</code> (safety function output data block)</li>
+  <li>Global safety signals are accessed via <code>Global.safety.*</code> paths</li>
+  <li>Safety interlocks are incorporated into the interlock groups alongside operational conditions</li>
+</ul>
+
+<h3>HMI Button Pattern (Buttons Block)</h3>
+<ul>
+  <li>Dual joystick support: left and right joysticks with selectable function assignment per side</li>
+  <li>Button actions for manual mode: directional controls (up/down, forward/backward), start/stop</li>
+  <li>Mode selection: Automatic, Manual, Setup modes</li>
+  <li>Buttons block writes to control flags that are consumed by the Control block</li>
+</ul>
+
+<hr>
+
+<h2>Library Blocks</h2>
+<p>The following reusable library blocks are used across modules:</p>
+<table>
+  <tr><th>Library Block</th><th>Purpose</th><th>Used In</th></tr>
+  <tr><td>LInterlock8Block-AND</td><td>8-input AND interlock with diagnostics</td><td>All modules with interlocks</td></tr>
+  <tr><td>LAnalogValve</td><td>Analog hydraulic valve control</td><td>WT, GB, BC, PS, DS</td></tr>
+  <tr><td>LValve</td><td>Digital on/off valve control</td><td>TT, BC, CC, HY</td></tr>
+  <tr><td>LSimpleMotor</td><td>Basic motor start/stop control</td><td>BC</td></tr>
+  <tr><td>LPositionSetpoint</td><td>Position setpoint management</td><td>WT, GB</td></tr>
+  <tr><td>LTimeConversion_v2</td><td>Timer unit conversion</td><td>Multiple</td></tr>
+  <tr><td>LIFMSensor</td><td>IFM sensor interface</td><td>Multiple</td></tr>
+  <tr><td>LRP_EncoderLaser</td><td>Encoder/laser measurement</td><td>WT, CO</td></tr>
+  <tr><td>LSEWMoviCAdvanced</td><td>SEW frequency drive interface</td><td>TT, CB (shared drive)</td></tr>
+  <tr><td>Program_Alarm</td><td>Siemens alarm generation</td><td>All modules with alarms</td></tr>
+  <tr><td>Ack_Alarms</td><td>Alarm acknowledgment</td><td>All modules with alarms</td></tr>
+  <tr><td>L_AnalogScaling</td><td>Analog signal scaling</td><td>Multiple</td></tr>
+  <tr><td>LDigitalInput</td><td>Debounced digital input</td><td>Multiple</td></tr>
+  <tr><td>LEncoder</td><td>Incremental encoder interface</td><td>WT, GB</td></tr>
+  <tr><td>LEncoderMonitoring</td><td>Encoder health monitoring</td><td>GB</td></tr>
+  <tr><td>L_Pulse</td><td>Pulse generation</td><td>Multiple</td></tr>
+  <tr><td>LRP_GearboxDownRamp</td><td>Gearbox deceleration ramp</td><td>GB</td></tr>
+</table>
+
+<hr>
+
+<h2>Cross-Module Communication</h2>
+<p>Modules never call each other directly. All inter-module coordination flows through two global data blocks: <strong>Interface</strong> (DB 4) for module-to-module status and commands, and <strong>Global</strong> (DB 1) for machine-wide state.</p>
+
+<h3>Interface Block (DB 4)</h3>
+<p>The <code>Interface</code> data block is the central communication hub. Each module has its own namespace within it:</p>
+
+<div class="tree">
+  <ul>
+    <li><span class="node"><span class="node-name">Interface</span> (DB 4)</span>
+      <ul>
+        <li><span class="node">workTable <span class="node-label">(typeWorkTableInterface)</span></span></li>
+        <li><span class="node">cageCentering <span class="node-label">(typeCageCenteringInterface)</span></span></li>
+        <li><span class="node">turnTable <span class="node-label">(typeTurnTableInterface)</span></span></li>
+        <li><span class="node">bellCompactor <span class="node-label">(typeBellCompactorInterface)</span></span></li>
+        <li><span class="node">conveyorBelt <span class="node-label">(typeConveyorBeltInterface)</span></span></li>
+        <li><span class="node">gearbox <span class="node-label">(typeGearboxInterface)</span></span></li>
+        <li><span class="node">pressShaft <span class="node-label">(typePressShaftInterface)</span></span></li>
+        <li><span class="node">distributorShaft <span class="node-label">(typeDistributorInterface)</span></span></li>
+        <li><span class="node">waterSprinkling <span class="node-label">(typeWaterSprinklingInterface)</span></span></li>
+        <li><span class="node">palletCentering <span class="node-label">(typePalletCenteringInterface)</span></span></li>
+        <li><span class="node">palletInserting <span class="node-label">(typePalletInsertingInterface)</span></span></li>
+        <li><span class="node">hydraulic <span class="node-label">(typeHydraulicInterface)</span></span></li>
+        <li><span class="node">skipHoist <span class="node-label">(typeSkipHoistInterface)</span></span></li>
+        <li><span class="node">concreteOrder <span class="node-label">(typeConcreteOrderInterface)</span></span></li>
+      </ul>
+    </li>
+  </ul>
+</div>
+
+<p>Each module's interface section follows a consistent pattern with two areas:</p>
+<ul>
+  <li><strong><code>status</code></strong> — The module <strong>writes</strong> its current state here (positions, running flags, alarm flags, temperatures). Other modules and the global sequence <strong>read</strong> these fields.</li>
+  <li><strong><code>command</code></strong> — The global sequence or other modules <strong>write</strong> commands here (step triggers, speed setpoints, manual controls). The module <strong>reads</strong> them as inputs.</li>
+</ul>
+
+<p>The Interface block is passed as an <code>InOut</code> parameter through the call chain: <code>[XX]Call</code> receives it, passes it to <code>[XX]Core</code>, which passes it down to <code>[XX]Alarms</code>, <code>[XX]Control</code>, <code>[XX]StateMachine</code>, etc. Each block reads or writes the fields it needs.</p>
+
+<h4>Communication Flow Example</h4>
+<p>A typical production cycle step works like this:</p>
+<ol>
+  <li>GlobalSequence writes <code>Interface.gearbox.moveToBottom = TRUE</code></li>
+  <li>Gearbox reads this command, starts lowering the shaft</li>
+  <li>Gearbox writes <code>Interface.gearbox.status.cycleDone = TRUE</code></li>
+  <li>GlobalSequence reads cycleDone, transitions to the next step</li>
+</ol>
+
+<h4>Typical Interface Fields Per Module</h4>
+<p>Most modules expose a similar set of fields (exact fields vary per module):</p>
+<table>
+  <tr><th>Field Pattern</th><th>Direction</th><th>Purpose</th></tr>
+  <tr><td><code>status.alarm</code></td><td>Module writes</td><td>Alarm active flag</td></tr>
+  <tr><td><code>status.cycleDone</code></td><td>Module writes</td><td>Automatic cycle step completed</td></tr>
+  <tr><td><code>status.initialPosition</code></td><td>Module writes</td><td>Module is at home/ready position</td></tr>
+  <tr><td><code>command.automatic.*</code></td><td>Sequence writes</td><td>Step commands for the automatic cycle</td></tr>
+  <tr><td><code>command.manual.*</code></td><td>Buttons/HMI writes</td><td>Manual mode movement commands</td></tr>
+  <tr><td><code>command.speed*</code></td><td>Sequence writes</td><td>Speed setpoints (from recipe)</td></tr>
+</table>
+
+<h3>Global Block (DB 1)</h3>
+<p>The <code>Global</code> data block holds machine-wide state that <strong>every</strong> module reads. Unlike Interface, which is per-module, Global contains state that applies to the entire machine:</p>
+
+<div class="tree">
+  <ul>
+    <li><span class="node"><span class="node-name">Global</span> (DB 1)</span>
+      <ul>
+        <li><span class="node"><span class="node-name">simulation</span> <span class="node-label">(Bool) — Simulation mode flag</span></span></li>
+        <li><span class="node"><span class="node-name">mode</span> <span class="node-label">— Operating mode (Retain)</span></span>
+          <ul>
+            <li><span class="node">automatic <span class="node-label">(Bool) — Automatic production mode (default: TRUE)</span></span></li>
+            <li><span class="node">manual <span class="node-label">(Bool) — Manual/jog mode</span></span></li>
+            <li><span class="node">setup <span class="node-label">(Bool) — Setup/commissioning mode</span></span></li>
+            <li><span class="node">cleaning <span class="node-label">(Bool) — Cleaning mode</span></span></li>
+          </ul>
+        </li>
+        <li><span class="node"><span class="node-name">commands</span> <span class="node-label">— Operator commands (Retain)</span></span>
+          <ul>
+            <li><span class="node">powerOn <span class="node-label">(Bool) — Master power enable</span></span></li>
+            <li><span class="node">automaticStart <span class="node-label">(Bool) — Start automatic cycle</span></span></li>
+            <li><span class="node">automaticStop <span class="node-label">(Bool) — Stop automatic cycle</span></span></li>
+            <li><span class="node">reset <span class="node-label">(Bool) — Alarm reset / acknowledge</span></span></li>
+            <li><span class="node">resetSequence <span class="node-label">(Bool) — Reset sequence counter</span></span></li>
+            <li><span class="node">initialPosition <span class="node-label">(Bool) — Go to home position</span></span></li>
+            <li><span class="node">regulationOff <span class="node-label">(Bool) — Disable pressure regulation</span></span></li>
+            <li><span class="node">requestToStop <span class="node-label">(Bool) — Operator requests stop</span></span></li>
+            <li><span class="node">allowRequestedStop <span class="node-label">(Bool) — Machine reached safe position, can stop</span></span></li>
+            <li><span class="node">lampTest <span class="node-label">(Bool) — Test indicator lamps</span></span></li>
+          </ul>
+        </li>
+        <li><span class="node"><span class="node-name">safety</span> <span class="node-label">(typeGlobalSafety) — Safety signals (access doors, e-stop)</span></span></li>
+        <li><span class="node"><span class="node-name">joystick</span> <span class="node-label">— Four joystick inputs (Retain)</span></span>
+          <ul>
+            <li><span class="node">topLeft / topRight / bottomLeft / bottomRight</span></li>
+            <li><span class="node">each: up, down, left, right <span class="node-label">(Bool)</span></span></li>
+          </ul>
+        </li>
+        <li><span class="node"><span class="node-name">status</span></span>
+          <ul>
+            <li><span class="node">powerOn <span class="node-label">(Bool) — Power is active</span></span></li>
+            <li><span class="node">automaticStopped <span class="node-label">(Bool) — Automatic mode halted</span></span></li>
+            <li><span class="node">atInitialPosition <span class="node-label">(Bool) — Machine at home position</span></span></li>
+            <li><span class="node">startActive <span class="node-label">(Bool) — Start LED indicator</span></span></li>
+            <li><span class="node">startCondition <span class="node-label">(Bool) — Start conditions met</span></span></li>
+          </ul>
+        </li>
+        <li><span class="node"><span class="node-name">withHandlingLine</span> <span class="node-label">(Bool) — Handling line configuration flag</span></span></li>
+      </ul>
+    </li>
+  </ul>
+</div>
+
+<p>Modules access these as <code>Global.mode.automatic</code>, <code>Global.commands.reset</code>, <code>Global.safety.accessDoorsOK</code>, <code>Global.simulation</code>, etc.</p>
+
+<h3>Interface vs Global</h3>
+<table>
+  <tr><th>Aspect</th><th>Interface (DB 4)</th><th>Global (DB 1)</th></tr>
+  <tr><td>Scope</td><td>Per-module namespaces</td><td>Machine-wide</td></tr>
+  <tr><td>Content</td><td>Module status + step commands</td><td>Modes, safety, operator commands</td></tr>
+  <tr><td>Written by</td><td>Each module writes its own section</td><td>GlobalCall / GlobalControlPanel</td></tr>
+  <tr><td>Read by</td><td>Other modules + GlobalSequence</td><td>All modules</td></tr>
+  <tr><td>Purpose</td><td>Cross-module coordination</td><td>Machine state and operator input</td></tr>
+</table>
+
+<h3>Global Blocks Hierarchy</h3>
+<p>The Global layer has its own block structure that runs alongside the per-module OBs:</p>
+
+<div class="tree">
+  <ul>
+    <li><span class="node"><span class="node-name">GlobalCall</span> (FB 11, DB "GlobalCall_DB")</span>
+      <ul>
+        <li><span class="node"><span class="node-name">GlobalControlPanel</span> (FB 13) <span class="node-label">— Button/LED handling, mode selection</span></span></li>
+        <li><span class="node"><span class="node-name">GlobalSignals</span> (FB 14) <span class="node-label">— Access door requests, safety alarm routing</span></span></li>
+        <li><span class="node"><span class="node-name">GlobalAlarms</span> (FB 16) <span class="node-label">— 9 system-wide Program_Alarm instances</span></span></li>
+        <li><span class="node"><span class="node-name">GlobalSequence</span> (GRAPH 10) <span class="node-label">— Main production sequence state machine</span></span></li>
+        <li><span class="node"><span class="node-name">GlobalInitialPosition</span> (GRAPH 12) <span class="node-label">— Startup homing sequence</span></span></li>
+      </ul>
+    </li>
+  </ul>
+</div>
+
+<p>Supporting blocks:</p>
+<ul>
+  <li><strong>StateMachines (DB 6)</strong> — Instance data for both GRAPH sequences</li>
+  <li><strong>Production (20)</strong> — Production cycle management (ProductionMain, ProductionCore)</li>
+  <li><strong>Maintenance (30)</strong> — Maintenance mode logic (MaintenanceMain, MaintenanceCore)</li>
+  <li><strong>Help functions (40)</strong> — Access request handling (HFAccessRequest), safety alarms (HFSafetyAlarms)</li>
+</ul>
+
+<p><strong>GlobalSequence</strong> is the master orchestrator of the automatic production cycle. It writes commands to each module's Interface section (e.g., <code>Interface.gearbox.moveToBottom = TRUE</code>) and waits for status feedback (e.g., <code>Interface.gearbox.status.cycleDone</code>). <strong>GlobalInitialPosition</strong> performs the same coordination pattern but for the startup homing sequence.</p>
+
+<h3>Key Cross-Module Dependencies</h3>
+<table>
+  <tr><th>Source Module</th><th>Target Module</th><th>Signal via Interface</th></tr>
+  <tr><td>Work Table (100)</td><td>Gearbox (600), Press Shaft (700), Distributor Shaft (800)</td><td>Cycle step commands, feeder status</td></tr>
+  <tr><td>Gearbox (600)</td><td>Work Table (100), Bell End Compactor (400)</td><td>Position status, movement done</td></tr>
+  <tr><td>Turn Table (300)</td><td>All modules</td><td>Table in position, ready for cycle</td></tr>
+  <tr><td>Conveyor Belt (500)</td><td>Work Table (100), Water Sprinkling (900)</td><td>Belt running status</td></tr>
+  <tr><td>Hydraulics (1300)</td><td>All hydraulic modules</td><td><code>hydraulic.status.drivesOn</code>, pressure OK</td></tr>
+  <tr><td>Skip Hoist (1400)</td><td>Concrete Order (1500)</td><td>Hoist position, handover signals</td></tr>
+  <tr><td>Concrete Order (1500)</td><td>Skip Hoist (1400), Conveyor Belt (500)</td><td>Mixture ready, concrete available</td></tr>
+</table>
+
+<h3>Shared Resources</h3>
+<ul>
+  <li><strong>SEW Frequency Drive</strong>: Turn Table (300) and Conveyor Belt (500) share a single SEW MoviC Advanced frequency drive. Only one can operate at a time — mutual exclusion enforced through interlocks.</li>
+  <li><strong>Hydraulic Power Unit</strong>: Module 1300 provides central hydraulic pressure to Work Table, Gearbox, Bell End Compactor, Press Shaft, Distributor Shaft, and Pallet Centering. All hydraulic consumers check <code>Interface.hydraulic.status.drivesOn</code> as an interlock before commanding movement.</li>
+</ul>
+
+</div>
+</body>
+</html>
